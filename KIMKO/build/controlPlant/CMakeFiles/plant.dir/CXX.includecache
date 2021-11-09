@@ -1,0 +1,14 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/kimko/KIMKO/controlPlant/controlPlant.cpp
+controlPlant.h
+/home/kimko/KIMKO/controlPlant/controlPlant.h
+
+/home/kimko/KIMKO/controlPlant/controlPlant.h
+
