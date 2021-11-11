@@ -36,19 +36,19 @@ iostream
 fstream
 -
 
-/home/kimko/KIMKO/main.cpp
+/home/kimko/myRepo-Thesis/KIMKO/main.cpp
 iostream
 -
 run.h
-/home/kimko/KIMKO/run.h
+/home/kimko/myRepo-Thesis/KIMKO/run.h
 thread
 -
 controlPlant.h
-/home/kimko/KIMKO/controlPlant.h
+/home/kimko/myRepo-Thesis/KIMKO/controlPlant.h
 readWritePlot.h
-/home/kimko/KIMKO/readWritePlot.h
+/home/kimko/myRepo-Thesis/KIMKO/readWritePlot.h
 
-/home/kimko/KIMKO/matplotlib-cpp-master/matplotlibcpp.h
+/home/kimko/myRepo-Thesis/KIMKO/matplotlib-cpp-master/matplotlibcpp.h
 algorithm
 -
 array
@@ -74,9 +74,9 @@ Python.h
 numpy/arrayobject.h
 -
 
-/home/kimko/KIMKO/run.cpp
+/home/kimko/myRepo-Thesis/KIMKO/run.cpp
 run.h
-/home/kimko/KIMKO/run.h
+/home/kimko/myRepo-Thesis/KIMKO/run.h
 stdio.h
 -
 iostream
@@ -88,19 +88,19 @@ fstream
 vector
 -
 matplotlib-cpp-master/matplotlibcpp.h
-/home/kimko/KIMKO/matplotlib-cpp-master/matplotlibcpp.h
+/home/kimko/myRepo-Thesis/KIMKO/matplotlib-cpp-master/matplotlibcpp.h
 time.h
 -
 readWritePlot.h
-/home/kimko/KIMKO/readWritePlot.h
+/home/kimko/myRepo-Thesis/KIMKO/readWritePlot.h
 
-/home/kimko/KIMKO/run.h
+/home/kimko/myRepo-Thesis/KIMKO/run.h
 pid.h
-/home/kimko/KIMKO/pid.h
+/home/kimko/myRepo-Thesis/KIMKO/pid.h
 mpc.h
-/home/kimko/KIMKO/mpc.h
+/home/kimko/myRepo-Thesis/KIMKO/mpc.h
 PCANBasic.h
-/home/kimko/KIMKO/PCANBasic.h
+/home/kimko/myRepo-Thesis/KIMKO/PCANBasic.h
 unistd.h
 -
 stdint.h
@@ -108,7 +108,7 @@ stdint.h
 thread
 -
 controlPlant.h
-/home/kimko/KIMKO/controlPlant.h
+/home/kimko/myRepo-Thesis/KIMKO/controlPlant.h
 
 /usr/include/python3.6m/Python.h
 patchlevel.h

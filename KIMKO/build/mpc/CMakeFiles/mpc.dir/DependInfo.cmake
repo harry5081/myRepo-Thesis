@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/kimko/KIMKO/mpc/mpc.cpp" "/home/kimko/KIMKO/build/mpc/CMakeFiles/mpc.dir/mpc.cpp.o"
+  "/home/kimko/myRepo-Thesis/KIMKO/mpc/mpc.cpp" "/home/kimko/myRepo-Thesis/KIMKO/build/mpc/CMakeFiles/mpc.dir/mpc.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

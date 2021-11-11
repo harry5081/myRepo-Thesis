@@ -6,5 +6,5 @@ CXX_FLAGS =
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/usr/include/python3.6m -I/home/kimko/KIMKO/plot -I/home/kimko/KIMKO/pid -I/home/kimko/KIMKO/controlPlant -I/home/kimko/KIMKO/mpc 
+CXX_INCLUDES = -I/usr/include/python3.6m -I/home/kimko/myRepo-Thesis/KIMKO/plot -I/home/kimko/myRepo-Thesis/KIMKO/pid -I/home/kimko/myRepo-Thesis/KIMKO/controlPlant -I/home/kimko/myRepo-Thesis/KIMKO/mpc 
 

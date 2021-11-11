@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/kimko/KIMKO
+CMAKE_SOURCE_DIR = /home/kimko/myRepo-Thesis/KIMKO
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/kimko/KIMKO/build
+CMAKE_BINARY_DIR = /home/kimko/myRepo-Thesis/KIMKO/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -126,14 +126,14 @@ install/fast: preinstall/fast
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/kimko/KIMKO/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/kimko/KIMKO/build/CMakeFiles /home/kimko/KIMKO/build/plot/CMakeFiles/progress.marks
-	cd /home/kimko/KIMKO/build && $(MAKE) -f CMakeFiles/Makefile2 plot/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/kimko/KIMKO/build/CMakeFiles 0
+	cd /home/kimko/myRepo-Thesis/KIMKO/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/kimko/myRepo-Thesis/KIMKO/build/CMakeFiles /home/kimko/myRepo-Thesis/KIMKO/build/plot/CMakeFiles/progress.marks
+	cd /home/kimko/myRepo-Thesis/KIMKO/build && $(MAKE) -f CMakeFiles/Makefile2 plot/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/kimko/myRepo-Thesis/KIMKO/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/kimko/KIMKO/build && $(MAKE) -f CMakeFiles/Makefile2 plot/clean
+	cd /home/kimko/myRepo-Thesis/KIMKO/build && $(MAKE) -f CMakeFiles/Makefile2 plot/clean
 .PHONY : clean
 
 # The main clean target
@@ -143,22 +143,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/kimko/KIMKO/build && $(MAKE) -f CMakeFiles/Makefile2 plot/preinstall
+	cd /home/kimko/myRepo-Thesis/KIMKO/build && $(MAKE) -f CMakeFiles/Makefile2 plot/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/kimko/KIMKO/build && $(MAKE) -f CMakeFiles/Makefile2 plot/preinstall
+	cd /home/kimko/myRepo-Thesis/KIMKO/build && $(MAKE) -f CMakeFiles/Makefile2 plot/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home/kimko/KIMKO/build && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/kimko/myRepo-Thesis/KIMKO/build && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 plot/CMakeFiles/plot.dir/rule:
-	cd /home/kimko/KIMKO/build && $(MAKE) -f CMakeFiles/Makefile2 plot/CMakeFiles/plot.dir/rule
+	cd /home/kimko/myRepo-Thesis/KIMKO/build && $(MAKE) -f CMakeFiles/Makefile2 plot/CMakeFiles/plot.dir/rule
 .PHONY : plot/CMakeFiles/plot.dir/rule
 
 # Convenience name for target.
@@ -168,7 +168,7 @@ plot: plot/CMakeFiles/plot.dir/rule
 
 # fast build rule for target.
 plot/fast:
-	cd /home/kimko/KIMKO/build && $(MAKE) -f plot/CMakeFiles/plot.dir/build.make plot/CMakeFiles/plot.dir/build
+	cd /home/kimko/myRepo-Thesis/KIMKO/build && $(MAKE) -f plot/CMakeFiles/plot.dir/build.make plot/CMakeFiles/plot.dir/build
 .PHONY : plot/fast
 
 readWritePlot.o: readWritePlot.cpp.o
@@ -177,7 +177,7 @@ readWritePlot.o: readWritePlot.cpp.o
 
 # target to build an object file
 readWritePlot.cpp.o:
-	cd /home/kimko/KIMKO/build && $(MAKE) -f plot/CMakeFiles/plot.dir/build.make plot/CMakeFiles/plot.dir/readWritePlot.cpp.o
+	cd /home/kimko/myRepo-Thesis/KIMKO/build && $(MAKE) -f plot/CMakeFiles/plot.dir/build.make plot/CMakeFiles/plot.dir/readWritePlot.cpp.o
 .PHONY : readWritePlot.cpp.o
 
 readWritePlot.i: readWritePlot.cpp.i
@@ -186,7 +186,7 @@ readWritePlot.i: readWritePlot.cpp.i
 
 # target to preprocess a source file
 readWritePlot.cpp.i:
-	cd /home/kimko/KIMKO/build && $(MAKE) -f plot/CMakeFiles/plot.dir/build.make plot/CMakeFiles/plot.dir/readWritePlot.cpp.i
+	cd /home/kimko/myRepo-Thesis/KIMKO/build && $(MAKE) -f plot/CMakeFiles/plot.dir/build.make plot/CMakeFiles/plot.dir/readWritePlot.cpp.i
 .PHONY : readWritePlot.cpp.i
 
 readWritePlot.s: readWritePlot.cpp.s
@@ -195,7 +195,7 @@ readWritePlot.s: readWritePlot.cpp.s
 
 # target to generate assembly for a file
 readWritePlot.cpp.s:
-	cd /home/kimko/KIMKO/build && $(MAKE) -f plot/CMakeFiles/plot.dir/build.make plot/CMakeFiles/plot.dir/readWritePlot.cpp.s
+	cd /home/kimko/myRepo-Thesis/KIMKO/build && $(MAKE) -f plot/CMakeFiles/plot.dir/build.make plot/CMakeFiles/plot.dir/readWritePlot.cpp.s
 .PHONY : readWritePlot.cpp.s
 
 # Help Target
@@ -225,6 +225,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home/kimko/KIMKO/build && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/kimko/myRepo-Thesis/KIMKO/build && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/kimko/KIMKO/matplotlib-cpp-master/matplotlibcpp.h
+/home/kimko/myRepo-Thesis/KIMKO/matplotlib-cpp-master/matplotlibcpp.h
 algorithm
 -
 array
@@ -32,7 +32,7 @@ Python.h
 numpy/arrayobject.h
 -
 
-/home/kimko/KIMKO/plot/readWritePlot.cpp
+/home/kimko/myRepo-Thesis/KIMKO/plot/readWritePlot.cpp
 fstream
 -
 vector
@@ -40,7 +40,7 @@ vector
 iostream
 -
 ../matplotlib-cpp-master/matplotlibcpp.h
-/home/kimko/KIMKO/matplotlib-cpp-master/matplotlibcpp.h
+/home/kimko/myRepo-Thesis/KIMKO/matplotlib-cpp-master/matplotlibcpp.h
 
 /usr/include/python3.6m/Python.h
 patchlevel.h

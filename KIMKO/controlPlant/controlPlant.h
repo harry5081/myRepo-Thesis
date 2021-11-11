@@ -6,7 +6,12 @@ class PLANT{
 
 public:
     
+    bool initZPosButton = false;
+    bool initXYPosButton = false;
     bool initPosButton = false;
+    
+    float originPos_x;
+    float originPos_y;
     float originPos_z;
 
     int ref_vel_x;

@@ -16,9 +16,9 @@ DOF dof =Z_DIRECTION;
 DRAW draw = PLOT;
 
 
-PID pid_x(3,0.005,1,0.3);
-PID pid_y(3,0.1,1.0,1.0);
-PID pid_z(3,0.1,1,1);
+//PID pid_x(3,0.005,0.5,0.3);
+PID pid_y(3,0.005,0.5,0.3);
+PID pid_z(3,0.01,1,1);
 
 MPC mpc;
 
@@ -61,7 +61,7 @@ m_int16_velocity_level2(0)
     printf("pcan init success \n");
     
     init();
-    //initOriginPos();
+    initOriginPos();
 
 
 
@@ -82,9 +82,12 @@ void run::start()
     // mRobot.ref_pos_x = mpc.sinePosDemand(time);
     // mRobot.ref_vel_x = mpc.cosVelDemand(time);
 
+    // mRobot.ref_pos_x = mpc.sineToTenPosDemand(time);
+    // mRobot.ref_vel_x = mpc.cosToTenVelDemand(time);
+
     /////////////////////////////////////////////     Y      /////////////////////////////////////
-    // mRobot.ref_pos_y = mpc.sinePosDemand(time);
-    // mRobot.ref_vel_y = mpc.cosVelDemand(time);
+    //mRobot.ref_pos_y = mpc.sinePosDemand(time);
+    //mRobot.ref_vel_y = mpc.cosVelDemand(time);
 
     /////////////////////////////////////////////     Z      /////////////////////////////////////
     mRobot.ref_pos_z = mpc.sinePosDemand(time)/5;
@@ -95,8 +98,8 @@ void run::start()
     
 
     //int PID::pidExe(float posError, int velDemand, float velError)
-    m_int16_desired_velocity_X = pid_x.pidExe(mRobot.ref_pos_x-mRobot.pos_x, mRobot.ref_vel_x, mRobot.ref_vel_x-mRobot.vel_x);
-    m_int16_desired_velocity_Y = pid_y.pidExe(mRobot.ref_pos_y-mRobot.pos_y, mRobot.ref_vel_y, mRobot.ref_vel_y-mRobot.vel_y);
+    //m_int16_desired_velocity_X = pid_x.pidExe(mRobot.ref_pos_x-mRobot.pos_x, mRobot.ref_vel_x, mRobot.ref_vel_x-mRobot.vel_x);
+    //m_int16_desired_velocity_Y = pid_y.pidExe(mRobot.ref_pos_y-mRobot.pos_y, mRobot.ref_vel_y, mRobot.ref_vel_y-mRobot.vel_y);
     m_f_desired_velocity_Z = pid_z.pidExeAngle(mRobot.ref_pos_z-mRobot.pos_z,mRobot.ref_vel_z,mRobot.ref_vel_z-mRobot.vel_z);
     
     
@@ -373,8 +376,12 @@ void run::getPositionValue(){
         //    std::cout << "y_pos: ";
         //    std::cout << std::dec << y_pos << std::endl;
 
-        mRobot.pos_x = x_pos;
-        mRobot.pos_y = y_pos;    
+        // mRobot.pos_x = x_pos;
+        // mRobot.pos_y = y_pos;   
+
+        mRobot.pos_x = x_pos-mRobot.originPos_x;
+        mRobot.pos_y = y_pos-mRobot.originPos_y; 
+
     } //if(m_pcanMsg_listen.ID == 0x1A1)
 
 
@@ -397,15 +404,22 @@ void run::getPositionValue(){
         // std::cout << "z_pos: ";
         // std::cout <<  z_pos << std::endl;
 
-        //mRobot.pos_z = z_pos-mRobot.originPos_z;
+        mRobot.pos_z = z_pos-mRobot.originPos_z;
        
-        mRobot.pos_z = z_pos;
+        //mRobot.pos_z = z_pos;
 
          if(mRobot.pos_z>=180 && mRobot.pos_z<=360){
              mRobot.pos_z=mRobot.pos_z-360;
              std::cout <<  "Angle 180~360 convert to -180~0" << std::endl;
              std::cout <<  "Angle 180~360 convert to -180~0" << std::endl;
              std::cout <<  "Angle 180~360 convert to -180~0" << std::endl;
+        }
+
+        else if(mRobot.pos_z>=-360 && mRobot.pos_z<=-180){
+             mRobot.pos_z=mRobot.pos_z+360;
+             std::cout <<  "Angle -180~-360 convert to 180~0" << std::endl;
+             std::cout <<  "Angle -180~-360 convert to 180~0" << std::endl;
+             std::cout <<  "Angle -180~-360 convert to 180~0" << std::endl;
         }
         
     }// if(m_pcanMsg_listen.ID == 0x1C1)
@@ -421,22 +435,27 @@ void run::initOriginPos(){
 
     while(mRobot.initPosButton == false)   {
     
-        std::cout <<  "initOriginPos" << std::endl;
+        //std::cout <<  "initOriginPos" << std::endl;
         TPCANStatus result;
         result = CAN_Read(m_Channel, &m_pcanMsg_listen, nullptr);
-                
-    //   if(m_pcanMsg_listen.ID == 0x1A1){
-    //   int32_t x_pos = static_cast<uint32_t>(m_pcanMsg_listen.DATA[0]) | static_cast<uint32_t>(m_pcanMsg_listen.DATA[1]<<8)\
-    //                    |static_cast<uint32_t>(m_pcanMsg_listen.DATA[2])<<16 | static_cast<uint32_t>(m_pcanMsg_listen.DATA[3]<<24);
-    //    pos_x = x_pos;
+    
+        //XY Position            
+        if(m_pcanMsg_listen.ID == 0x1A1){
+            int32_t x_pos = static_cast<uint32_t>(m_pcanMsg_listen.DATA[0]) | static_cast<uint32_t>(m_pcanMsg_listen.DATA[1]<<8)\
+                       |static_cast<uint32_t>(m_pcanMsg_listen.DATA[2])<<16 | static_cast<uint32_t>(m_pcanMsg_listen.DATA[3]<<24);
+            mRobot.originPos_x = x_pos;
 
-    //    int32_t y_pos = static_cast<uint32_t>(m_pcanMsg_listen.DATA[4]) | static_cast<uint32_t>(m_pcanMsg_listen.DATA[5]<<8)\
-    //                    |static_cast<uint32_t>(m_pcanMsg_listen.DATA[6])<<16 | static_cast<uint32_t>(m_pcanMsg_listen.DATA[7]<<24);
-    //    pos_y = y_pos;
+            int32_t y_pos = static_cast<uint32_t>(m_pcanMsg_listen.DATA[4]) | static_cast<uint32_t>(m_pcanMsg_listen.DATA[5]<<8)\
+                       |static_cast<uint32_t>(m_pcanMsg_listen.DATA[6])<<16 | static_cast<uint32_t>(m_pcanMsg_listen.DATA[7]<<24);
+            mRobot.originPos_y = y_pos;
+            
+            mRobot.initXYPosButton=true;
 
-    //    }
+            
 
-    //Z Position
+       }
+
+        //Z Position
 
         if(m_pcanMsg_listen.ID == 0x1C1){
                
@@ -445,7 +464,20 @@ void run::initOriginPos(){
             float z_pos = *((float *) &z_pos_temp);
         
             mRobot.originPos_z = z_pos;
-            mRobot.initPosButton=true;      
+            mRobot.initZPosButton=true;   
+
+            
+
+        if(mRobot.initXYPosButton==true && mRobot.initZPosButton==true){
+            mRobot.initPosButton =true;
+            std::cout <<  std::endl;
+            std::cout <<  std::endl;
+            std::cout <<  "initOrigin X Pos: " << mRobot.originPos_x <<std::endl;
+            std::cout <<  "initOrigin Y Pos: " << mRobot.originPos_y <<std::endl;
+            std::cout <<  "initOrigin Z Pos: " << mRobot.originPos_z << std::endl;   
+            std::cout <<  std::endl;
+        }
+
         }
 
     }         

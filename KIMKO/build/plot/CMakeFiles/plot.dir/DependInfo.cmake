@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/kimko/KIMKO/plot/readWritePlot.cpp" "/home/kimko/KIMKO/build/plot/CMakeFiles/plot.dir/readWritePlot.cpp.o"
+  "/home/kimko/myRepo-Thesis/KIMKO/plot/readWritePlot.cpp" "/home/kimko/myRepo-Thesis/KIMKO/build/plot/CMakeFiles/plot.dir/readWritePlot.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

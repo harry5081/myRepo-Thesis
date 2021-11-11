@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/kimko/KIMKO/pid/pid.cpp
+/home/kimko/myRepo-Thesis/KIMKO/pid/pid.cpp
 iostream
 -
 vector
@@ -14,11 +14,11 @@ vector
 unistd.h
 -
 pid.h
-/home/kimko/KIMKO/pid/pid.h
+/home/kimko/myRepo-Thesis/KIMKO/pid/pid.h
 ../plot/readWritePlot.h
-/home/kimko/KIMKO/plot/readWritePlot.h
+/home/kimko/myRepo-Thesis/KIMKO/plot/readWritePlot.h
 
-/home/kimko/KIMKO/pid/pid.h
+/home/kimko/myRepo-Thesis/KIMKO/pid/pid.h
 vector
 -
 iostream
@@ -28,7 +28,7 @@ cmath
 time.h
 -
 
-/home/kimko/KIMKO/plot/readWritePlot.h
+/home/kimko/myRepo-Thesis/KIMKO/plot/readWritePlot.h
 stdio.h
 -
 iostream

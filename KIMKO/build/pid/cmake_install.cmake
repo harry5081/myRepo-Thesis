@@ -1,4 +1,4 @@
-# Install script for directory: /home/kimko/KIMKO/pid
+# Install script for directory: /home/kimko/myRepo-Thesis/KIMKO/pid
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

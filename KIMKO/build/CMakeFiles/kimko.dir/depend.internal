@@ -6,16 +6,16 @@ CMakeFiles/kimko.dir/main.cpp.o
  ../mpc/mpc.h
  ../pid/pid.h
  ../plot/readWritePlot.h
- /home/kimko/KIMKO/main.cpp
- /home/kimko/KIMKO/run.h
+ /home/kimko/myRepo-Thesis/KIMKO/main.cpp
+ /home/kimko/myRepo-Thesis/KIMKO/run.h
 CMakeFiles/kimko.dir/run.cpp.o
  ../controlPlant/controlPlant.h
  ../mpc/mpc.h
  ../pid/pid.h
  ../plot/readWritePlot.h
- /home/kimko/KIMKO/matplotlib-cpp-master/matplotlibcpp.h
- /home/kimko/KIMKO/run.cpp
- /home/kimko/KIMKO/run.h
+ /home/kimko/myRepo-Thesis/KIMKO/matplotlib-cpp-master/matplotlibcpp.h
+ /home/kimko/myRepo-Thesis/KIMKO/run.cpp
+ /home/kimko/myRepo-Thesis/KIMKO/run.h
  /usr/include/python3.6m/Python.h
  /usr/include/python3.6m/abstract.h
  /usr/include/python3.6m/bltinmodule.h

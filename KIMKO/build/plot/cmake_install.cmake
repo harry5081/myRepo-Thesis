@@ -1,4 +1,4 @@
-# Install script for directory: /home/kimko/KIMKO/plot
+# Install script for directory: /home/kimko/myRepo-Thesis/KIMKO/plot
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

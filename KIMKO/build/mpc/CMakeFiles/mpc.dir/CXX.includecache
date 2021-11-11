@@ -6,11 +6,11 @@
 
 #IncludeRegexTransform: 
 
-/home/kimko/KIMKO/mpc/mpc.cpp
+/home/kimko/myRepo-Thesis/KIMKO/mpc/mpc.cpp
 mpc.h
-/home/kimko/KIMKO/mpc/mpc.h
+/home/kimko/myRepo-Thesis/KIMKO/mpc/mpc.h
 
-/home/kimko/KIMKO/mpc/mpc.h
+/home/kimko/myRepo-Thesis/KIMKO/mpc/mpc.h
 vector
 -
 iostream
