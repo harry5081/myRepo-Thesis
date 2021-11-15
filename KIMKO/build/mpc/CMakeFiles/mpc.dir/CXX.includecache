@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/kimko/myRepo-Thesis/KIMKO/mpc/mpc.cpp
+mpc.h
+/home/kimko/myRepo-Thesis/KIMKO/mpc/mpc.h
+
+/home/kimko/myRepo-Thesis/KIMKO/mpc/mpc.h
+vector
+-
+iostream
+-
+cmath
+-
+time.h
+-
+
