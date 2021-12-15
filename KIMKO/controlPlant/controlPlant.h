@@ -14,13 +14,13 @@ public:
     float originPos_y;
     float originPos_z;
 
-    int ref_vel_x;
-    int ref_vel_y;
-    float ref_vel_z;
+    int vd_x;
+    int vd_y;
+    float vd_z;
 
-    float ref_pos_x;
-    float ref_pos_y;
-    float ref_pos_z;
+    float pd_x;
+    float pd_y;
+    float pd_z;
     
     
 

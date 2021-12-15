@@ -6,33 +6,3 @@
 
 #IncludeRegexTransform: 
 
-/home/kimko/myRepo-Thesis/KIMKO/pid/pid.cpp
-iostream
--
-vector
--
-unistd.h
--
-pid.h
-/home/kimko/myRepo-Thesis/KIMKO/pid/pid.h
-../plot/readWritePlot.h
-/home/kimko/myRepo-Thesis/KIMKO/plot/readWritePlot.h
-
-/home/kimko/myRepo-Thesis/KIMKO/pid/pid.h
-vector
--
-iostream
--
-cmath
--
-time.h
--
-
-/home/kimko/myRepo-Thesis/KIMKO/plot/readWritePlot.h
-stdio.h
--
-iostream
--
-fstream
--
-

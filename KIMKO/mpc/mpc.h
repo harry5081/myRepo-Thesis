@@ -7,6 +7,11 @@
 #include <cmath>
 #include <time.h>
 
+#include <pybind11/pybind11.h>
+//#include <pybind11/embed.h>
+#include <pybind11/stl.h>
+//#include <pybind11/numpy.h>
+
 #define PI 3.14159265
 
 
@@ -25,9 +30,21 @@ private:
 
 
     void initDemand();
+
+    
     
 
 public:
+
+    float x_vel_ref;
+    float x_pos_ref;
+
+    float y_vel_ref;
+    float y_pos_ref;
+
+    float z_vel_ref;
+    float z_pos_ref;
+    
 
     float x_vel_demand;
     float x_pos_demand;
@@ -37,6 +54,8 @@ public:
 
     float z_vel_demand;
     float z_pos_demand;
+
+    void mpcOperation(float v_ref=0, float p_ref=100, float v_init=0, float p_init=0, int v_input_begin=0);
 
     float sinePosDemand(float time);
     float cosVelDemand(float time);

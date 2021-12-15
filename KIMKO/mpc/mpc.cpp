@@ -7,6 +7,32 @@ initDemand();
 }
 
 //MPC
+
+
+
+
+void MPC::mpcOperation(float v_ref, float p_ref, float v_init, float p_init, int v_input_begin){
+    
+    float time1 = (float)clock()/CLOCKS_PER_SEC;
+
+    pybind11::module_ mpc = pybind11::module_::import("mpc_xDirect");
+    pybind11::object result = mpc.attr("functionTest")();//(v_ref, p_ref, v_init, p_init, v_input_begin);
+    std::vector<float> result_value = result.cast<std::vector<float>>();
+
+    float time2 = (float)clock()/CLOCKS_PER_SEC;
+    std::cout << " MPC operation time: "<< time2-time1 << std::endl;
+
+    x_vel_demand = result_value[0];
+    x_pos_demand = result_value[1];
+
+    //auto result_value= result.cast;
+    std::cout << x_vel_demand << std::endl;
+    std::cout << x_pos_demand << std::endl;
+
+    
+
+}
+
 void MPC::initDemand(){ //initialize sine positionDemand
 
     std::cout<< "MPC demand init." <<std::endl;
@@ -31,10 +57,6 @@ void MPC::initDemand(){ //initialize sine positionDemand
     */
 
 }
-
-
-
-
 
 float MPC::sinePosDemand(float time){
 

@@ -1,4 +1,4 @@
-# Install script for directory: /home/kimko/myRepo-Thesis/KIMKO/controlPlant
+# Install script for directory: /home/harry/myRepo-Thesis/KIMKO/controlPlant
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

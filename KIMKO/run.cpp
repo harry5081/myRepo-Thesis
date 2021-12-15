@@ -8,15 +8,21 @@
 #include <vector>
 #include "matplotlib-cpp-master/matplotlibcpp.h"
 
+
 #include <time.h>
 #include "readWritePlot.h"
+
+#include <pybind11/pybind11.h>
+#include <pybind11/embed.h>
+#include <pybind11/stl.h>
+//#include <pybind11/numpy.h>
 
 
 DOF dof =Z_DIRECTION;
 DRAW draw = PLOT;
 
 
-//PID pid_x(3,0.005,0.5,0.3);
+PID pid_x(3,0.005,0.5,0.3);
 PID pid_y(3,0.005,0.5,0.3);
 PID pid_z(3,0.01,1,1);
 
@@ -51,11 +57,29 @@ m_int16_velocity_level0(0),
 m_int16_velocity_level1(0),
 m_int16_velocity_level2(0)
 {
-    
+    pybind11::scoped_interpreter guard{};
     while(CAN_Initialize(m_Channel, m_Btr0Btr1) != PCAN_ERROR_OK)
     {
-         sleep(1);
-         printf("pcan init fails \n");
+        sleep(1);
+        printf("pcan init fails \n");
+
+        //mpc.mpcOperation(0,100,0,0,0);
+        mpc.mpcOperation(mpc.x_vel_ref, mpc.x_pos_ref, mRobot.vd_x, mRobot.pos_x, mRobot.controlInput_x_vel);
+    
+
+        // pybind11::print("Hello Python");
+        
+        // std::ifstream script("mpc_xDirect.py");
+        // std:: string line;
+        // if(!script.is_open()){
+        //     std::cout<< "Python Script not open!"<<std::endl;
+        // }
+        // else{
+        //     while(std::getline(script,line)){
+        //         pybind11::exec(line.c_str());
+        //     }
+        //     script.close();
+        // }
     }
     
     printf("pcan init success \n");
@@ -68,6 +92,7 @@ m_int16_velocity_level2(0)
 }
 void run::start()
 {
+    //CAN_READ to get the initial state
    
     //printf("enter the operating mode");
     //scanf("%hd", &m_int16_operatingmode);
@@ -77,30 +102,34 @@ void run::start()
 
     float time = (float)clock()/CLOCKS_PER_SEC;
 
-    //mpc
+    //mpc vd pd from python
     /////////////////////////////////////////////     X      /////////////////////////////////////
-    // mRobot.ref_pos_x = mpc.sinePosDemand(time);
-    // mRobot.ref_vel_x = mpc.cosVelDemand(time);
+    
+    mpc.mpcOperation(mpc.x_vel_ref, mpc.x_pos_ref, mRobot.vd_x, mRobot.pos_x, mRobot.controlInput_x_vel);
+    mRobot.vd_x = mpc.x_vel_demand;
+    mRobot.pd_x = mpc.x_pos_demand;
+    // mRobot.pd_x = mpc.sinePosDemand(time);
+    // mRobot.vd_x = mpc.cosVelDemand(time);
 
-    // mRobot.ref_pos_x = mpc.sineToTenPosDemand(time);
-    // mRobot.ref_vel_x = mpc.cosToTenVelDemand(time);
+    // mRobot.pd_x = mpc.sineToTenPosDemand(time);
+    // mRobot.vd_x = mpc.cosToTenVelDemand(time);
 
     /////////////////////////////////////////////     Y      /////////////////////////////////////
-    //mRobot.ref_pos_y = mpc.sinePosDemand(time);
-    //mRobot.ref_vel_y = mpc.cosVelDemand(time);
+    // mRobot.pd_y = mpc.sinePosDemand(time);
+    // mRobot.vd_y = mpc.cosVelDemand(time);
 
     /////////////////////////////////////////////     Z      /////////////////////////////////////
-    mRobot.ref_pos_z = mpc.sinePosDemand(time)/5;
-    mRobot.ref_vel_z = mpc.cosVelDemand(time)/5;
+    // mRobot.pd_z = mpc.sinePosDemand(time)/5;
+    // mRobot.vd_z = mpc.cosVelDemand(time)/5;
     
-    // mRobot.ref_pos_z = mpc.sineToTenPosDemand(time)/10*3;
-    // mRobot.ref_vel_z = mpc.cosToTenVelDemand(time)/10*3;
+    // mRobot.pd_z = mpc.sineToTenPosDemand(time)/10*3;
+    // mRobot.vd_z = mpc.cosToTenVelDemand(time)/10*3;
     
 
     //int PID::pidExe(float posError, int velDemand, float velError)
-    //m_int16_desired_velocity_X = pid_x.pidExe(mRobot.ref_pos_x-mRobot.pos_x, mRobot.ref_vel_x, mRobot.ref_vel_x-mRobot.vel_x);
-    //m_int16_desired_velocity_Y = pid_y.pidExe(mRobot.ref_pos_y-mRobot.pos_y, mRobot.ref_vel_y, mRobot.ref_vel_y-mRobot.vel_y);
-    m_f_desired_velocity_Z = pid_z.pidExeAngle(mRobot.ref_pos_z-mRobot.pos_z,mRobot.ref_vel_z,mRobot.ref_vel_z-mRobot.vel_z);
+    m_int16_desired_velocity_X = pid_x.pidExe(mRobot.pd_x-mRobot.pos_x, mRobot.vd_x, mRobot.vd_x-mRobot.vel_x);
+    // m_int16_desired_velocity_Y = pid_y.pidExe(mRobot.pd_y-mRobot.pos_y, mRobot.vd_y, mRobot.vd_y-mRobot.vel_y);
+    // m_f_desired_velocity_Z = pid_z.pidExeAngle(mRobot.pd_z-mRobot.pos_z,mRobot.vd_z,mRobot.vd_z-mRobot.vel_z);
     
     
 

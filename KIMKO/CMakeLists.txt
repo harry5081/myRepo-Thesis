@@ -3,10 +3,15 @@ project(kimko)
 
 add_executable(kimko main.cpp run.cpp)
 
+
+
 find_package(PythonLibs REQUIRED)
 include_directories(${PYTHON_INCLUDE_DIRS})
 target_link_libraries(kimko ${PYTHON_LIBRARIES})
 
+find_package(pybind11 CONFIG)
+include_directories(${pybind11_INCLUDE_DIRS})
+target_link_libraries(kimko PRIVATE pybind11::embed)
 
 
 add_subdirectory(plot)

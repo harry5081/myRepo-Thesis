@@ -7,6 +7,8 @@
 #include "readWritePlot.h"
 
 
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // plot ref_TIME
 ReadWritePlot *refPlot_Vel_time = new ReadWritePlot;
@@ -71,6 +73,7 @@ void writeDatatoFile();
 std::shared_ptr<std::thread> start_thread;
 int main(int argc, char **argv) {
 
+    
         
     std::cout << "Hello, world!." << std::endl;
     //initDemand();
@@ -133,14 +136,14 @@ void writeDatatoFile()
 
         // ref
          refPlot_Vel_time->writeDatatoFile(time, "plot/VelDemand_Time");
-         refPlot_VelX->writeDatatoFile(m_run->mRobot.ref_vel_x, "plot/VelDemand_Data_X");
-         refPlot_VelY->writeDatatoFile(m_run->mRobot.ref_vel_y, "plot/VelDemand_Data_Y");
-         refPlot_VelZ->writeDatatoFile(m_run->mRobot.ref_vel_z, "plot/VelDemand_Data_Z");
+         refPlot_VelX->writeDatatoFile(m_run->mRobot.vd_x, "plot/VelDemand_Data_X");
+         refPlot_VelY->writeDatatoFile(m_run->mRobot.vd_y, "plot/VelDemand_Data_Y");
+         refPlot_VelZ->writeDatatoFile(m_run->mRobot.vd_z, "plot/VelDemand_Data_Z");
 
          refPlot_Pos_time->writeDatatoFile(time, "plot/PosDemand_Time");
-         refPlot_PosX->writeDatatoFile(m_run->mRobot.ref_pos_x, "plot/PosDemand_Data_X");
-         refPlot_PosY->writeDatatoFile(m_run->mRobot.ref_pos_y, "plot/PosDemand_Data_Y");
-         refPlot_PosZ->writeDatatoFile(m_run->mRobot.ref_pos_z, "plot/PosDemand_Data_Z");
+         refPlot_PosX->writeDatatoFile(m_run->mRobot.pd_x, "plot/PosDemand_Data_X");
+         refPlot_PosY->writeDatatoFile(m_run->mRobot.pd_y, "plot/PosDemand_Data_Y");
+         refPlot_PosZ->writeDatatoFile(m_run->mRobot.pd_z, "plot/PosDemand_Data_Z");
 
         // std::cout << m_run->mRobot.ref_pos_x << std::endl;
 
