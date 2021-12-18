@@ -70,17 +70,18 @@ void listen();
 void writeDatatoFile();
 
 
-std::shared_ptr<std::thread> start_thread;
+//std::shared_ptr<std::thread> start_thread;
 int main(int argc, char **argv) {
 
     
         
-    std::cout << "Hello, world!." << std::endl;
+    std::cout << "Hello, world!" << std::endl;
     //initDemand();
       
     m_run = new run();
-         
-    std::thread listen_thread(&listen);
+        
+    //std::thread listen_thread(&listen);
+    
     std::thread start_thread(&start);
 
     std::thread plot_thread(&writeDatatoFile);
@@ -89,7 +90,7 @@ int main(int argc, char **argv) {
 
     plot_thread.join();
     start_thread.join();
-    listen_thread.join();
+    //listen_thread.join();
 
     //start_thread.reset(new std::thread(&start));
     //start_thread->join();
@@ -100,7 +101,7 @@ int main(int argc, char **argv) {
 }
 
 void  start()
-{
+{   pybind11::scoped_interpreter guard{};
     while(1)
     {
         m_run->start();

@@ -16,7 +16,7 @@ void MPC::mpcOperation(float v_ref, float p_ref, float v_init, float p_init, int
     float time1 = (float)clock()/CLOCKS_PER_SEC;
 
     pybind11::module_ mpc = pybind11::module_::import("mpc_xDirect");
-    pybind11::object result = mpc.attr("functionTest")();//(v_ref, p_ref, v_init, p_init, v_input_begin);
+    pybind11::object result = mpc.attr("functionTest")(v_ref, p_ref, v_init, p_init, v_input_begin);//(v_ref, p_ref, v_init, p_init, v_input_begin);
     std::vector<float> result_value = result.cast<std::vector<float>>();
 
     float time2 = (float)clock()/CLOCKS_PER_SEC;
@@ -26,8 +26,8 @@ void MPC::mpcOperation(float v_ref, float p_ref, float v_init, float p_init, int
     x_pos_demand = result_value[1];
 
     //auto result_value= result.cast;
-    std::cout << x_vel_demand << std::endl;
-    std::cout << x_pos_demand << std::endl;
+    //std::cout << x_vel_demand << std::endl;
+    //std::cout << x_pos_demand << std::endl;
 
     
 
@@ -150,6 +150,22 @@ float MPC::stepPosDemand(float time){
     }
 
     return posDemand;
+}
+
+float MPC::stepVelDemand(float time){
+
+    float velDemand;
+    
+    if(time<=3){
+        velDemand=0;
+    }
+
+    else {
+       velDemand=100;
+        
+    }
+
+    return  velDemand;
 }
 
 

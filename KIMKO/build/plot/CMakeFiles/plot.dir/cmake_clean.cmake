@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/plot.dir/readWritePlot.cpp.o"
-  "libplot.a"
   "libplot.pdb"
+  "libplot.a"
 )
 
 # Per-language clean rules from dependency scanning.

@@ -8,7 +8,7 @@
 #include <time.h>
 
 #include <pybind11/pybind11.h>
-//#include <pybind11/embed.h>
+#include <pybind11/embed.h>
 #include <pybind11/stl.h>
 //#include <pybind11/numpy.h>
 
@@ -36,8 +36,8 @@ private:
 
 public:
 
-    float x_vel_ref;
-    float x_pos_ref;
+    float x_vel_ref=0;
+    float x_pos_ref=100;
 
     float y_vel_ref;
     float y_pos_ref;
@@ -61,6 +61,7 @@ public:
     float cosVelDemand(float time);
 
     float stepPosDemand(float time);
+    float stepVelDemand(float time);
 
     float sineToTenPosDemand(float time);
     float cosToTenVelDemand(float time);

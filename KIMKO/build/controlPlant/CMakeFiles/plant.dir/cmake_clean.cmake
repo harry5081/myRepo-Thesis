@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/plant.dir/controlPlant.cpp.o"
-  "libplant.a"
   "libplant.pdb"
+  "libplant.a"
 )
 
 # Per-language clean rules from dependency scanning.

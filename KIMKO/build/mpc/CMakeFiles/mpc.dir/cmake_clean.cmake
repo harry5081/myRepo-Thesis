@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/mpc.dir/mpc.cpp.o"
-  "libmpc.a"
   "libmpc.pdb"
+  "libmpc.a"
 )
 
 # Per-language clean rules from dependency scanning.

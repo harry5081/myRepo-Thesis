@@ -4,14 +4,14 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/harry/myRepo-Thesis/KIMKO/mpc/mpc.cpp" "/home/harry/myRepo-Thesis/KIMKO/build/mpc/CMakeFiles/mpc.dir/mpc.cpp.o"
+  "/home/kimko/myRepo-Thesis/KIMKO/mpc/mpc.cpp" "/home/kimko/myRepo-Thesis/KIMKO/build/mpc/CMakeFiles/mpc.dir/mpc.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
-  "/usr/include/python3.8"
-  "/home/harry/miniconda3/include"
+  "/usr/include/python3.6m"
+  "/home/kimko/miniconda3/include"
   "../mpc"
   )
 

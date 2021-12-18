@@ -12,21 +12,27 @@
 #include <time.h>
 #include "readWritePlot.h"
 
-#include <pybind11/pybind11.h>
-#include <pybind11/embed.h>
-#include <pybind11/stl.h>
+ #include <pybind11/pybind11.h>
+ #include <pybind11/embed.h>
+ #include <pybind11/stl.h>
 //#include <pybind11/numpy.h>
 
+ float timeDiff;
+ float timeTemp;
 
-DOF dof =Z_DIRECTION;
+
+DOF dof =X_DIRECTION;
 DRAW draw = PLOT;
 
-
-PID pid_x(3,0.005,0.5,0.3);
+//PID pid_x(0,0.0,1,0.0);
+PID pid_x(3,0.005,1,0.3);
 PID pid_y(3,0.005,0.5,0.3);
 PID pid_z(3,0.01,1,1);
 
 MPC mpc;
+
+bool velButton;
+bool posButton;
 
 
 
@@ -57,32 +63,20 @@ m_int16_velocity_level0(0),
 m_int16_velocity_level1(0),
 m_int16_velocity_level2(0)
 {
-    pybind11::scoped_interpreter guard{};
+    
     while(CAN_Initialize(m_Channel, m_Btr0Btr1) != PCAN_ERROR_OK)
     {
         sleep(1);
-        printf("pcan init fails \n");
+        printf("pcan init fails.. \n");
 
         //mpc.mpcOperation(0,100,0,0,0);
-        mpc.mpcOperation(mpc.x_vel_ref, mpc.x_pos_ref, mRobot.vd_x, mRobot.pos_x, mRobot.controlInput_x_vel);
-    
-
-        // pybind11::print("Hello Python");
         
-        // std::ifstream script("mpc_xDirect.py");
-        // std:: string line;
-        // if(!script.is_open()){
-        //     std::cout<< "Python Script not open!"<<std::endl;
-        // }
-        // else{
-        //     while(std::getline(script,line)){
-        //         pybind11::exec(line.c_str());
-        //     }
-        //     script.close();
-        // }
-    }
     
-    printf("pcan init success \n");
+    }
+
+    
+   
+    printf("pcan init success.. \n");
     
     init();
     initOriginPos();
@@ -92,6 +86,39 @@ m_int16_velocity_level2(0)
 }
 void run::start()
 {
+    
+   
+    // switch(dof){
+
+    //     case X_DIRECTION:
+    //         printf("enter the X velocity speed :");
+    //         scanf("%hd", &m_int16_desired_velocity_X);
+    //         break;
+
+    //     case Y_DIRECTION:
+    //         //printf("enter the Y velocity speed :");
+    //         //scanf("%hd", &m_int16_desired_velocity_Y);
+    //         break;
+
+    //     case Z_DIRECTION:
+    //         //printf("enter the Z velocity speed :");
+    //         //scanf("%f", &m_f_desired_velocity_Z);
+    //         //m_f_desired_velocity_Z = pid_z.pidExeAngle(robot.ref_pos_z-robot.pos_z,0,0);
+    //         break;
+
+    //     case ALL_DIRECTION:
+    //         //printf("enter the X velocity speed :");
+    //         //scanf("%hd", &m_int16_desired_velocity_X);
+
+    //         //printf("enter the Y velocity speed :");
+    //         //scanf("%hd", &m_int16_desired_velocity_Y);
+ 
+    //         //printf("enter the Z velocity speed :");
+    //         //scanf("%f", &m_f_desired_velocity_Z);
+    
+    //         break;
+    // }
+
     //CAN_READ to get the initial state
    
     //printf("enter the operating mode");
@@ -101,18 +128,28 @@ void run::start()
 
 
     float time = (float)clock()/CLOCKS_PER_SEC;
+    timeDiff=time - timeTemp+0.02;
+    std::cout << "!!!!!!!!!!!!!!!!!!!  TimeTest  !!!!!!!!!!!!!!!!!!!!!    "<< timeDiff <<std::endl;
+    timeTemp=time;
+    
 
     //mpc vd pd from python
     /////////////////////////////////////////////     X      /////////////////////////////////////
+    std::cout<<std::endl;
+    std::cout << "Robot Value"<<std::endl;
+    std::cout <<  "vel_x: " << mRobot.vel_x <<  "     pos_x: " << mRobot.pos_x <<std::endl<<std::endl;   
     
-    mpc.mpcOperation(mpc.x_vel_ref, mpc.x_pos_ref, mRobot.vd_x, mRobot.pos_x, mRobot.controlInput_x_vel);
+    mpc.mpcOperation(mpc.x_vel_ref, mpc.x_pos_ref, mRobot.vel_x, mRobot.pos_x, mRobot.controlInput_x_vel);
     mRobot.vd_x = mpc.x_vel_demand;
     mRobot.pd_x = mpc.x_pos_demand;
-    // mRobot.pd_x = mpc.sinePosDemand(time);
-    // mRobot.vd_x = mpc.cosVelDemand(time);
+    
+    
+    //mRobot.pd_x = mpc.sinePosDemand(time);
+    //mRobot.vd_x = mpc.cosVelDemand(time);
 
-    // mRobot.pd_x = mpc.sineToTenPosDemand(time);
-    // mRobot.vd_x = mpc.cosToTenVelDemand(time);
+    //mRobot.pd_x = mpc.sineToTenPosDemand(time);
+    //mRobot.vd_x = mpc.cosToTenVelDemand(time);
+    //mRobot.vd_x = mpc.stepVelDemand(time);
 
     /////////////////////////////////////////////     Y      /////////////////////////////////////
     // mRobot.pd_y = mpc.sinePosDemand(time);
@@ -166,39 +203,20 @@ void run::start()
     mRobot.controlInput_y_vel = m_int16_desired_velocity_Y;
     mRobot.controlInput_z_vel = m_f_desired_velocity_Z;
 
-
-
-    
-    switch(dof){
-
-        case X_DIRECTION:
-            //printf("enter the X velocity speed :");
-            //scanf("%hd", &m_int16_desired_velocity_X);
-            break;
-
-        case Y_DIRECTION:
-            //printf("enter the Y velocity speed :");
-            //scanf("%hd", &m_int16_desired_velocity_Y);
-            break;
-
-        case Z_DIRECTION:
-            //printf("enter the Z velocity speed :");
-            //scanf("%f", &m_f_desired_velocity_Z);
-            //m_f_desired_velocity_Z = pid_z.pidExeAngle(robot.ref_pos_z-robot.pos_z,0,0);
-            break;
-
-        case ALL_DIRECTION:
-            //printf("enter the X velocity speed :");
-            //scanf("%hd", &m_int16_desired_velocity_X);
-
-            //printf("enter the Y velocity speed :");
-            //scanf("%hd", &m_int16_desired_velocity_Y);
- 
-            //printf("enter the Z velocity speed :");
-            //scanf("%f", &m_f_desired_velocity_Z);
-    
-            break;
+    std::cout <<  "V_input: " << m_int16_desired_velocity_X<< std::endl;
+    if(m_int16_desired_velocity_X>=200){
+        m_int16_desired_velocity_X = 0;
     }
+    
+
+
+     while(velButton ==false ||  posButton==false){
+        canReadData();
+    }
+
+    velButton =false;
+    posButton =false;
+    
 
     
 }
@@ -325,8 +343,11 @@ void run::canOpen()  //CAN_Write()
         m_pcanMsg.DATA[7] = 0;
         
         CAN_Write(m_Channel, &m_pcanMsg);
+
+   
         
         usleep(20000);
+        
         
     }
 }
@@ -335,26 +356,31 @@ void run::canReadData(){
 
     TPCANStatus result;
        
-   while(1){
+   //while(1){
  
         result = CAN_Read(m_Channel, &m_pcanMsg_listen, nullptr);
                 
         if(result != PCAN_ERROR_QRCVEMPTY){
-            
+            std::cout << "-----CAN READ-----CAN READ-----CAN READ-----CAN READ-----CAN READ-----CAN READ-----" << std::endl;
             // data processing
 
             getVelocityValue();
             getPositionValue();
           
          }
+
+
     
-    }
+   // }
     
 }
 
 void run::getVelocityValue(){
 
     if(m_pcanMsg_listen.ID == 0x181){
+        velButton=true;
+        std::cout << "-----vel-----vel-----vel-----vel-----vel-----vel-----" << std::endl;
+            
 
         int16_t x_vel = static_cast<uint16_t>(m_pcanMsg_listen.DATA[0]) | static_cast<uint16_t>(m_pcanMsg_listen.DATA[1]<<8);
         //std::cout << "x_vel: ";
@@ -393,7 +419,8 @@ void run::getPositionValue(){
     
     //X,Y Position  
     if(m_pcanMsg_listen.ID == 0x1A1){
-                
+        posButton=true;
+        std::cout << "-----pos-----pos-----pos-----pos-----pos-----pos-----" << std::endl;        
 
         int32_t x_pos = static_cast<uint32_t>(m_pcanMsg_listen.DATA[0]) | static_cast<uint32_t>(m_pcanMsg_listen.DATA[1]<<8)\
                             |static_cast<uint32_t>(m_pcanMsg_listen.DATA[2])<<16 | static_cast<uint32_t>(m_pcanMsg_listen.DATA[3]<<24);
@@ -439,16 +466,16 @@ void run::getPositionValue(){
 
          if(mRobot.pos_z>=180 && mRobot.pos_z<=360){
              mRobot.pos_z=mRobot.pos_z-360;
-             std::cout <<  "Angle 180~360 convert to -180~0" << std::endl;
-             std::cout <<  "Angle 180~360 convert to -180~0" << std::endl;
-             std::cout <<  "Angle 180~360 convert to -180~0" << std::endl;
+            //  std::cout <<  "Angle 180~360 convert to -180~0" << std::endl;
+            //  std::cout <<  "Angle 180~360 convert to -180~0" << std::endl;
+            //  std::cout <<  "Angle 180~360 convert to -180~0" << std::endl;
         }
 
         else if(mRobot.pos_z>=-360 && mRobot.pos_z<=-180){
              mRobot.pos_z=mRobot.pos_z+360;
-             std::cout <<  "Angle -180~-360 convert to 180~0" << std::endl;
-             std::cout <<  "Angle -180~-360 convert to 180~0" << std::endl;
-             std::cout <<  "Angle -180~-360 convert to 180~0" << std::endl;
+            //  std::cout <<  "Angle -180~-360 convert to 180~0" << std::endl;
+            //  std::cout <<  "Angle -180~-360 convert to 180~0" << std::endl;
+            //  std::cout <<  "Angle -180~-360 convert to 180~0" << std::endl;
         }
         
     }// if(m_pcanMsg_listen.ID == 0x1C1)

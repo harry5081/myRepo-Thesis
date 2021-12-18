@@ -1,25 +1,21 @@
+
+
 from casadi import *
 import numpy as np
 
-#def functionTest(v_ref=0, p_ref=100, v_init=0, p_init=0, v_input_begin=0):
-def functionTest():
-
+#def functionTest():
+def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin):
     kf=1
     kd=0.3
     kp=3
     ki=0
-    
-    a = 0.7
+
+    a = 0.02
     t = 0.02
 
     window = 20
 
-    v_ref=0
-    p_ref=100
-    v_init=0
-    p_init=0
-    v_input_begin=0
-
+   
     #############################################################################
     # System Define
     # State
@@ -65,11 +61,11 @@ def functionTest():
         control_current = U[:,i]
         state_next = f(state_current,control_current)
         X[:,i+1] = state_next
-        
+
         V_INPUT_MATRIX[i]= v_input_f(state_current,control_current)
 
-    ff = Function('ff',[U,P],[X]) # to get all data throughout predict horz
-    v_input_ff = Function('v_input_ff',[U,P],[V_INPUT_MATRIX])
+        ff = Function('ff',[U,P],[X]) # to get all data throughout predict horz
+        v_input_ff = Function('v_input_ff',[U,P],[V_INPUT_MATRIX])
     ###############################################################################
     # Construct obj function
     obj = 0
@@ -87,14 +83,14 @@ def functionTest():
     v_input_temp = v_input_begin
 
     for i in range(0, window):
-        
+
         state = X[:,i+1]
         control = U[:,i]
-        
+
         v_input_dff = V_INPUT_MATRIX[i]- v_input_temp
         v_input_temp = V_INPUT_MATRIX[i]
-        obj = obj + (state - P[2:4]).T @ Q @ (state - P[2:4]) + v_input_dff **2
-        
+        obj = obj + i*(state - P[2:4]).T @ Q @ (state - P[2:4]) + 3*V_INPUT_MATRIX[i] **2
+
     ###############################################################################
     # Construct NLP solver
     OPT_variables = reshape(U,2*window,1) #[vd1, pd1, vd2, pd2, vd3, pd3 ...]
@@ -141,7 +137,7 @@ def functionTest():
     args["x0"] = reshape(u0,2*window,1) #initial guess of [vd1, pd1, vd2, pd2, vd3, pd3 ...]
 
     sol = solver(lbx=args["lbx"], ubx=args["ubx"], lbg=args["lbg"], ubg=args["ubg"],\
-            p=args["p"], x0=args["x0"])
+        p=args["p"], x0=args["x0"])
 
     #CAN_WRITE to make robot move
     mpc_iter = 0
@@ -160,20 +156,22 @@ def functionTest():
     #print(states_predichorz_update)
     #print(u_predichorz_update)
 
-    # np.set_printoptions(precision=2,suppress=True)
-    # for i in range(1):
-    #     for j in range(window):
-    #         print("----Window Update----")
-    #         print("window: ", j)
-    #         print("state [v, p] = ",states_predichorz_update[i,:,j])
-    #         print("input [vd, pd] = ",u_predichorz_update[i,:,j])
-    #         print("v_input = ",VVV[j])
-    #         print("")
-    #         print("")
+    np.set_printoptions(precision=5,suppress=True)
+    for i in range(1):
+        for j in range(1):
+        #for j in range(window):
+            print("----Window Update----")
+            print("v_ref:", v_ref, "  p_ref:", p_ref, "  v_init:",v_init, "  p_init:",p_init, "  v_input_begin:",v_input_begin)
+            print("window: ", j)
+            print("state [v, p] = ",states_predichorz_update[i,:,j])
+            print("input [vd, pd] = ",u_predichorz_update[i,:,j])
+            print("v_input = ",VVV[j])
+            print("")
+            print("")
 
-    
+
     print(x_sol[0:2])
-    
+
     return list([x_sol[0],x_sol[1]])
 
     # ###############################################################################
@@ -188,26 +186,26 @@ def functionTest():
     #     u0 = u #u0 used for initial guess of [vd1, pd1, vd2, pd2, vd3, pd3 ...]
     #     mpc_iter = mpc_iter+1
     #     #print("MPC Iteration: ", mpc_iter)
-        
+
     #     args["p"] =vertcat(init_state, final_state)
     #     args["x0"] = reshape(u0,2*window,1) #initial guess of [vd1, pd1, vd2, pd2, vd3, pd3 ...]
 
     #     sol = solver(lbx=args["lbx"], ubx=args["ubx"], lbg=args["lbg"], ubg=args["ubg"],\
     #             p=args["p"], x0=args["x0"])
-        
-        
+
+
     #     #CAN_WRITE to make robot move
     #     x_sol = sol['x']
     #     u = reshape(x_sol,2,window) 
-        
+
     #     # record the solved input vd, pd
     #     u_predichorz_update= np.concatenate([u_predichorz_update,np.reshape(u,(1,2,window))],0)
-            
+        
     #     # calculate all the state within a predic_horz
     #     states_through_predihorz = ff(u,args["p"]) # get all states within a predic horz
     #     # when update a horizontal, add a new page in states_predichorz_update
     #     states_predichorz_update = np.concatenate([states_predichorz_update,np.reshape(states_through_predihorz,(1,2,window+1))],0)
-        
+
     #     # print(states_predichorz_update)
     #     # print(u_predichorz_update)
 
@@ -230,4 +228,4 @@ def functionTest():
     # #     print("input [vd, pd] = ",u_predichorz_update[i,:,0])
     # #     print("")
     # #     print("")
-        
+

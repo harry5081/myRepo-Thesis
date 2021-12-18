@@ -1,8 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/kimko.dir/main.cpp.o"
   "CMakeFiles/kimko.dir/run.cpp.o"
-  "kimko"
   "kimko.pdb"
+  "kimko"
 )
 
 # Per-language clean rules from dependency scanning.
