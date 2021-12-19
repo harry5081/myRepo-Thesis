@@ -15,17 +15,6 @@ void intp();
 
 int wSize = 20;
 
-std::vector<float> posRef_Time_temp;
-std::vector<float> posRef_X_temp;
-std::vector<float> posRef_Y_temp;
-std::vector<float> posRef_Z_temp;
-
-std::vector<float> velRef_Time_temp;
-std::vector<float> velRef_X_temp;
-std::vector<float> velRef_Y_temp;
-std::vector<float> velRef_Z_temp;
-
-
 std::vector<float> posDemand_Time_temp;
 std::vector<float> posDemand_X_temp;
 std::vector<float> posDemand_Y_temp;
@@ -154,13 +143,11 @@ void plotX(){
     
     plt::subplot(3,1,1);
     plt::title("Vel");
-    plt::Plot plot0_1("v_ref",velRef_Time_temp,velRef_X_temp,"g");
-    plt::Plot plot0("v_d",velDemand_Time_temp,velDemand_X_temp,"b");  
-    plt::Plot plot1("v_input",canWriteTime_temp,canWriteData_temp,"k");
-    plt::Plot plot2("v_sensor",canReadTime_temp,canReadData_temp,"r");
+    plt::Plot plot0("VelDemandX",velDemand_Time_temp,velDemand_X_temp,"b--");   
+    plt::Plot plot1("WritecanX",canWriteTime_temp,canWriteData_temp,"k--");
+    plt::Plot plot2("WritereadX",canReadTime_temp,canReadData_temp,"r");
     
     plt::grid();
-    plt::legend();
 
 
     plt::subplot(3,1,2);
@@ -186,11 +173,11 @@ void plotX(){
     
     plt::subplot(3,1,1);
     plt::title("Pos");
-    plt::Plot plot5_1("p_ref",posRef_Time_temp,posRef_X_temp,"g");   
-    plt::Plot plot5("p_d",posDemand_Time_temp,posDemand_X_temp,"b");
-    plt::Plot plot6("p_sensor",canReadTime_Pos_temp,canReadData_PosX_temp,"r");
+       
+    plt::Plot plot5("PosDemandX",posDemand_Time_temp,posDemand_X_temp,"b--");
+    plt::Plot plot6("WritereadPosX",canReadTime_Pos_temp,canReadData_PosX_temp,"r");
     plt::grid(); 
-    plt::legend();
+
 
     plt::subplot(3,1,2);
        
@@ -233,10 +220,6 @@ void plotX(){
         readFileToVector("../build/plot/VelDemand_Data_Y", velDemand_Y_temp);
         readFileToVector("../build/plot/VelDemand_Data_Z", velDemand_Z_temp);
 
-        readFileToVector("../build/plot/VelRef_Time", velRef_Time_temp);
-        readFileToVector("../build/plot/VelRef_Data_X", velRef_X_temp);
-
-
         windowSizeControl();
            
         
@@ -247,7 +230,7 @@ void plotX(){
             plt::figure(1);
             plt::subplot(3,1,1);
             plt::xlim(0, wSize);
-            plt::ylim(-280, 280);
+            plt::ylim(-150, 150);
             
             plot1.update(canWriteTime_temp,canWriteData_temp);
 
@@ -260,12 +243,6 @@ void plotX(){
             if(velDemand_Time_temp.size()==velDemand_X_temp.size()){
                 
                 plot0.update(velDemand_Time_temp,velDemand_X_temp);
-                
-            }
-
-            if(velRef_Time_temp.size()==velRef_X_temp.size()){
-                
-                plot0_1.update(velRef_Time_temp,velRef_X_temp);
                 
             }
         }
@@ -342,10 +319,6 @@ void plotX(){
         readFileToVector("../build/plot/CAN_Read_Time_PosZ", canReadTime_PosZ_temp);
         readFileToVector("../build/plot/CAN_Read_Data_PosZ", canReadData_PosZ_temp);
 
-        readFileToVector("../build/plot/PosRef_Time", posRef_Time_temp);
-        readFileToVector("../build/plot/PosRef_Data_X", posRef_X_temp);
-
-
 
         ///////////////////////////     position part X    ///////////////////////////
        
@@ -353,20 +326,13 @@ void plotX(){
             plt::figure(2);
             plt::subplot(3,1,1);
             plt::xlim(0, wSize);
-            plt::ylim(-300, 300);
+            plt::ylim(-150, 150);
             //plt::ylim(-100, 200);
 
             plot5.update(posDemand_Time_temp,posDemand_X_temp);
 
             if(canReadTime_Pos_temp.size()==canReadData_PosX_temp.size()){
                 plot6.update(canReadTime_Pos_temp,canReadData_PosX_temp);
-            }
-
-            if(posRef_Time_temp.size()==posRef_X_temp.size()){
-                plot5_1.update(posRef_Time_temp,posRef_X_temp);
-            }
-            else{
-                std::cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<std::endl;
             }
        
         }
@@ -423,23 +389,15 @@ void plotX(){
 
         //plt::pause(0.05);
 
+
+
         //ref_vel
-        velRef_Time_temp.clear();
-        velRef_X_temp.clear();
-
-        posRef_Time_temp.clear();
-        posRef_X_temp.clear();
-
-        
-        
-
-        //demand_vel
         velDemand_Time_temp.clear();
         velDemand_X_temp.clear();
         velDemand_Y_temp.clear();
         velDemand_Z_temp.clear();
 
-        //demand_pos
+        //ref_pos
         posDemand_Time_temp.clear();
         posDemand_X_temp.clear();
         posDemand_Y_temp.clear();

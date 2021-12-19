@@ -33,12 +33,10 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin):
     n_controls = controls.shape[0]
 
     # Mathematical model of the system
-    A = SX([[1-a,0],[t,1]])
-    #A = SX([[0,0],[0,1]])
+    A = SX([[0,0],[0,1]])
     B = SX([[-kd,-kp]])
     C = SX([[kf+kd,kp]])
-    h = SX([[a],[0]])
-    #h = SX([[a],[t]])
+    h = SX([[a],[t]])
 
     model = A @ states + h @ B @ states + h @ C @ controls
     v_input = B @ states + C @ controls
@@ -91,15 +89,14 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin):
 
         v_input_dff = V_INPUT_MATRIX[i]- v_input_temp
         v_input_temp = V_INPUT_MATRIX[i]
-        #obj = obj + i*(state - P[2:4]).T @ Q @ (state - P[2:4]) + 3*V_INPUT_MATRIX[i] **2
-        #obj = obj + 1.5*i*(state - P[2:4]).T @ Q @ (state - P[2:4]) + V_INPUT_MATRIX[i] **2
-        obj = obj + 20*(state - P[2:4]).T @ Q @ (state - P[2:4]) + V_INPUT_MATRIX[i] **2
+        obj = obj + i*(state - P[2:4]).T @ Q @ (state - P[2:4]) + 3*V_INPUT_MATRIX[i] **2
+
     ###############################################################################
     # Construct NLP solver
     OPT_variables = reshape(U,2*window,1) #[vd1, pd1, vd2, pd2, vd3, pd3 ...]
 
-    #g=[]
-    g = V_INPUT_MATRIX
+    g=[]
+    #g = V_INPUT_MATRIX
     nlp_prob = {'f':obj, 'x':OPT_variables, 'g':g, 'p':P}   #dict
 
     # Options For Solver
@@ -122,13 +119,10 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin):
     args = {}
     args["lbx"] = -float('inf')
     args["ubx"] = float('inf')
-    
-    #args["lbg"] = -float('inf')
-    #args["ubg"] = float('inf')
-    
-    args["lbg"] = -250*np.ones(window)
-    args["ubg"] = 250*np.ones(window)
-    
+    args["lbg"] = -float('inf')
+
+    #args["ubg"] = 300*np.ones(window)
+    args["ubg"] = float('inf')
 
 
     init_state = np.array([[v_init],[p_init]])
