@@ -25,14 +25,15 @@ DOF dof =X_DIRECTION;
 DRAW draw = PLOT;
 
 //PID pid_x(0,0.0,1,0.0);
-PID pid_x(3,0.005,1,0.3);
+PID pid_x(3,0,1,0.3);
+//PID pid_x(3,0.005,1,0.3);
 PID pid_y(3,0.005,0.5,0.3);
 PID pid_z(3,0.01,1,1);
 
-MPC mpc;
 
-bool velButton;
-bool posButton;
+
+// bool velButton;
+// bool posButton;
 
 
 
@@ -128,7 +129,7 @@ void run::start()
 
 
     float time = (float)clock()/CLOCKS_PER_SEC;
-    timeDiff=time - timeTemp+0.02;
+    timeDiff=time - timeTemp;
     std::cout << "!!!!!!!!!!!!!!!!!!!  TimeTest  !!!!!!!!!!!!!!!!!!!!!    "<< timeDiff <<std::endl;
     timeTemp=time;
     
@@ -171,20 +172,20 @@ void run::start()
     
 
     //ensure controller input security
-    if(m_int16_desired_velocity_X >= 250){
+    if(m_int16_desired_velocity_X > 280){
         m_int16_desired_velocity_X=100;
         std::cout <<  "X Direction Controller Input too Fast!!!" << std::endl;
     }
-    else if (m_int16_desired_velocity_X <= -250){
+    else if (m_int16_desired_velocity_X < -280){
         m_int16_desired_velocity_X=-100;
         std::cout <<  "X Direction Controller Input too Fast!!!" << std::endl;
     }
     
-    if(m_int16_desired_velocity_Y >= 250){
+    if(m_int16_desired_velocity_Y > 280){
         m_int16_desired_velocity_Y=100;
         std::cout <<  "Y Direction Controller Input too Fast!!!" << std::endl;
     }
-    else if (m_int16_desired_velocity_Y <= -250){
+    else if (m_int16_desired_velocity_Y < -280){
         m_int16_desired_velocity_Y=-100;
         std::cout <<  "Y Direction Controller Input too Fast!!!" << std::endl;
     }
@@ -204,18 +205,22 @@ void run::start()
     mRobot.controlInput_z_vel = m_f_desired_velocity_Z;
 
     std::cout <<  "V_input: " << m_int16_desired_velocity_X<< std::endl;
-    if(m_int16_desired_velocity_X>=200){
-        m_int16_desired_velocity_X = 0;
-    }
     
 
+    // while(velButton ==false ||  posButton==false){
+        
+    // }
 
-     while(velButton ==false ||  posButton==false){
-        canReadData();
-    }
+    // velButton =false;
+    // posButton =false;
 
-    velButton =false;
-    posButton =false;
+
+    //  while(velButton ==false ||  posButton==false){
+    //     canReadData();
+    // }
+
+    // velButton =false;
+    // posButton =false;
     
 
     
@@ -346,7 +351,7 @@ void run::canOpen()  //CAN_Write()
 
    
         
-        usleep(20000);
+        usleep(20000);  //20 ms
         
         
     }
@@ -361,7 +366,7 @@ void run::canReadData(){
         result = CAN_Read(m_Channel, &m_pcanMsg_listen, nullptr);
                 
         if(result != PCAN_ERROR_QRCVEMPTY){
-            std::cout << "-----CAN READ-----CAN READ-----CAN READ-----CAN READ-----CAN READ-----CAN READ-----" << std::endl;
+            std::cout << "---------------------------------" << std::endl;
             // data processing
 
             getVelocityValue();
@@ -379,7 +384,7 @@ void run::getVelocityValue(){
 
     if(m_pcanMsg_listen.ID == 0x181){
         velButton=true;
-        std::cout << "-----vel-----vel-----vel-----vel-----vel-----vel-----" << std::endl;
+        std::cout << "-----VEL-----VEL-----VEL-----VEL-----VEL-----VEL-----" << std::endl;
             
 
         int16_t x_vel = static_cast<uint16_t>(m_pcanMsg_listen.DATA[0]) | static_cast<uint16_t>(m_pcanMsg_listen.DATA[1]<<8);
@@ -420,7 +425,7 @@ void run::getPositionValue(){
     //X,Y Position  
     if(m_pcanMsg_listen.ID == 0x1A1){
         posButton=true;
-        std::cout << "-----pos-----pos-----pos-----pos-----pos-----pos-----" << std::endl;        
+        std::cout << "-----POS-----POS-----POS-----POS-----POS-----POS-----" << std::endl;        
 
         int32_t x_pos = static_cast<uint32_t>(m_pcanMsg_listen.DATA[0]) | static_cast<uint32_t>(m_pcanMsg_listen.DATA[1]<<8)\
                             |static_cast<uint32_t>(m_pcanMsg_listen.DATA[2])<<16 | static_cast<uint32_t>(m_pcanMsg_listen.DATA[3]<<24);
