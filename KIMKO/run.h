@@ -34,6 +34,10 @@ public:
     void getPositionValue();
 
     PLANT mRobot;
+    MPC mpc;
+
+    bool velButton;
+    bool posButton;
 
     
 

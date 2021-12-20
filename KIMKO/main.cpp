@@ -9,25 +9,39 @@
 
 
 
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
-// plot ref_TIME
-ReadWritePlot *refPlot_Vel_time = new ReadWritePlot;
-ReadWritePlot *refPlot_Pos_time = new ReadWritePlot;
+// ref
+ReadWritePlot *ref_Plot_Vel_time = new ReadWritePlot;
+ReadWritePlot *ref_Plot_Pos_time = new ReadWritePlot;
 
-// plot Ref_X_Vel
-ReadWritePlot *refPlot_VelX= new ReadWritePlot;
-// plot Ref_Y_Vel
-ReadWritePlot *refPlot_VelY= new ReadWritePlot;
-// plot Ref_Z_Vel
-ReadWritePlot *refPlot_VelZ= new ReadWritePlot;
+// plot ref_X_Vel
+ReadWritePlot *ref_Plot_VelX= new ReadWritePlot;
+
+// plot ref_X_Pos
+ReadWritePlot *ref_Plot_PosX= new ReadWritePlot;
 
 
-// plot Ref_X_Pos
-ReadWritePlot *refPlot_PosX= new ReadWritePlot;
-// plot Ref_Y_Pos
-ReadWritePlot *refPlot_PosY= new ReadWritePlot;
-// plot Ref_Z_Pos
-ReadWritePlot *refPlot_PosZ= new ReadWritePlot;
+
+// plot demand_TIME
+ReadWritePlot *vd_Plot_Vel_time = new ReadWritePlot;
+ReadWritePlot *pd_Plot_Pos_time = new ReadWritePlot;
+
+// plot demand_X_Vel
+ReadWritePlot *vd_Plot_VelX= new ReadWritePlot;
+// plot demand_Y_Vel
+ReadWritePlot *vd_Plot_VelY= new ReadWritePlot;
+// plot demand_Z_Vel
+ReadWritePlot *vd_Plot_VelZ= new ReadWritePlot;
+
+
+// plot demand_X_Pos
+ReadWritePlot *pd_Plot_PosX= new ReadWritePlot;
+// plot demand_Y_Pos
+ReadWritePlot *pd_Plot_PosY= new ReadWritePlot;
+// plot demand_Z_Pos
+ReadWritePlot *pd_Plot_PosZ= new ReadWritePlot;
 
 
 
@@ -75,12 +89,12 @@ int main(int argc, char **argv) {
 
     
         
-    std::cout << "Hello, world!" << std::endl;
+    std::cout << "Hello, world!..." << std::endl;
     //initDemand();
       
     m_run = new run();
         
-    //std::thread listen_thread(&listen);
+    std::thread listen_thread(&listen);
     
     std::thread start_thread(&start);
 
@@ -90,7 +104,7 @@ int main(int argc, char **argv) {
 
     plot_thread.join();
     start_thread.join();
-    //listen_thread.join();
+    listen_thread.join();
 
     //start_thread.reset(new std::thread(&start));
     //start_thread->join();
@@ -133,18 +147,24 @@ void writeDatatoFile()
     {
         float time = (float)clock()/CLOCKS_PER_SEC;
 
+        //ref
+        ref_Plot_Vel_time->writeDatatoFile(time, "plot/VelRef_Time");
+        ref_Plot_VelX->writeDatatoFile(m_run->mpc.x_vel_ref, "plot/VelRef_Data_X");
+
+        ref_Plot_Pos_time->writeDatatoFile(time, "plot/PosRef_Time");
+        ref_Plot_PosX->writeDatatoFile(m_run->mpc.x_pos_ref, "plot/PosRef_Data_X");
 
 
-        // ref
-         refPlot_Vel_time->writeDatatoFile(time, "plot/VelDemand_Time");
-         refPlot_VelX->writeDatatoFile(m_run->mRobot.vd_x, "plot/VelDemand_Data_X");
-         refPlot_VelY->writeDatatoFile(m_run->mRobot.vd_y, "plot/VelDemand_Data_Y");
-         refPlot_VelZ->writeDatatoFile(m_run->mRobot.vd_z, "plot/VelDemand_Data_Z");
+        // vd  pd
+         vd_Plot_Vel_time->writeDatatoFile(time, "plot/VelDemand_Time");
+         vd_Plot_VelX->writeDatatoFile(m_run->mRobot.vd_x, "plot/VelDemand_Data_X");
+         vd_Plot_VelY->writeDatatoFile(m_run->mRobot.vd_y, "plot/VelDemand_Data_Y");
+         vd_Plot_VelZ->writeDatatoFile(m_run->mRobot.vd_z, "plot/VelDemand_Data_Z");
 
-         refPlot_Pos_time->writeDatatoFile(time, "plot/PosDemand_Time");
-         refPlot_PosX->writeDatatoFile(m_run->mRobot.pd_x, "plot/PosDemand_Data_X");
-         refPlot_PosY->writeDatatoFile(m_run->mRobot.pd_y, "plot/PosDemand_Data_Y");
-         refPlot_PosZ->writeDatatoFile(m_run->mRobot.pd_z, "plot/PosDemand_Data_Z");
+         pd_Plot_Pos_time->writeDatatoFile(time, "plot/PosDemand_Time");
+         pd_Plot_PosX->writeDatatoFile(m_run->mRobot.pd_x, "plot/PosDemand_Data_X");
+         pd_Plot_PosY->writeDatatoFile(m_run->mRobot.pd_y, "plot/PosDemand_Data_Y");
+         pd_Plot_PosZ->writeDatatoFile(m_run->mRobot.pd_z, "plot/PosDemand_Data_Z");
 
         // std::cout << m_run->mRobot.ref_pos_x << std::endl;
 
