@@ -25,8 +25,8 @@ DOF dof =X_DIRECTION;
 DRAW draw = PLOT;
 
 //PID pid_x(0,0.0,1,0.0);
+//PID pid_x(3,0,1,0.3);
 PID pid_x(3,0,1,0.3);
-//PID pid_x(3,0.005,1,0.3);
 PID pid_y(3,0.005,0.5,0.3);
 PID pid_z(3,0.01,1,1);
 
