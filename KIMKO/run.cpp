@@ -208,13 +208,13 @@ void run::start()
     
 
     // wait till pos and vel both are read from CAN_READ 
-    while(velButton ==false ||  posButton==false){
+    // while(velButton ==false ||  posButton==false){
    
         
-    }
+    // }
 
-    velButton =false;
-    posButton =false;
+    // velButton =false;
+    // posButton =false;
 
 
     //  while(velButton ==false ||  posButton==false){

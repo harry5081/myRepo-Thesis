@@ -31,13 +31,16 @@ private:
 
     void initDemand();
 
+    float pre_vd = 0;
+    float pre_pd = 0;
+
     
     
 
 public:
 
     float x_vel_ref=0;
-    float x_pos_ref=100;
+    float x_pos_ref=-200;
 
     float y_vel_ref;
     float y_pos_ref;

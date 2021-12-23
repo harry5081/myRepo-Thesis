@@ -13,7 +13,7 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin):
     a = 0.02
     t = 0.02
 
-    window = 20
+    window = 5
 
    
     #############################################################################
@@ -93,7 +93,7 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin):
         v_input_temp = V_INPUT_MATRIX[i]
         #obj = obj + i*(state - P[2:4]).T @ Q @ (state - P[2:4]) + 3*V_INPUT_MATRIX[i] **2
         #obj = obj + 1.5*i*(state - P[2:4]).T @ Q @ (state - P[2:4])# + (v_input_dff **2)
-        obj = obj + 10*(state - P[2:4]).T @ Q @ (state - P[2:4])+V_INPUT_MATRIX[i] **2
+        obj = obj + 10*(state - P[2:4]).T @ Q @ (state - P[2:4]) + V_INPUT_MATRIX[i] **2 
     ###############################################################################
     # Construct NLP solver
     OPT_variables = reshape(U,2*window,1) #[vd1, pd1, vd2, pd2, vd3, pd3 ...]
