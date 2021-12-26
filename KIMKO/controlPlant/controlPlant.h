@@ -24,8 +24,8 @@ public:
     
     
 
-    int controlInput_x_vel;
-    int controlInput_y_vel;
+    float controlInput_x_vel;
+    float controlInput_y_vel;
     float controlInput_z_vel;
 
 

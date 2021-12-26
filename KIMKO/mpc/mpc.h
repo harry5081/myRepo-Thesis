@@ -56,6 +56,8 @@ public:
     float z_pos_demand;
 
     void mpcOperation(float v_ref=0, float p_ref=100, float v_init=0, float p_init=0, int v_input_begin=0);
+    void mpcOperation(std::vector<float> v_ref, std::vector<float> p_ref, std::vector<float> v_d, std::vector<float> p_d, std::vector<float> v_input);
+
 
     float sinePosDemand(float time);
     float cosVelDemand(float time);
