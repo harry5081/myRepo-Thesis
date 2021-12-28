@@ -12,7 +12,7 @@ def functionTest2(v_ref=0, p_ref=100, v_init=0, p_init=0, v_input_begin=0, pre_v
     a = 0.02
     t = 0.02
 
-    window = 5
+    window = 20
 
     # v_ref=0
     # p_ref=100
