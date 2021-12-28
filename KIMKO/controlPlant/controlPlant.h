@@ -31,8 +31,8 @@ public:
 
 
     
-    int vel_x;
-    int vel_y;
+    float vel_x;
+    float vel_y;
     float vel_z;
 
     float pos_x;
