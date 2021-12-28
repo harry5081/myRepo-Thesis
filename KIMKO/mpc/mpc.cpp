@@ -38,6 +38,34 @@ void MPC::mpcOperation(float v_ref, float p_ref, float v_init, float p_init, int
 
 }
 
+void MPC::mpcOperation(std::vector<float> v_ref, std::vector<float> p_ref, std::vector<float> v_init, std::vector<float> p_init, std::vector<float> v_input){
+
+    float time1 = (float)clock()/CLOCKS_PER_SEC;
+    
+    pybind11::module_ mpc = pybind11::module_::import("mpc_xyzDirect");
+    pybind11::object result = mpc.attr("functionTest")(v_ref, p_ref, v_init, p_init, v_input, pre_vd_pd);
+    std::vector<float> result_value = result.cast<std::vector<float>>();
+
+    float time2 = (float)clock()/CLOCKS_PER_SEC;
+    std::cout << " MPC_XYZ operation time: "<< time2-time1 << std::endl;
+
+    x_vel_demand = result_value[0];
+    x_pos_demand = result_value[1];
+
+    y_vel_demand = result_value[2];
+    y_pos_demand = result_value[3];
+
+    z_vel_demand = result_value[4];
+    z_pos_demand = result_value[5];
+
+    pre_vd_pd = {x_vel_demand, x_pos_demand, y_vel_demand, y_pos_demand, z_vel_demand, z_pos_demand};
+
+
+    std::cout << y_vel_demand << std::endl;
+    std::cout << y_pos_demand << std::endl;
+}
+
+
 void MPC::initDemand(){ //initialize sine positionDemand
 
     std::cout<< "MPC demand init." <<std::endl;

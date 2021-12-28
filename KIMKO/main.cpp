@@ -18,9 +18,17 @@ ReadWritePlot *ref_Plot_Pos_time = new ReadWritePlot;
 
 // plot ref_X_Vel
 ReadWritePlot *ref_Plot_VelX= new ReadWritePlot;
+// plot ref_Y_Vel
+ReadWritePlot *ref_Plot_VelY= new ReadWritePlot;
+// plot ref_Z_Vel
+ReadWritePlot *ref_Plot_VelZ= new ReadWritePlot;
 
 // plot ref_X_Pos
 ReadWritePlot *ref_Plot_PosX= new ReadWritePlot;
+// plot ref_Y_Pos
+ReadWritePlot *ref_Plot_PosY= new ReadWritePlot;
+// plot ref_Z_Pos
+ReadWritePlot *ref_Plot_PosZ= new ReadWritePlot;
 
 
 
@@ -150,9 +158,13 @@ void writeDatatoFile()
         //ref
         ref_Plot_Vel_time->writeDatatoFile(time, "plot/VelRef_Time");
         ref_Plot_VelX->writeDatatoFile(m_run->mpc.x_vel_ref, "plot/VelRef_Data_X");
+        ref_Plot_VelY->writeDatatoFile(m_run->mpc.y_vel_ref, "plot/VelRef_Data_Y");
+        ref_Plot_VelZ->writeDatatoFile(m_run->mpc.z_vel_ref, "plot/VelRef_Data_Z");
 
         ref_Plot_Pos_time->writeDatatoFile(time, "plot/PosRef_Time");
         ref_Plot_PosX->writeDatatoFile(m_run->mpc.x_pos_ref, "plot/PosRef_Data_X");
+        ref_Plot_PosY->writeDatatoFile(m_run->mpc.y_pos_ref, "plot/PosRef_Data_Y");
+        ref_Plot_PosZ->writeDatatoFile(m_run->mpc.z_pos_ref, "plot/PosRef_Data_Z");
 
 
         // vd  pd

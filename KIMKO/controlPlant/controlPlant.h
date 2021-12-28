@@ -24,15 +24,15 @@ public:
     
     
 
-    int controlInput_x_vel;
-    int controlInput_y_vel;
+    float controlInput_x_vel;
+    float controlInput_y_vel;
     float controlInput_z_vel;
 
 
 
     
-    int vel_x;
-    int vel_y;
+    float vel_x;
+    float vel_y;
     float vel_z;
 
     float pos_x;

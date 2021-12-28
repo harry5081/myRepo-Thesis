@@ -34,16 +34,18 @@ private:
     float pre_vd = 0;
     float pre_pd = 0;
 
+    std::vector<float> pre_vd_pd ={0,0,0,0,0,0}; // pre_vdx, pre_pdx, pre_vdy, pre_pdy, pre_vdz, pre_pdz, 
+
     
     
 
 public:
 
     float x_vel_ref=0;
-    float x_pos_ref=200;
+    float x_pos_ref=0;
 
-    float y_vel_ref;
-    float y_pos_ref;
+    float y_vel_ref=0;
+    float y_pos_ref=0;
 
     float z_vel_ref;
     float z_pos_ref;
@@ -59,6 +61,8 @@ public:
     float z_pos_demand;
 
     void mpcOperation(float v_ref=0, float p_ref=100, float v_init=0, float p_init=0, int v_input_begin=0);
+    void mpcOperation(std::vector<float> v_ref, std::vector<float> p_ref, std::vector<float> v_init, std::vector<float> p_init, std::vector<float> v_input);
+
 
     float sinePosDemand(float time);
     float cosVelDemand(float time);

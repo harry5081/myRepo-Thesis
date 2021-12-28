@@ -147,7 +147,7 @@ void intp(){
 
 void plotX(){
     
-    
+    ///////////////////////////     velocity part     ///////////////////////////
     plt::figure_size(1200, 780);
     
     plt::figure(1);
@@ -164,16 +164,18 @@ void plotX(){
 
 
     plt::subplot(3,1,2);
-    plt::Plot plot2_9("VelDemandY",velDemand_Time_temp,velDemand_Y_temp,"b--");
-    plt::Plot plot3("WritecanY",canWriteTime_temp,canWriteData_Y_temp,"k--");
+    plt::Plot plot2_8("v_ref_y",velRef_Time_temp,velRef_Y_temp,"g");
+    plt::Plot plot2_9("VelDemandY",velDemand_Time_temp,velDemand_Y_temp,"b");
+    plt::Plot plot3("WritecanY",canWriteTime_temp,canWriteData_Y_temp,"k");
     plt::Plot plot4("WritereadY",canReadTime_temp,canReadData_Y_temp,"r");
    
     plt::grid();
 
 
     plt::subplot(3,1,3);
-    plt::Plot plot4_5("VelDemandZ",velDemand_Time_temp,velDemand_Z_temp,"b--");
-    plt::Plot plot4_6("WritecanZ",canWriteTime_temp,canWriteData_Z_temp,"k--");
+    plt::Plot plot4_4("v_ref_z",velRef_Time_temp,velRef_Z_temp,"g");
+    plt::Plot plot4_5("VelDemandZ",velDemand_Time_temp,velDemand_Z_temp,"b");
+    plt::Plot plot4_6("WritecanZ",canWriteTime_temp,canWriteData_Z_temp,"k");
     plt::Plot plot4_7("WritereadZ",canReadTime_temp,canReadData_Z_temp,"r");
    
     plt::grid();
@@ -181,7 +183,7 @@ void plotX(){
 
 
 
-
+    ///////////////////////////     position part     ///////////////////////////
     plt::figure(2);
     
     plt::subplot(3,1,1);
@@ -193,14 +195,14 @@ void plotX(){
     plt::legend();
 
     plt::subplot(3,1,2);
-       
-    plt::Plot plot7("PosDemandY",posDemand_Time_temp,posDemand_Y_temp,"b--");
+    plt::Plot plot7_1("p_ref_y",posRef_Time_temp,posRef_Y_temp,"g"); 
+    plt::Plot plot7("PosDemandY",posDemand_Time_temp,posDemand_Y_temp,"b");
     plt::Plot plot8("WritereadPosY",canReadTime_Pos_temp,canReadData_PosY_temp,"r");
     plt::grid(); 
 
     plt::subplot(3,1,3);
-       
-    plt::Plot plot9("PosDemandZ",posDemand_Time_temp,posDemand_Z_temp,"b--");
+    plt::Plot plot9_1("p_ref_z",posRef_Time_temp,posRef_Z_temp,"g");    
+    plt::Plot plot9("PosDemandZ",posDemand_Time_temp,posDemand_Z_temp,"b");
     plt::Plot plot10("WritereadPosZ",canReadTime_Pos_temp,canReadData_PosZ_temp,"r");
     plt::grid();
 
@@ -235,6 +237,8 @@ void plotX(){
 
         readFileToVector("../build/plot/VelRef_Time", velRef_Time_temp);
         readFileToVector("../build/plot/VelRef_Data_X", velRef_X_temp);
+        readFileToVector("../build/plot/VelRef_Data_Y", velRef_Y_temp);
+        readFileToVector("../build/plot/VelRef_Data_Z", velRef_Z_temp);
 
 
         windowSizeControl();
@@ -289,7 +293,14 @@ void plotX(){
           if(velDemand_Time_temp.size()==velDemand_Y_temp.size()){
                 
                 plot2_9.update(velDemand_Time_temp,velDemand_Y_temp);
-          }      
+          }
+
+          if(velRef_Time_temp.size()==velRef_Y_temp.size()){
+                
+                plot2_8.update(velRef_Time_temp,velRef_Y_temp);
+                
+            }
+
            else{
                 std::cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<std::endl;
            }     
@@ -305,7 +316,7 @@ void plotX(){
             plt::figure(1);
             plt::subplot(3,1,3);
             plt::xlim(0, wSize);
-            plt::ylim(-50, 50);
+            plt::ylim(0, 30);
             
             plot4_6.update(canWriteTime_temp,canWriteData_Z_temp);
 
@@ -318,6 +329,12 @@ void plotX(){
             if(velDemand_Time_temp.size()==velDemand_Z_temp.size()){
                 
                 plot4_5.update(velDemand_Time_temp,velDemand_Z_temp);
+                
+            }
+
+            if(velRef_Time_temp.size()==velRef_Z_temp.size()){
+                
+                plot4_4.update(velRef_Time_temp,velRef_Z_temp);
                 
             }
         }
@@ -344,6 +361,8 @@ void plotX(){
 
         readFileToVector("../build/plot/PosRef_Time", posRef_Time_temp);
         readFileToVector("../build/plot/PosRef_Data_X", posRef_X_temp);
+        readFileToVector("../build/plot/PosRef_Data_Y", posRef_Y_temp);
+        readFileToVector("../build/plot/PosRef_Data_Z", posRef_Z_temp);
 
 
 
@@ -390,6 +409,9 @@ void plotX(){
             if(canReadTime_Pos_temp.size()==canReadData_PosY_temp.size()){
                 plot8.update(canReadTime_Pos_temp,canReadData_PosY_temp);
             }
+            if(posRef_Time_temp.size()==posRef_Y_temp.size()){
+                plot7_1.update(posRef_Time_temp,posRef_Y_temp);
+            }
        
         }
         else{
@@ -414,6 +436,10 @@ void plotX(){
                 plot10.update(canReadTime_PosZ_temp,canReadData_PosZ_temp);
             }
 
+            if(posRef_Time_temp.size()==posRef_Z_temp.size()){
+                plot9_1.update(posRef_Time_temp,posRef_Z_temp);
+            }
+
             else{
             std::cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<std::endl;
             }
@@ -426,9 +452,13 @@ void plotX(){
         //ref_vel
         velRef_Time_temp.clear();
         velRef_X_temp.clear();
+        velRef_Y_temp.clear();
+        velRef_Z_temp.clear();
 
         posRef_Time_temp.clear();
         posRef_X_temp.clear();
+        posRef_Y_temp.clear();
+        posRef_Z_temp.clear();
 
         
         
