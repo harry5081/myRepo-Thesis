@@ -282,7 +282,7 @@ void plotX(){
           plt::figure(1);
           plt::subplot(3,1,2);
           plt::xlim(0, wSize);
-          plt::ylim(-150, 150);
+          plt::ylim(-280, 280);
          
           plot3.update(canWriteTime_temp,canWriteData_Y_temp);
           std::cout<<"OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO"<<std::endl;
@@ -316,7 +316,7 @@ void plotX(){
             plt::figure(1);
             plt::subplot(3,1,3);
             plt::xlim(0, wSize);
-            plt::ylim(0, 30);
+            plt::ylim(-20, 20);
             
             plot4_6.update(canWriteTime_temp,canWriteData_Z_temp);
 
@@ -401,7 +401,7 @@ void plotX(){
             plt::figure(2);
             plt::subplot(3,1,2);
             plt::xlim(0, wSize);
-            plt::ylim(-150, 150);
+            plt::ylim(-300, 300);
             //plt::ylim(-100, 200);
 
             plot7.update(posDemand_Time_temp,posDemand_Y_temp);

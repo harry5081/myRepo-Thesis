@@ -42,13 +42,13 @@ private:
 public:
 
     float x_vel_ref=0;
-    float x_pos_ref=0;
+    float x_pos_ref=-200;
 
     float y_vel_ref=0;
     float y_pos_ref=0;
 
-    float z_vel_ref;
-    float z_pos_ref;
+    float z_vel_ref=0;
+    float z_pos_ref=-20;
     
 
     float x_vel_demand;

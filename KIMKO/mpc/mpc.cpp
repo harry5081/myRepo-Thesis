@@ -61,8 +61,8 @@ void MPC::mpcOperation(std::vector<float> v_ref, std::vector<float> p_ref, std::
     pre_vd_pd = {x_vel_demand, x_pos_demand, y_vel_demand, y_pos_demand, z_vel_demand, z_pos_demand};
 
 
-    std::cout << y_vel_demand << std::endl;
-    std::cout << y_pos_demand << std::endl;
+    std::cout << z_vel_demand << std::endl;
+    std::cout << z_pos_demand << std::endl;
 }
 
 
