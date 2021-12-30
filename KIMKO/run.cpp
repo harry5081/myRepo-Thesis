@@ -21,7 +21,7 @@
  float timeTemp;
 
 
-DOF dof =Z_DIRECTION;
+DOF dof =ALL_DIRECTION;
 DRAW draw = PLOT;
 
 //PID pid_x(0,0.0,1,0.0);
@@ -90,36 +90,7 @@ void run::start()
 {
     
    
-    // switch(dof){
-
-    //     case X_DIRECTION:
-    //         printf("enter the X velocity speed :");
-    //         scanf("%hd", &m_int16_desired_velocity_X);
-    //         break;
-
-    //     case Y_DIRECTION:
-    //         //printf("enter the Y velocity speed :");
-    //         //scanf("%hd", &m_int16_desired_velocity_Y);
-    //         break;
-
-    //     case Z_DIRECTION:
-    //         printf("enter the Z velocity speed :");
-    //         scanf("%f", &m_f_desired_velocity_Z);
-            
-    //         break;
-
-    //     case ALL_DIRECTION:
-    //         //printf("enter the X velocity speed :");
-    //         //scanf("%hd", &m_int16_desired_velocity_X);
-
-    //         //printf("enter the Y velocity speed :");
-    //         //scanf("%hd", &m_int16_desired_velocity_Y);
- 
-    //         //printf("enter the Z velocity speed :");
-    //         //scanf("%f", &m_f_desired_velocity_Z);
     
-    //         break;
-    // }
 
     //CAN_READ to get the initial state
    
@@ -146,17 +117,17 @@ void run::start()
     //mpc vd pd from python
     /////////////////////////////////////////////     X      /////////////////////////////////////
     std::cout<<std::endl;
-    std::cout << "Robot Value"<<std::endl;
+    std::cout << "Robot Frame Value"<<std::endl;
     std::cout <<  "vel_x: " << mRobot.vel_x <<  "     pos_x: " << mRobot.pos_x <<std::endl<<std::endl;   
     
     //mpc.mpcOperation(mpc.x_vel_ref, mpc.x_pos_ref, mRobot.vel_x, mRobot.pos_x, mRobot.controlInput_x_vel);
-    mpc.mpcOperation(v_ref, p_ref, v_init, p_init, v_input);
+    //mpc.mpcOperation(v_ref, p_ref, v_init, p_init, v_input);
     //mRobot.vd_x = mpc.x_vel_demand;
     //mRobot.pd_x = mpc.x_pos_demand;
     
     
-    mRobot.pd_x = mpc.sinePosDemand(time);
-    mRobot.vd_x = mpc.cosVelDemand(time);
+    //mRobot.pd_x = mpc.sinePosDemand(time);
+    //mRobot.vd_x = mpc.cosVelDemand(time);
 
     //mRobot.pd_x = mpc.sineToTenPosDemand(time);
     //mRobot.vd_x = mpc.cosToTenVelDemand(time);
@@ -177,18 +148,49 @@ void run::start()
     std::cout <<  "vel_z: " << mRobot.vel_z <<  "     pos_z: " << mRobot.pos_z <<std::endl<<std::endl;   
     //mRobot.vd_z = mpc.z_vel_demand;
     //mRobot.pd_z = mpc.z_pos_demand;
-    mRobot.pd_z = mpc.sinePosDemand(time)/10;
-    mRobot.vd_z = mpc.cosVelDemand(time)/10;
+    //mRobot.pd_z = mpc.sinePosDemand(time)/10;
+    //mRobot.vd_z = mpc.cosVelDemand(time)/10;
     
     // mRobot.pd_z = mpc.sineToTenPosDemand(time)/10*3;
     // mRobot.vd_z = mpc.cosToTenVelDemand(time)/10*3;
     
 
     //int PID::pidExe(float posError, int velDemand, float velError)
-    m_int16_desired_velocity_X = pid_x.pidExe(mRobot.pd_x-mRobot.pos_x, mRobot.vd_x, mRobot.vd_x-mRobot.vel_x);
-    m_int16_desired_velocity_Y = pid_y.pidExe(mRobot.pd_y-mRobot.pos_y, mRobot.vd_y, mRobot.vd_y-mRobot.vel_y);
-    m_f_desired_velocity_Z = pid_z.pidExeAngle(mRobot.pd_z-mRobot.pos_z,mRobot.vd_z,mRobot.vd_z-mRobot.vel_z);
+    //m_int16_desired_velocity_X = pid_x.pidExe(mRobot.pd_x-mRobot.pos_x, mRobot.vd_x, mRobot.vd_x-mRobot.vel_x);
+    //m_int16_desired_velocity_Y = pid_y.pidExe(mRobot.pd_y-mRobot.pos_y, mRobot.vd_y, mRobot.vd_y-mRobot.vel_y);
+    //m_f_desired_velocity_Z = pid_z.pidExeAngle(mRobot.pd_z-mRobot.pos_z,mRobot.vd_z,mRobot.vd_z-mRobot.vel_z);
     
+
+    switch(dof){
+
+        case X_DIRECTION:
+            printf("enter the X velocity speed :");
+            scanf("%hd", &m_int16_desired_velocity_X);
+            break;
+
+        case Y_DIRECTION:
+            //printf("enter the Y velocity speed :");
+            //scanf("%hd", &m_int16_desired_velocity_Y);
+            break;
+
+        case Z_DIRECTION:
+            printf("enter the Z velocity speed :");
+            scanf("%f", &m_f_desired_velocity_Z);
+            
+            break;
+
+        case ALL_DIRECTION:
+            printf("enter the X velocity speed :");
+            scanf("%hd", &m_int16_desired_velocity_X);
+
+            printf("enter the Y velocity speed :");
+            scanf("%hd", &m_int16_desired_velocity_Y);
+ 
+            printf("enter the Z velocity speed :");
+            scanf("%f", &m_f_desired_velocity_Z);
+    
+            break;
+    }
     
 
     //ensure controller input security
@@ -227,6 +229,8 @@ void run::start()
     std::cout <<  "V_input_x: " << m_int16_desired_velocity_X<< std::endl;
     std::cout <<  "V_input_y: " << m_int16_desired_velocity_Y<< std::endl;
     std::cout <<  "V_input_z: " << m_f_desired_velocity_Z<< std::endl;
+
+    
 
     // wait till pos and vel both are read from CAN_READ 
     // while(velButton ==false ||  posButton==false){
@@ -375,6 +379,17 @@ void run::canOpen()  //CAN_Write()
    
         
         usleep(20000);  //20 ms
+
+        // std::cout << "Robot Frame Value"<<std::endl;
+        // std::cout <<  "     pos_x: " << mRobot.pos_x <<std::endl<<std::endl;
+        // std::cout <<  "     pos_y: " << mRobot.pos_y <<std::endl<<std::endl;
+        // std::cout <<  "     pos_z: " << mRobot.pos_z <<std::endl<<std::endl;
+
+        // mRobot.deadReckon();
+        // std::cout << "Global Frame Value"<<std::endl;
+        // std::cout <<  "     World_x: " << mRobot.pos_x_global <<std::endl<<std::endl;
+        // std::cout <<  "     World_y: " << mRobot.pos_y_global <<std::endl<<std::endl;
+        // std::cout <<  "     World_theta: " << mRobot.pos_z <<std::endl<<std::endl;
         
         
     }
@@ -389,7 +404,7 @@ void run::canReadData(){
         result = CAN_Read(m_Channel, &m_pcanMsg_listen, nullptr);
                 
         if(result != PCAN_ERROR_QRCVEMPTY){
-            std::cout << "---------------------------------" << std::endl;
+            //std::cout << "---------------------------------" << std::endl;
             // data processing
 
             getVelocityValue();
@@ -408,7 +423,7 @@ void run::getVelocityValue(){
 
     if(m_pcanMsg_listen.ID == 0x181){
         velButton=true;
-        std::cout << "-----VEL-----VEL-----VEL-----VEL-----VEL-----VEL-----" << std::endl;
+        //std::cout << "-----VEL-----VEL-----VEL-----VEL-----VEL-----VEL-----" << std::endl;
             
 
         int16_t x_vel = static_cast<uint16_t>(m_pcanMsg_listen.DATA[0]) | static_cast<uint16_t>(m_pcanMsg_listen.DATA[1]<<8);
@@ -449,7 +464,7 @@ void run::getPositionValue(){
     //X,Y Position  
     if(m_pcanMsg_listen.ID == 0x1A1){
         posButton=true;
-        std::cout << "-----POS-----POS-----POS-----POS-----POS-----POS-----" << std::endl;        
+        //std::cout << "-----POS-----POS-----POS-----POS-----POS-----POS-----" << std::endl;        
 
         int32_t x_pos = static_cast<uint32_t>(m_pcanMsg_listen.DATA[0]) | static_cast<uint32_t>(m_pcanMsg_listen.DATA[1]<<8)\
                             |static_cast<uint32_t>(m_pcanMsg_listen.DATA[2])<<16 | static_cast<uint32_t>(m_pcanMsg_listen.DATA[3]<<24);
@@ -459,15 +474,21 @@ void run::getPositionValue(){
         int32_t y_pos = static_cast<uint32_t>(m_pcanMsg_listen.DATA[4]) | static_cast<uint32_t>(m_pcanMsg_listen.DATA[5]<<8)\
                             |static_cast<uint32_t>(m_pcanMsg_listen.DATA[6])<<16 | static_cast<uint32_t>(m_pcanMsg_listen.DATA[7]<<24);
         //    std::cout << "y_pos: ";
-        //    std::cout << std::dec << y_pos << std::endl;
+        std::cout << "-----POS-----POS-----POS-----POS-----POS-----POS-----" << std::endl;   
+        std::cout << std::dec << y_pos << std::endl;
 
-        // mRobot.pos_x = x_pos;
-        // mRobot.pos_y = y_pos;   
+        mRobot.pos_x = x_pos;
+        mRobot.pos_y = y_pos;   
 
-        mRobot.pos_x = x_pos-mRobot.originPos_x;
-        mRobot.pos_y = y_pos-mRobot.originPos_y; 
+        // mRobot.pos_x = x_pos-mRobot.originPos_x;
+        // mRobot.pos_y = y_pos-mRobot.originPos_y; 
 
     } //if(m_pcanMsg_listen.ID == 0x1A1)
+
+    if(m_pcanMsg_listen.ID == 0x1A2){
+        std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl; 
+
+    }
 
 
     //Z Position

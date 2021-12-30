@@ -123,7 +123,8 @@ int main(int argc, char **argv) {
 }
 
 void  start()
-{   pybind11::scoped_interpreter guard{};
+{   
+    //pybind11::scoped_interpreter guard{};
     while(1)
     {
         m_run->start();
