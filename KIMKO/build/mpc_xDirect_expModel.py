@@ -37,20 +37,48 @@ controls = vertcat(v_d, p_d)
 n_controls = controls.shape[0]
 
 # Mathematical model of the system
-#A = SX([[0,0],[0,1]])
-A = SX([[1-a,0],[t,1]])
 B = SX([[-kd,-kp]])
 C = SX([[kf+kd,kp]])
+
+v_input = B @ states + C @ controls
+v_input_f = Function('v_input_f',[states,controls],[v_input])
+
+e = exp(-200*t/(fabs(v_input-v)+0.01))
+ef = Function('ef',[states,controls],[e])
+
+#A = SX([[0,0],[0,1]])
+#A = SX([[1-a,0],[t,1]])
+#A = SX([[e,0],[t,1]])
+# A_temp1=horzcat(e,0)
+# A_temp2=horzcat(t,1)
+# A = vertcat(A_temp1,A_temp2)
+#A = SX([[e,0],[t,1]])
+A = SX.sym('A',2,2)
+A[0,0]=e
+A[0,1]=0
+A[1,0]=t
+A[1,1]=1
+
 #h = SX([[a],[t]])
-h = SX([[a],[0]])
+#h = SX([[a],[0]])
+#h = SX([[1-e],[0]])
+#h = vertcat(1-e,0)
+h = SX.sym('h',2,1)
+h[0,0] = 1-e
+h[1,0] = 0
 
 model = A @ states + h @ B @ states + h @ C @ controls
-v_input = B @ states + C @ controls
 
 ###########################################################################
 # Make mathematical model as function object
+
+
+
+Af = Function('Af',[states,controls],[A])
+hf = Function('hf',[states,controls],[h])
+
 f = Function('f',[states,controls],[model])
-v_input_f = Function('v_input_f',[states,controls],[v_input])
+
 
 U = SX.sym('U',n_controls,window) # vd,pd during a window
 P = SX.sym('P',n_state + n_state) # initial state and reference state of the robot
@@ -65,10 +93,26 @@ for i in range(window): # fill out all prediction state within a predic horz
 
     state_current = X[:,i]
     control_current = U[:,i]
-    state_next = f(state_current,control_current)
+    V_INPUT_MATRIX[i]= v_input_f(state_current,control_current)
+
+    e = exp(-200*t/(fabs(V_INPUT_MATRIX[i]-state_current[0])+0.01))
+    #e = exp(-200*t/fabs(1)+1)
+    #e = 0.02
+    A = SX.sym('A',2,2)
+    A[0,0]=e
+    A[0,1]=0
+    A[1,0]=t
+    A[1,1]=1
+    
+    h = SX.sym('h',2,1)
+    h[0,0] = 1-e
+    h[1,0] = 0
+
+    state_next = A @ state_current + h @ B @ state_current + h @ C @ control_current
+    
     X[:,i+1] = state_next
     
-    V_INPUT_MATRIX[i]= v_input_f(state_current,control_current)
+    
 
 ff = Function('ff',[U,P],[X]) # to get all data throughout predict horz
 v_input_ff = Function('v_input_ff',[U,P],[V_INPUT_MATRIX])
@@ -130,6 +174,8 @@ args["ubx"] = float('inf')
 
 args["ubg"] = 250*np.ones(window)
 args["lbg"] = -250*np.ones(window)
+#args["ubg"] = float('inf')
+#args["lbg"] = -float('inf')
 
 
 init_state = np.array([[v_init],[p_init]])
@@ -181,6 +227,9 @@ for i in range(1):
 
 print(x_sol[0:2])
 
+# here here here
+
+
 #return list([x_sol[0],x_sol[1]])
 
 # ###############################################################################
@@ -203,36 +252,36 @@ print(x_sol[0:2])
 #             p=args["p"], x0=args["x0"])
     
     
-#     #CAN_WRITE to make robot move
-#     x_sol = sol['x']
-#     u = reshape(x_sol,2,window) 
+    # #CAN_WRITE to make robot move
+    # x_sol = sol['x']
+    # u = reshape(x_sol,2,window) 
     
-#     # record the solved input vd, pd
-#     u_predichorz_update= np.concatenate([u_predichorz_update,np.reshape(u,(1,2,window))],0)
+    # # record the solved input vd, pd
+    # u_predichorz_update= np.concatenate([u_predichorz_update,np.reshape(u,(1,2,window))],0)
         
-#     # calculate all the state within a predic_horz
-#     states_through_predihorz = ff(u,args["p"]) # get all states within a predic horz
-#     # when update a horizontal, add a new page in states_predichorz_update
-#     states_predichorz_update = np.concatenate([states_predichorz_update,np.reshape(states_through_predihorz,(1,2,window+1))],0)
+    # # calculate all the state within a predic_horz
+    # states_through_predihorz = ff(u,args["p"]) # get all states within a predic horz
+    # # when update a horizontal, add a new page in states_predichorz_update
+    # states_predichorz_update = np.concatenate([states_predichorz_update,np.reshape(states_through_predihorz,(1,2,window+1))],0)
     
-#     VVV = v_input_ff(u,args["p"])
-#     v_predichorz_update = np.concatenate([v_predichorz_update,np.reshape(VVV,(1,1,window))],0)
+    # VVV = v_input_ff(u,args["p"])
+    # v_predichorz_update = np.concatenate([v_predichorz_update,np.reshape(VVV,(1,1,window))],0)
 
 
 
-#     # print(states_predichorz_update)
-#     # print(u_predichorz_update)
+    # print(states_predichorz_update)
+    # print(u_predichorz_update)
 
-#     # np.set_printoptions(precision=2,suppress=True)
-#     # for i in range(1):
-#     #     for j in range(window):
-#     #         print("----Window Update----")
-#     #         print("window: ", j)
-#     #         print("state [v, p] = ",states_predichorz_update[i,:,j])
-#     #         print("input [vd, pd] = ",u_predichorz_update[i,:,j])
-#     #         print("v_input = ",VVV[j])
-#     #         print("")
-#     #         print("")
+    # np.set_printoptions(precision=2,suppress=True)
+    # for i in range(1):
+    #     for j in range(window):
+    #         print("----Window Update----")
+    #         print("window: ", j)
+    #         print("state [v, p] = ",states_predichorz_update[i,:,j])
+    #         print("input [vd, pd] = ",u_predichorz_update[i,:,j])
+    #         print("v_input = ",VVV[j])
+    #         print("")
+    #         print("")
 
 # np.set_printoptions(precision=2,suppress=True)
 # for i in range(mpc_iter+1):

@@ -72,8 +72,8 @@ m_int16_velocity_level2(0)
         std::vector<float> p_init = {mRobot.pos_x, mRobot.pos_y, mRobot.pos_z};
         std::vector<float> v_input = {mRobot.controlInput_x_vel, mRobot.controlInput_y_vel, mRobot.controlInput_z_vel};
         
-        //mpc.mpcOperation(mpc.x_vel_ref, mpc.x_pos_ref, mRobot.vel_x, mRobot.pos_x, mRobot.controlInput_x_vel);
-        mpc.mpcOperation(v_ref, p_ref, v_init, p_init, v_input);
+        mpc.mpcOperation(mpc.x_vel_ref, mpc.x_pos_ref, mRobot.vel_x, mRobot.pos_x, mRobot.controlInput_x_vel);
+        //mpc.mpcOperation(v_ref, p_ref, v_init, p_init, v_input);
     
 
         // pybind11::print("Hello Python");
