@@ -1,5 +1,6 @@
 from casadi import *
 import numpy as np
+import math
 
 #def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
 
@@ -20,7 +21,7 @@ t = 0.02
 window = 20
 
 v_ref=np.array([0,0,0])
-p_ref=np.array([100,0,0])
+p_ref=np.array([100,0,10])
 v_init=np.array([0,0,0])
 p_init=np.array([0,0,0])
 v_input_begin=np.array([0,0,0])
@@ -56,20 +57,22 @@ n_controls = controls.shape[0]
 
 # Mathematical model of the system
 #A = SX([[0,0],[0,1]])
-Ax = SX([[1-a,0],[t,1]])
+#Ax_1 = vertcat([1-a,0],[t*cos(pdz*math.pi/360),1])
+#Ax_2 = SX([[0,0],[-t*sin(pdz*math.pi/360),0]])
 Bx = SX([[-kd,-kp]])
 Cx = SX([[kf+kd,kp]])
 #h = SX([[a],[t]])
 hx= SX([[a],[0]])
 
 
-Ay = SX([[1-a,0],[t,1]])
+#Ay_1 = SX([[0,0],[t*sin(pdz*math.pi/360),0]])
+#Ay_2 = SX([[1-a,0],[t*cos(pdz*math.pi/360),1]])
 By = SX([[-kd,-kp]])
 Cy = SX([[kf+kd,kp]])
 #h = SX([[a],[t]])
 hy = SX([[a],[0]])
 
-Az = SX([[1-a,0],[t,1]])
+#Az = SX([[1-a,0],[t,1]])
 Bz = SX([[-kd_z,-kp_z]])
 Cz = SX([[kf_z+kd_z,kp_z]])
 #h = SX([[a],[t]])
@@ -77,9 +80,9 @@ hz = SX([[a],[0]])
 
 zero_22_temp = SX([[0,0],[0,0]])
 zero_02_temp = SX([[0,0]])
-Ax_temp = SX(horzcat(Ax,zero_22_temp,zero_22_temp))
-Ay_temp = SX(horzcat(zero_22_temp,Ay,zero_22_temp))
-Az_temp = SX(horzcat(zero_22_temp,zero_22_temp,Az))
+# Ax_temp = SX(horzcat(Ax_1,Ax_2,zero_22_temp))
+# Ay_temp = SX(horzcat(Ay_1,Ay_2,zero_22_temp))
+# Az_temp = SX(horzcat(zero_22_temp,zero_22_temp,Az))
 
 Bx_temp = SX(horzcat(Bx,zero_02_temp,zero_02_temp))
 By_temp = SX(horzcat(zero_02_temp,By,zero_02_temp))
@@ -93,8 +96,22 @@ hx_temp = SX(horzcat(hx,zero_02_temp.T,zero_02_temp.T))
 hy_temp = SX(horzcat(zero_02_temp.T,hy,zero_02_temp.T))
 hz_temp = SX(horzcat(zero_02_temp.T,zero_02_temp.T,hz))
 
+A = SX.zeros(6,6)
+A[0,0] = 1-a
+A[2,2] = 1-a
+A[4,4] = 1-a
 
-A = SX(vertcat(Ax_temp, Ay_temp, Az_temp))
+A[1,1] = 1
+A[3,3] = 1
+A[5,5] = 1
+
+A[1,0] = t*cos(pdz*math.pi/360)
+A[3,0] = t*sin(pdz*math.pi/360)
+A[1,2] = -t*sin(pdz*math.pi/360)
+A[3,2] = t*cos(pdz*math.pi/360)
+A[5,4] = t
+
+#A = SX(vertcat(Ax_temp, Ay_temp, Az_temp))
 B = SX(vertcat(Bx_temp, By_temp, Bz_temp))
 C = SX(vertcat(Cx_temp, Cy_temp, Cz_temp))
 h = SX(vertcat(hx_temp, hy_temp, hz_temp))
@@ -156,7 +173,7 @@ for i in range(window): # fill out all prediction state within a predic horz
     #v_input_temp = V_INPUT_MATRIX[:,i]
 
     #obj = obj + 1.5*i*(X[:,i+1] - P[6:12]).T @ Q @ (X[:,i+1] - P[6:12]) + V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]
-    obj = obj + 30*(X[:,i+1] - P[6:12]).T @ Q @ (X[:,i+1] - P[6:12])+ V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]+ 0.001*(control_diff.T @ control_diff)
+    obj = obj + 30*(X[:,i+1] - P[6:12]).T @ Q @ (X[:,i+1] - P[6:12])+ V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]+ 0.1*(control_diff.T @ control_diff)
 
 
     state_next_multi_shoot = X[:,i+1]
@@ -288,10 +305,14 @@ for i in range(1):
 
 ##############################################################################
 #Update the prediction horizontal
-# i=0
-# while (abs(args["p"][1]-final_state[1]) > 1e-1):
-#     i=i+1
-for i in range(100):
+i=0
+diff = args["p"][0:6]-final_state
+#while (abs(args["p"][5]-final_state[5]) > 1e-1):
+#while (abs(args["p"][1]-final_state[1])+abs(args["p"][3]-final_state[3])+abs(args["p"][5]-final_state[5]) > 10*(1e-1)):
+while (diff.T @ diff > 10): 
+    diff = args["p"][0:6]-final_state
+    i=i+1
+#for i in range(100):
     #print("----- Horizontal Prediction Update -----")
     #shift
     init_state = states_predichorz_update[mpc_iter,:,1]

@@ -96,7 +96,7 @@ for i in range(0, window):
     v_input_dff = V_INPUT_MATRIX[i]- v_input_temp
     v_input_temp = V_INPUT_MATRIX[i]
     #obj = obj + i*(state - P[2:4]).T @ Q @ (state - P[2:4]) + 3*V_INPUT_MATRIX[i] **2
-    obj = obj + 10*(state - P[2:4]).T @ Q @ (state - P[2:4]) + V_INPUT_MATRIX[i] **2
+    obj = obj + 30*(state - P[2:4]).T @ Q @ (state - P[2:4]) + V_INPUT_MATRIX[i] **2
     
 ###############################################################################
 # Construct NLP solver
@@ -184,63 +184,63 @@ print(x_sol[0:2])
 #return list([x_sol[0],x_sol[1]])
 
 # ###############################################################################
-# # Update the prediction horizontal
+# Update the prediction horizontal
 
 #while (abs(args["p"][1]-final_state[1]) > 1e-1):
-# for i in range(100):
-#     #print("----- Horizontal Prediction Update -----")
-#     #shift
-#     init_state = states_predichorz_update[mpc_iter,:,1]
-#     final_state = np.array([[0],[p_ref]])
-#     u0 = u #u0 used for initial guess of [vd1, pd1, vd2, pd2, vd3, pd3 ...]
-#     mpc_iter = mpc_iter+1
-#     #print("MPC Iteration: ", mpc_iter)
+for i in range(50):
+    #print("----- Horizontal Prediction Update -----")
+    #shift
+    init_state = states_predichorz_update[mpc_iter,:,1]
+    final_state = np.array([[0],[p_ref]])
+    u0 = u #u0 used for initial guess of [vd1, pd1, vd2, pd2, vd3, pd3 ...]
+    mpc_iter = mpc_iter+1
+    #print("MPC Iteration: ", mpc_iter)
     
-#     args["p"] =vertcat(init_state, final_state)
-#     args["x0"] = reshape(u0,2*window,1) #initial guess of [vd1, pd1, vd2, pd2, vd3, pd3 ...]
+    args["p"] =vertcat(init_state, final_state)
+    args["x0"] = reshape(u0,2*window,1) #initial guess of [vd1, pd1, vd2, pd2, vd3, pd3 ...]
 
-#     sol = solver(lbx=args["lbx"], ubx=args["ubx"], lbg=args["lbg"], ubg=args["ubg"],\
-#             p=args["p"], x0=args["x0"])
+    sol = solver(lbx=args["lbx"], ubx=args["ubx"], lbg=args["lbg"], ubg=args["ubg"],\
+            p=args["p"], x0=args["x0"])
     
     
-#     #CAN_WRITE to make robot move
-#     x_sol = sol['x']
-#     u = reshape(x_sol,2,window) 
+    #CAN_WRITE to make robot move
+    x_sol = sol['x']
+    u = reshape(x_sol,2,window) 
     
-#     # record the solved input vd, pd
-#     u_predichorz_update= np.concatenate([u_predichorz_update,np.reshape(u,(1,2,window))],0)
+    # record the solved input vd, pd
+    u_predichorz_update= np.concatenate([u_predichorz_update,np.reshape(u,(1,2,window))],0)
         
-#     # calculate all the state within a predic_horz
-#     states_through_predihorz = ff(u,args["p"]) # get all states within a predic horz
-#     # when update a horizontal, add a new page in states_predichorz_update
-#     states_predichorz_update = np.concatenate([states_predichorz_update,np.reshape(states_through_predihorz,(1,2,window+1))],0)
+    # calculate all the state within a predic_horz
+    states_through_predihorz = ff(u,args["p"]) # get all states within a predic horz
+    # when update a horizontal, add a new page in states_predichorz_update
+    states_predichorz_update = np.concatenate([states_predichorz_update,np.reshape(states_through_predihorz,(1,2,window+1))],0)
     
-#     VVV = v_input_ff(u,args["p"])
-#     v_predichorz_update = np.concatenate([v_predichorz_update,np.reshape(VVV,(1,1,window))],0)
+    VVV = v_input_ff(u,args["p"])
+    v_predichorz_update = np.concatenate([v_predichorz_update,np.reshape(VVV,(1,1,window))],0)
 
 
 
-#     # print(states_predichorz_update)
-#     # print(u_predichorz_update)
+    # print(states_predichorz_update)
+    # print(u_predichorz_update)
 
-#     # np.set_printoptions(precision=2,suppress=True)
-#     # for i in range(1):
-#     #     for j in range(window):
-#     #         print("----Window Update----")
-#     #         print("window: ", j)
-#     #         print("state [v, p] = ",states_predichorz_update[i,:,j])
-#     #         print("input [vd, pd] = ",u_predichorz_update[i,:,j])
-#     #         print("v_input = ",VVV[j])
-#     #         print("")
-#     #         print("")
+    # np.set_printoptions(precision=2,suppress=True)
+    # for i in range(1):
+    #     for j in range(window):
+    #         print("----Window Update----")
+    #         print("window: ", j)
+    #         print("state [v, p] = ",states_predichorz_update[i,:,j])
+    #         print("input [vd, pd] = ",u_predichorz_update[i,:,j])
+    #         print("v_input = ",VVV[j])
+    #         print("")
+    #         print("")
 
-# np.set_printoptions(precision=2,suppress=True)
-# for i in range(mpc_iter+1):
-#     print("----Prediction Horizontal Update----")
-#     print("mpc_iter: ", i)
-#     print("state [v, p] = ",states_predichorz_update[i,:,0])
-#     print("demand [vd, pd] = ",u_predichorz_update[i,:,0])
-#     print("v_input = ",v_predichorz_update[i,0,0])
-#     print("")
-#     print("")
+np.set_printoptions(precision=2,suppress=True)
+for i in range(mpc_iter+1):
+    print("----Prediction Horizontal Update----")
+    print("mpc_iter: ", i)
+    print("state [v, p] = ",states_predichorz_update[i,:,0])
+    print("demand [vd, pd] = ",u_predichorz_update[i,:,0])
+    print("v_input = ",v_predichorz_update[i,0,0])
+    print("")
+    print("")
     
