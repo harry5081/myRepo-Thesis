@@ -81,7 +81,7 @@ m_int16_velocity_level2(0)
     printf("pcan init success.. \n");
     
     init();
-    initOriginPos();
+    //initOriginPos();
 
 
 
@@ -97,12 +97,12 @@ void run::start()
     //printf("enter the operating mode");
     //scanf("%hd", &m_int16_operatingmode);
 
-    m_int16_operatingmode = 2;
+    m_int16_operatingmode = 1;
 
 
     float time = (float)clock()/CLOCKS_PER_SEC;
     timeDiff=time - timeTemp;
-    std::cout << "!!!!!!!!!!!!!!!!!!!  TimeTest  !!!!!!!!!!!!!!!!!!!!!    "<< timeDiff <<std::endl;
+    //std::cout << "!!!!!!!!!!!!!!!!!!!  TimeTest  !!!!!!!!!!!!!!!!!!!!!    "<< timeDiff <<std::endl;
     timeTemp=time;
 
     std::vector<float> v_ref = {mpc.x_vel_ref, mpc.y_vel_ref, mpc.z_vel_ref};
@@ -116,9 +116,9 @@ void run::start()
 
     //mpc vd pd from python
     /////////////////////////////////////////////     X      /////////////////////////////////////
-    std::cout<<std::endl;
-    std::cout << "Robot Frame Value"<<std::endl;
-    std::cout <<  "vel_x: " << mRobot.vel_x <<  "     pos_x: " << mRobot.pos_x <<std::endl<<std::endl;   
+    //std::cout<<std::endl;
+    //std::cout << "Robot Frame Value"<<std::endl;
+    //std::cout <<  "vel_x: " << mRobot.vel_x <<  "     pos_x: " << mRobot.pos_x <<std::endl<<std::endl;   
     
     //mpc.mpcOperation(mpc.x_vel_ref, mpc.x_pos_ref, mRobot.vel_x, mRobot.pos_x, mRobot.controlInput_x_vel);
     //mpc.mpcOperation(v_ref, p_ref, v_init, p_init, v_input);
@@ -136,7 +136,7 @@ void run::start()
     /////////////////////////////////////////////     Y      /////////////////////////////////////
     //std::cout<<std::endl;
     //std::cout << "Robot Value"<<std::endl;
-    std::cout <<  "vel_y: " << mRobot.vel_y <<  "     pos_y: " << mRobot.pos_y <<std::endl<<std::endl;   
+    //std::cout <<  "vel_y: " << mRobot.vel_y <<  "     pos_y: " << mRobot.pos_y <<std::endl<<std::endl;   
     
     //mRobot.vd_y = mpc.y_vel_demand;
     //mRobot.pd_y = mpc.y_pos_demand;
@@ -145,7 +145,7 @@ void run::start()
     // mRobot.vd_y = mpc.cosVelDemand(time);
 
     /////////////////////////////////////////////     Z      /////////////////////////////////////
-    std::cout <<  "vel_z: " << mRobot.vel_z <<  "     pos_z: " << mRobot.pos_z <<std::endl<<std::endl;   
+    //std::cout <<  "vel_z: " << mRobot.vel_z <<  "     pos_z: " << mRobot.pos_z <<std::endl<<std::endl;   
     //mRobot.vd_z = mpc.z_vel_demand;
     //mRobot.pd_z = mpc.z_pos_demand;
     //mRobot.pd_z = mpc.sinePosDemand(time)/10;
@@ -161,36 +161,36 @@ void run::start()
     //m_f_desired_velocity_Z = pid_z.pidExeAngle(mRobot.pd_z-mRobot.pos_z,mRobot.vd_z,mRobot.vd_z-mRobot.vel_z);
     
 
-    switch(dof){
+    // switch(dof){
 
-        case X_DIRECTION:
-            printf("enter the X velocity speed :");
-            scanf("%hd", &m_int16_desired_velocity_X);
-            break;
+    //     case X_DIRECTION:
+    //         printf("enter the X velocity speed :");
+    //         scanf("%hd", &m_int16_desired_velocity_X);
+    //         break;
 
-        case Y_DIRECTION:
-            //printf("enter the Y velocity speed :");
-            //scanf("%hd", &m_int16_desired_velocity_Y);
-            break;
+    //     case Y_DIRECTION:
+    //         //printf("enter the Y velocity speed :");
+    //         //scanf("%hd", &m_int16_desired_velocity_Y);
+    //         break;
 
-        case Z_DIRECTION:
-            printf("enter the Z velocity speed :");
-            scanf("%f", &m_f_desired_velocity_Z);
+    //     case Z_DIRECTION:
+    //         printf("enter the Z velocity speed :");
+    //         scanf("%f", &m_f_desired_velocity_Z);
             
-            break;
+    //         break;
 
-        case ALL_DIRECTION:
-            printf("enter the X velocity speed :");
-            scanf("%hd", &m_int16_desired_velocity_X);
+    //     case ALL_DIRECTION:
+    //         printf("enter the X velocity speed :");
+    //         scanf("%hd", &m_int16_desired_velocity_X);
 
-            printf("enter the Y velocity speed :");
-            scanf("%hd", &m_int16_desired_velocity_Y);
+    //         printf("enter the Y velocity speed :");
+    //         scanf("%hd", &m_int16_desired_velocity_Y);
  
-            printf("enter the Z velocity speed :");
-            scanf("%f", &m_f_desired_velocity_Z);
+    //         printf("enter the Z velocity speed :");
+    //         scanf("%f", &m_f_desired_velocity_Z);
     
-            break;
-    }
+    //         break;
+    // }
     
 
     //ensure controller input security
@@ -221,14 +221,17 @@ void run::start()
         std::cout <<  "Z Direction Controller Input too Fast!!!" << std::endl;
     }
 
+    //m_int16_desired_velocity_X = 10;
+    //m_int16_desired_velocity_Y = 0;
+    //m_f_desired_velocity_Z = 2;
 
     mRobot.controlInput_x_vel = m_int16_desired_velocity_X;
     mRobot.controlInput_y_vel = m_int16_desired_velocity_Y;
     mRobot.controlInput_z_vel = m_f_desired_velocity_Z;
 
-    std::cout <<  "V_input_x: " << m_int16_desired_velocity_X<< std::endl;
-    std::cout <<  "V_input_y: " << m_int16_desired_velocity_Y<< std::endl;
-    std::cout <<  "V_input_z: " << m_f_desired_velocity_Z<< std::endl;
+    // std::cout <<  "V_input_x: " << m_int16_desired_velocity_X<< std::endl;
+    // std::cout <<  "V_input_y: " << m_int16_desired_velocity_Y<< std::endl;
+    // std::cout <<  "V_input_z: " << m_f_desired_velocity_Z<< std::endl;
 
     
 
@@ -264,6 +267,7 @@ void run::canOpen()  //CAN_Write()
     
     while(1)
     {
+        std::cout << "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"<<std::endl;
         uint16_t uint16_data = 0;
         uint32_t uint32_data = 0;
         //PDO 0x201
@@ -380,16 +384,22 @@ void run::canOpen()  //CAN_Write()
         
         usleep(20000);  //20 ms
 
-        // std::cout << "Robot Frame Value"<<std::endl;
-        // std::cout <<  "     pos_x: " << mRobot.pos_x <<std::endl<<std::endl;
-        // std::cout <<  "     pos_y: " << mRobot.pos_y <<std::endl<<std::endl;
-        // std::cout <<  "     pos_z: " << mRobot.pos_z <<std::endl<<std::endl;
+        std::cout << "Robot Frame Value"<<std::endl;
+        std::cout <<  "     pos_x: " << mRobot.pos_x <<std::endl<<std::endl;
+        std::cout <<  "     pos_y: " << mRobot.pos_y <<std::endl<<std::endl;
+        std::cout <<  "     pos_z: " << mRobot.pos_z <<std::endl<<std::endl;
 
-        // mRobot.deadReckon();
-        // std::cout << "Global Frame Value"<<std::endl;
-        // std::cout <<  "     World_x: " << mRobot.pos_x_global <<std::endl<<std::endl;
-        // std::cout <<  "     World_y: " << mRobot.pos_y_global <<std::endl<<std::endl;
-        // std::cout <<  "     World_theta: " << mRobot.pos_z <<std::endl<<std::endl;
+        mRobot.deadReckon();
+        std::cout << "Global Frame Value"<<std::endl;
+        std::cout <<  "     World_x: " << mRobot.pos_x_global <<std::endl<<std::endl;
+        std::cout <<  "     World_y: " << mRobot.pos_y_global <<std::endl<<std::endl;
+        std::cout <<  "     World_theta: " << mRobot.theta_global <<std::endl<<std::endl;
+
+        mRobot.pos_sensor_correct();
+        std::cout << "Correct Position Value"<<std::endl;
+        std::cout <<  "     Correct_x: " << mRobot.pos_x_correct <<std::endl<<std::endl;
+        std::cout <<  "     Correct_y: " << mRobot.pos_y_correct <<std::endl<<std::endl;
+        std::cout <<  "     Correct_theta: " << mRobot.pos_z_correct <<std::endl<<std::endl;
         
         
     }
@@ -445,6 +455,11 @@ void run::getVelocityValue(){
         mRobot.vel_x = x_vel;
         mRobot.vel_y = y_vel;
         mRobot.vel_z = z_vel;
+
+        mRobot.controlInput_x_vel = x_vel;
+    mRobot.controlInput_y_vel = y_vel;
+    mRobot.controlInput_z_vel = z_vel;
+
 
 
         if(draw == PLOT){
