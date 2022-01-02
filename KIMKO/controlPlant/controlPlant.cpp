@@ -2,6 +2,8 @@
 #include <cmath>
 #include <iostream>
 
+#include <stdlib.h>     /* abs */
+
 void PLANT::deadReckon(){
 
     // float sample_time = 0.02;
@@ -39,8 +41,75 @@ void PLANT::deadReckon(){
 
 }
 
-
 void PLANT::pos_sensor_correct(){
+
+    float v_angle;
+    double angle_temp;
+    int quadrant;
+
+    pos_x_cur = pos_x;
+    pos_y_cur = pos_y;
+    pos_z_cur = pos_z;
+
+    v_angle = atan2 (vel_y,vel_x) * 180 / PI;
+    angle_temp = pos_z_cur + v_angle;
+
+    std::cout <<   pos_z_cur <<std::endl;
+    std::cout <<   v_angle <<std::endl;
+    std::cout <<   angle_temp <<std::endl;
+
+    angle_temp = int(angle_temp) % 360; // [0..360) if angle is positive, (-360..0] if negative
+    if (angle_temp < 0){
+        angle_temp += 360; // Back to [0..360)
+    }
+    quadrant = (int(angle_temp/90)) % 4 + 1; // Quadrant
+    std::cout <<   angle_temp <<std::endl;
+    std::cout <<   quadrant <<std::endl;
+
+
+    pos_x_diff = abs(pos_x_cur-pos_x_pre);
+    pos_y_diff = abs(pos_y_cur-pos_y_pre);
+    pos_z_diff = abs(pos_z_cur-pos_z_pre);
+
+
+    if(quadrant == 1){
+        pos_x_correct = pos_x_correct + pos_x_diff;
+        pos_y_correct = pos_y_correct + pos_y_diff;
+
+    }
+
+    else if(quadrant == 2){
+        pos_x_correct = pos_x_correct - pos_x_diff;
+        pos_y_correct = pos_y_correct + pos_y_diff;
+    }
+
+    else if(quadrant == 3){
+        pos_x_correct = pos_x_correct - pos_x_diff;
+        pos_y_correct = pos_y_correct - pos_y_diff;
+    }
+
+    else if(quadrant == 4){
+        pos_x_correct = pos_x_correct + pos_x_diff;
+        pos_y_correct = pos_y_correct - pos_y_diff;
+    }
+
+    else{
+        std::cout <<   "Problem!!! pos_sensor_correct()" <<std::endl;
+
+    }
+
+
+    pos_x_pre = pos_x_cur;
+    pos_y_pre = pos_y_cur;
+    pos_z_pre = pos_z_cur;
+    
+
+
+
+}
+
+
+void PLANT::pos_sensor_correct2(){
 
     bool xdiretion = false;
     bool ydiretion = false;

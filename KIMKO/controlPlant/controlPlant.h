@@ -67,6 +67,7 @@ public:
 
     void deadReckon();
     void pos_sensor_correct();
+    void pos_sensor_correct2();
 
     
 
