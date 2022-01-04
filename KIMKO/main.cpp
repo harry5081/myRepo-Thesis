@@ -82,6 +82,11 @@ ReadWritePlot *canReadDataPlot_PosX= new ReadWritePlot;
 ReadWritePlot *canReadDataPlot_PosY= new ReadWritePlot;
 // plot Pos_Z
 ReadWritePlot *canReadDataPlot_PosZ= new ReadWritePlot;
+
+// plot Pos_X_correct
+ReadWritePlot *canReadDataPlot_PosX_cor = new ReadWritePlot;
+// plot Pos_Y_correct
+ReadWritePlot *canReadDataPlot_PosY_cor = new ReadWritePlot;
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -124,7 +129,7 @@ int main(int argc, char **argv) {
 
 void  start()
 {   
-    //pybind11::scoped_interpreter guard{};
+    pybind11::scoped_interpreter guard{};
     while(1)
     {
         m_run->start();
@@ -209,6 +214,9 @@ void writeDatatoFile()
                 
             canReadDataPlot_PosX->writeDatatoFile(m_run->mRobot.pos_x, "plot/CAN_Read_Data_PosX");
             canReadDataPlot_PosY->writeDatatoFile(m_run->mRobot.pos_y, "plot/CAN_Read_Data_PosY");
+
+            canReadDataPlot_PosX_cor->writeDatatoFile(m_run->mRobot.pos_x_correct, "plot/CAN_Read_Data_PosX_Correct");
+            canReadDataPlot_PosY_cor->writeDatatoFile(m_run->mRobot.pos_y_correct, "plot/CAN_Read_Data_PosY_Correct");
 
              canReadTimePlot_PosZ->writeDatatoFile((float)clock()/CLOCKS_PER_SEC, "plot/CAN_Read_Time_PosZ");   
             canReadDataPlot_PosZ->writeDatatoFile(m_run->mRobot.pos_z, "plot/CAN_Read_Data_PosZ");

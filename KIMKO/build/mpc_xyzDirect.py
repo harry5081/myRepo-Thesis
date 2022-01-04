@@ -203,7 +203,7 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     #args["lbg"] = -float('inf')
     #args["ubg"] = float('inf')
 
-    v_input_g_temp = np.array([250,250,15])
+    v_input_g_temp = np.array([250,250,5])
     args["lbg"] = vertcat(np.zeros(6*(window+1)),-1*repmat(v_input_g_temp,(window),1))
     args["ubg"] = vertcat(np.zeros(6*(window+1)),repmat(v_input_g_temp,(window),1))
 

@@ -81,7 +81,7 @@ m_int16_velocity_level2(0)
     printf("pcan init success.. \n");
     
     init();
-    //initOriginPos();
+    initOriginPos();
 
 
 
@@ -97,7 +97,7 @@ void run::start()
     //printf("enter the operating mode");
     //scanf("%hd", &m_int16_operatingmode);
 
-    m_int16_operatingmode = 1;
+    m_int16_operatingmode = 2;
 
 
     float time = (float)clock()/CLOCKS_PER_SEC;
@@ -110,7 +110,7 @@ void run::start()
     // std::vector<float> v_d = {mpc.x_vel_demand, mpc.y_vel_demand, mpc.z_vel_demand};
     // std::vector<float> p_d = {mpc.x_pos_demand, mpc.y_pos_demand, mpc.z_pos_demand};
     std::vector<float> v_init = {mRobot.vel_x, mRobot.vel_y, mRobot.vel_z};
-    std::vector<float> p_init = {mRobot.pos_x, mRobot.pos_y, mRobot.pos_z};
+    std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, mRobot.pos_z};
     std::vector<float> v_input = {mRobot.controlInput_x_vel, mRobot.controlInput_y_vel, mRobot.controlInput_z_vel};
     
 
@@ -121,9 +121,9 @@ void run::start()
     //std::cout <<  "vel_x: " << mRobot.vel_x <<  "     pos_x: " << mRobot.pos_x <<std::endl<<std::endl;   
     
     //mpc.mpcOperation(mpc.x_vel_ref, mpc.x_pos_ref, mRobot.vel_x, mRobot.pos_x, mRobot.controlInput_x_vel);
-    //mpc.mpcOperation(v_ref, p_ref, v_init, p_init, v_input);
-    //mRobot.vd_x = mpc.x_vel_demand;
-    //mRobot.pd_x = mpc.x_pos_demand;
+    mpc.mpcOperation(v_ref, p_ref, v_init, p_init, v_input);
+    mRobot.vd_x = mpc.x_vel_demand;
+    mRobot.pd_x = mpc.x_pos_demand;
     
     
     //mRobot.pd_x = mpc.sinePosDemand(time);
@@ -138,27 +138,27 @@ void run::start()
     //std::cout << "Robot Value"<<std::endl;
     //std::cout <<  "vel_y: " << mRobot.vel_y <<  "     pos_y: " << mRobot.pos_y <<std::endl<<std::endl;   
     
-    //mRobot.vd_y = mpc.y_vel_demand;
-    //mRobot.pd_y = mpc.y_pos_demand;
+    mRobot.vd_y = mpc.y_vel_demand;
+    mRobot.pd_y = mpc.y_pos_demand;
     
-    // mRobot.pd_y = mpc.sinePosDemand(time);
-    // mRobot.vd_y = mpc.cosVelDemand(time);
+    //mRobot.pd_y = mpc.sinePosDemand(time);
+    //mRobot.vd_y = mpc.cosVelDemand(time);
 
     /////////////////////////////////////////////     Z      /////////////////////////////////////
-    //std::cout <<  "vel_z: " << mRobot.vel_z <<  "     pos_z: " << mRobot.pos_z <<std::endl<<std::endl;   
-    //mRobot.vd_z = mpc.z_vel_demand;
-    //mRobot.pd_z = mpc.z_pos_demand;
+    std::cout <<  "vel_z: " << mRobot.vel_z <<  "     pos_z: " << mRobot.pos_z <<std::endl<<std::endl;   
+    mRobot.vd_z = mpc.z_vel_demand;
+    mRobot.pd_z = mpc.z_pos_demand;
     //mRobot.pd_z = mpc.sinePosDemand(time)/10;
     //mRobot.vd_z = mpc.cosVelDemand(time)/10;
     
-    // mRobot.pd_z = mpc.sineToTenPosDemand(time)/10*3;
-    // mRobot.vd_z = mpc.cosToTenVelDemand(time)/10*3;
+    //mRobot.pd_z = mpc.sineToTenPosDemand(time)/10;
+    //mRobot.vd_z = mpc.cosToTenVelDemand(time)/10;
     
 
     //int PID::pidExe(float posError, int velDemand, float velError)
-    //m_int16_desired_velocity_X = pid_x.pidExe(mRobot.pd_x-mRobot.pos_x, mRobot.vd_x, mRobot.vd_x-mRobot.vel_x);
-    //m_int16_desired_velocity_Y = pid_y.pidExe(mRobot.pd_y-mRobot.pos_y, mRobot.vd_y, mRobot.vd_y-mRobot.vel_y);
-    //m_f_desired_velocity_Z = pid_z.pidExeAngle(mRobot.pd_z-mRobot.pos_z,mRobot.vd_z,mRobot.vd_z-mRobot.vel_z);
+    m_int16_desired_velocity_X = pid_x.pidExe(mRobot.pd_x-mRobot.pos_x_correct, mRobot.vd_x, mRobot.vd_x-mRobot.vel_x);
+    m_int16_desired_velocity_Y = pid_y.pidExe(mRobot.pd_y-mRobot.pos_y_correct, mRobot.vd_y, mRobot.vd_y-mRobot.vel_y);
+    m_f_desired_velocity_Z = pid_z.pidExeAngle(mRobot.pd_z-mRobot.pos_z,mRobot.vd_z,mRobot.vd_z-mRobot.vel_z);
     
 
     // switch(dof){
@@ -212,12 +212,12 @@ void run::start()
         std::cout <<  "Y Direction Controller Input too Fast!!!" << std::endl;
     }
     
-    if(m_f_desired_velocity_Z >= 20){
-        m_f_desired_velocity_Z=20;
+    if(m_f_desired_velocity_Z >= 15){
+        m_f_desired_velocity_Z=5;
         std::cout <<  "Z Direction Controller Input too Fast!!!" << std::endl;
     }
-    else if (m_f_desired_velocity_Z <= -20){
-        m_f_desired_velocity_Z=-20;
+    else if (m_f_desired_velocity_Z <= -15){
+        m_f_desired_velocity_Z=-5;
         std::cout <<  "Z Direction Controller Input too Fast!!!" << std::endl;
     }
 
@@ -267,7 +267,7 @@ void run::canOpen()  //CAN_Write()
     
     while(1)
     {
-        std::cout << "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"<<std::endl;
+        //std::cout << "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"<<std::endl;
         uint16_t uint16_data = 0;
         uint32_t uint32_data = 0;
         //PDO 0x201
@@ -384,22 +384,7 @@ void run::canOpen()  //CAN_Write()
         
         usleep(20000);  //20 ms
 
-        std::cout << "Robot Frame Value"<<std::endl;
-        std::cout <<  "     pos_x: " << mRobot.pos_x <<std::endl<<std::endl;
-        std::cout <<  "     pos_y: " << mRobot.pos_y <<std::endl<<std::endl;
-        std::cout <<  "     pos_z: " << mRobot.pos_z <<std::endl<<std::endl;
-
-        mRobot.deadReckon();
-        std::cout << "Global Frame Value"<<std::endl;
-        std::cout <<  "     World_x: " << mRobot.pos_x_global <<std::endl<<std::endl;
-        std::cout <<  "     World_y: " << mRobot.pos_y_global <<std::endl<<std::endl;
-        std::cout <<  "     World_theta: " << mRobot.theta_global <<std::endl<<std::endl;
-
-        mRobot.pos_sensor_correct();
-        std::cout << "Correct Position Value"<<std::endl;
-        std::cout <<  "     Correct_x: " << mRobot.pos_x_correct <<std::endl<<std::endl;
-        std::cout <<  "     Correct_y: " << mRobot.pos_y_correct <<std::endl<<std::endl;
-        std::cout <<  "     Correct_theta: " << mRobot.pos_z_correct <<std::endl<<std::endl;
+        
         
         
     }
@@ -419,6 +404,24 @@ void run::canReadData(){
 
             getVelocityValue();
             getPositionValue();
+
+            // // data processing
+            // std::cout << "Robot Frame Value"<<std::endl;
+            // std::cout <<  "     pos_x: " << mRobot.pos_x <<std::endl<<std::endl;
+            // std::cout <<  "     pos_y: " << mRobot.pos_y <<std::endl<<std::endl;
+            // std::cout <<  "     pos_z: " << mRobot.pos_z <<std::endl<<std::endl;
+
+            // mRobot.deadReckon();
+            // std::cout << "Global Frame Value"<<std::endl;
+            // std::cout <<  "     World_x: " << mRobot.pos_x_global <<std::endl<<std::endl;
+            // std::cout <<  "     World_y: " << mRobot.pos_y_global <<std::endl<<std::endl;
+            // std::cout <<  "     World_theta: " << mRobot.theta_global <<std::endl<<std::endl;
+
+            mRobot.pos_sensor_correct();
+            // std::cout << "Correct Position Value"<<std::endl;
+            // std::cout <<  "     Correct_x: " << mRobot.pos_x_correct <<std::endl<<std::endl;
+            // std::cout <<  "     Correct_y: " << mRobot.pos_y_correct <<std::endl<<std::endl;
+            // std::cout <<  "     Correct_theta: " << mRobot.pos_z_correct <<std::endl<<std::endl;
             
             //usleep(20000); //20 ms
          }
@@ -457,8 +460,8 @@ void run::getVelocityValue(){
         mRobot.vel_z = z_vel;
 
         mRobot.controlInput_x_vel = x_vel;
-    mRobot.controlInput_y_vel = y_vel;
-    mRobot.controlInput_z_vel = z_vel;
+        mRobot.controlInput_y_vel = y_vel;
+        mRobot.controlInput_z_vel = z_vel;
 
 
 
@@ -489,14 +492,14 @@ void run::getPositionValue(){
         int32_t y_pos = static_cast<uint32_t>(m_pcanMsg_listen.DATA[4]) | static_cast<uint32_t>(m_pcanMsg_listen.DATA[5]<<8)\
                             |static_cast<uint32_t>(m_pcanMsg_listen.DATA[6])<<16 | static_cast<uint32_t>(m_pcanMsg_listen.DATA[7]<<24);
         //    std::cout << "y_pos: ";
-        std::cout << "-----POS-----POS-----POS-----POS-----POS-----POS-----" << std::endl;   
-        std::cout << std::dec << y_pos << std::endl;
+        //std::cout << "-----POS-----POS-----POS-----POS-----POS-----POS-----" << std::endl;   
+        //std::cout << std::dec << y_pos << std::endl;
 
-        mRobot.pos_x = x_pos;
-        mRobot.pos_y = y_pos;   
+        // mRobot.pos_x = x_pos;
+        // mRobot.pos_y = y_pos;   
 
-        // mRobot.pos_x = x_pos-mRobot.originPos_x;
-        // mRobot.pos_y = y_pos-mRobot.originPos_y; 
+        mRobot.pos_x = x_pos-mRobot.originPos_x;
+        mRobot.pos_y = y_pos-mRobot.originPos_y; 
 
     } //if(m_pcanMsg_listen.ID == 0x1A1)
 
