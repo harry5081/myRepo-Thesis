@@ -2,16 +2,20 @@
 #include <vector>
 #include <iostream>
 #include <thread>
+#include <math.h>
 #include "../matplotlib-cpp-master/matplotlibcpp.h"
 
 //g++ -o plot.out plotThreeDyn.cpp -I/usr/include/python2.7 /lib/x86_64-linux-gnu/libpthread.so.0 -lpython2.7
 
+
+#define PI 3.14159265
 
 template<class T> void readFileToVector(std::string fileName, std::vector<T> &data);
 void windowSizeControl();
 void plotX();
 void plot(std::string CAN_Write_Time, std::string CAN_Write_Data, std::string CAN_Read_Time, std::string CAN_Read_Data);
 void intp();
+void plotTheta();
 
 int wSize = 20;
 
@@ -66,6 +70,7 @@ std::vector<float> PosY_cor;
 
 
 bool intp_button = false;
+bool show_angle_button = false;
 
 
 
@@ -75,7 +80,7 @@ namespace plt = matplotlibcpp;
 int main() {
     std::cout<<" Start Read File and Plot"<<std::endl;
 
-
+    
     std::thread plot_thread(&plotX);
     std::thread intp_thread(&intp);
  
@@ -83,6 +88,8 @@ int main() {
  
     plot_thread.join();
     intp_thread.join();
+
+    
   
     return 0;
 }
@@ -136,18 +143,60 @@ void intp(){
 
         if(temp == 's'){
             intp_button = true;
+            show_angle_button = false;
         }
 
         else if(temp == 'c'){
             intp_button = false;
+            show_angle_button = false;
         }
+        else if(temp == 'a'){
+            show_angle_button = true;
+            return;
+        }
+        
+        
 
         sleep(1);
     }
 
+    
+
 }
     
 
+void plotTheta(){
+    
+    readFileToVector("../build/plot/CAN_Read_Data_PosX_Correct", PosX_cor);
+    readFileToVector("../build/plot/CAN_Read_Data_PosY_Correct", PosY_cor);
+    readFileToVector("../build/plot/CAN_Read_Data_PosZ", canReadData_PosZ_temp);
+    
+    
+    std::vector<float> xPoint;
+    std::vector<float> yPoint;
+    std::vector<float> xDir;
+    std::vector<float> yDir;
+    
+    for(int i=0; i<canReadData_PosZ_temp.size(); ){
+        xDir.push_back(1*cos(canReadData_PosZ_temp[i]* PI / 180.0));
+        yDir.push_back(1*sin(canReadData_PosZ_temp[i]* PI / 180.0));
+        
+        xPoint.push_back(PosX_cor[i]);
+        yPoint.push_back(PosY_cor[i]);
+        
+        i=i+30;
+
+    }
+    
+    plt::figure(4);
+    plt::grid();
+    plt::xlim(-200, 200);
+    plt::ylim(-200, 200);
+    plt::plot(PosY_cor, PosX_cor);
+    plt::quiver(yPoint, xPoint, yDir, xDir);
+    plt::show();
+
+}
 void plotX(){
     
     ///////////////////////////     velocity part     ///////////////////////////
@@ -221,9 +270,14 @@ void plotX(){
     plt::Plot plot_map("Global Map",PosY_cor,PosX_cor,"k"); 
     plt::title("Global Map");
     plt::grid();
+
+    
+    
+    
   
 
     while(true){
+        
         if(intp_button==false){
         
         /////////////////////////////////////////////////////////////////////////////
@@ -535,8 +589,15 @@ void plotX(){
         
 
         }//if(intp_button==false)
-        
+
+        if(show_angle_button){
+            plotTheta();
+            return;
+        }
+      
     }//while(true)
+
+    
 
 }
 
