@@ -1,8 +1,10 @@
 #include <fstream>
 #include <vector>
 #include <iostream>
+#include <stdlib.h>
 #include <thread>
 #include <math.h>
+#include <cmath>
 #include "../matplotlib-cpp-master/matplotlibcpp.h"
 
 //g++ -o plot.out plotThreeDyn.cpp -I/usr/include/python2.7 /lib/x86_64-linux-gnu/libpthread.so.0 -lpython2.7
@@ -176,15 +178,63 @@ void plotTheta(){
     std::vector<float> yPoint;
     std::vector<float> xDir;
     std::vector<float> yDir;
+
+    float posX_cur, posY_cur, posZ_cur;
+    float posX_pre, posY_pre, posZ_pre;
+    float disDiff;
+    float angDiff;
     
-    for(int i=0; i<canReadData_PosZ_temp.size(); ){
-        xDir.push_back(1*cos(canReadData_PosZ_temp[i]* PI / 180.0));
-        yDir.push_back(1*sin(canReadData_PosZ_temp[i]* PI / 180.0));
+    for(int i=0; i<canReadData_PosZ_temp.size(); i++){
         
-        xPoint.push_back(PosX_cor[i]);
-        yPoint.push_back(PosY_cor[i]);
+        posX_cur = PosX_cor[i];
+        posY_cur = PosY_cor[i];
+        posZ_cur = canReadData_PosZ_temp[i];
+
+        disDiff = sqrt(pow(posX_cur-posX_pre,2) + pow(posY_cur-posY_pre,2));
+        angDiff = abs(posZ_cur-posZ_pre);
+
+        if(i==0){
+            xDir.push_back(1*cos(canReadData_PosZ_temp[i]* PI / 180.0));
+            yDir.push_back(1*sin(canReadData_PosZ_temp[i]* PI / 180.0));
         
-        i=i+30;
+            xPoint.push_back(PosX_cor[i]);
+            yPoint.push_back(PosY_cor[i]);
+
+            posX_pre = posX_cur;
+            posY_pre = posY_cur;
+            posZ_pre = posZ_cur;
+
+        }
+
+        else if(angDiff>=3 || disDiff>50){
+            xDir.push_back(1*cos(canReadData_PosZ_temp[i]* PI / 180.0));
+            yDir.push_back(1*sin(canReadData_PosZ_temp[i]* PI / 180.0));
+        
+            xPoint.push_back(PosX_cor[i]);
+            yPoint.push_back(PosY_cor[i]);
+
+            posX_pre = posX_cur;
+            posY_pre = posY_cur;
+            posZ_pre = posZ_cur;
+
+        }
+
+        else if( i==canReadData_PosZ_temp.size()-1)
+        {
+            xDir.push_back(1*cos(canReadData_PosZ_temp[i]* PI / 180.0));
+            yDir.push_back(1*sin(canReadData_PosZ_temp[i]* PI / 180.0));
+        
+            xPoint.push_back(PosX_cor[i]);
+            yPoint.push_back(PosY_cor[i]);
+
+        }
+
+        
+
+        
+        
+        
+        
 
     }
     

@@ -120,8 +120,8 @@ void run::start()
     //std::cout << "Robot Frame Value"<<std::endl;
     //std::cout <<  "vel_x: " << mRobot.vel_x <<  "     pos_x: " << mRobot.pos_x <<std::endl<<std::endl;   
     
-    mpc.mpcOperation(mpc.x_vel_ref, mpc.x_pos_ref, mRobot.vel_x, mRobot.pos_x_correct, mRobot.controlInput_x_vel);
-    //mpc.mpcOperation(v_ref, p_ref, v_init, p_init, v_input);
+    //mpc.mpcOperation(mpc.z_vel_ref, mpc.z_pos_ref, mRobot.vel_z, mRobot.pos_z, mRobot.controlInput_z_vel);
+    mpc.mpcOperation(v_ref, p_ref, v_init, p_init, v_input);
     mRobot.vd_x = mpc.x_vel_demand;
     mRobot.pd_x = mpc.x_pos_demand;
     
@@ -157,8 +157,8 @@ void run::start()
 
     //int PID::pidExe(float posError, int velDemand, float velError)
     m_int16_desired_velocity_X = pid_x.pidExe(mRobot.pd_x-mRobot.pos_x_correct, mRobot.vd_x, mRobot.vd_x-mRobot.vel_x);
-    //m_int16_desired_velocity_Y = pid_y.pidExe(mRobot.pd_y-mRobot.pos_y_correct, mRobot.vd_y, mRobot.vd_y-mRobot.vel_y);
-    //m_f_desired_velocity_Z = pid_z.pidExeAngle(mRobot.pd_z-mRobot.pos_z,mRobot.vd_z,mRobot.vd_z-mRobot.vel_z);
+    m_int16_desired_velocity_Y = pid_y.pidExe(mRobot.pd_y-mRobot.pos_y_correct, mRobot.vd_y, mRobot.vd_y-mRobot.vel_y);
+    m_f_desired_velocity_Z = pid_z.pidExeAngle(mRobot.pd_z-mRobot.pos_z,mRobot.vd_z,mRobot.vd_z-mRobot.vel_z);
     
 
     // switch(dof){

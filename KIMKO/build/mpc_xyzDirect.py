@@ -11,10 +11,11 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     kp_z = 3
     ki_z = 0
     kf_z = 1
-    kd_z = 1
+    kd_z = 0.3
     
 
     a = 0.02
+    az =0.01
     t = 0.02
 
     window = 20
@@ -68,11 +69,11 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     #h = SX([[a],[t]])
     hy = SX([[a],[0]])
 
-    Az = SX([[1-a,0],[t,1]])
+    Az = SX([[1-az,0],[t,1]])
     Bz = SX([[-kd_z,-kp_z]])
     Cz = SX([[kf_z+kd_z,kp_z]])
     #h = SX([[a],[t]])
-    hz = SX([[a],[0]])
+    hz = SX([[az],[0]])
 
     zero_22_temp = SX([[0,0],[0,0]])
     zero_02_temp = SX([[0,0]])
@@ -155,7 +156,7 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
         #v_input_temp = V_INPUT_MATRIX[:,i]
 
         #obj = obj + 1.5*i*(X[:,i+1] - P[6:12]).T @ Q @ (X[:,i+1] - P[6:12]) + V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]
-        obj = obj + 10*(X[:,i+1] - P[6:12]).T @ Q @ (X[:,i+1] - P[6:12])+ V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]+ 0.001*(control_diff.T @ control_diff)
+        obj = obj + 10*(X[:,i+1] - P[6:12]).T @ Q @ (X[:,i+1] - P[6:12])+ V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]+ 0.01*(control_diff.T @ control_diff)
 
 
         state_next_multi_shoot = X[:,i+1]

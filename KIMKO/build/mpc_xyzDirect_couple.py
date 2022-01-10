@@ -16,6 +16,7 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
 
 
     a = 0.02
+    az = 0.02
     t = 0.02
 
     window = 20
@@ -76,7 +77,7 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     Bz = SX([[-kd_z,-kp_z]])
     Cz = SX([[kf_z+kd_z,kp_z]])
     #h = SX([[a],[t]])
-    hz = SX([[a],[0]])
+    hz = SX([[az],[0]])
 
     zero_22_temp = SX([[0,0],[0,0]])
     zero_02_temp = SX([[0,0]])
@@ -99,16 +100,16 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     A = SX.zeros(6,6)
     A[0,0] = 1-a
     A[2,2] = 1-a
-    A[4,4] = 1-a
+    A[4,4] = 1-az
 
     A[1,1] = 1
     A[3,3] = 1
     A[5,5] = 1
 
-    A[1,0] = t*cos(pdz*math.pi/360)
-    A[3,0] = t*sin(pdz*math.pi/360)
-    A[1,2] = -t*sin(pdz*math.pi/360)
-    A[3,2] = t*cos(pdz*math.pi/360)
+    A[1,0] = t*cos(pz*math.pi/360)
+    A[3,0] = t*sin(pz*math.pi/360)
+    A[1,2] = -t*sin(pz*math.pi/360)
+    A[3,2] = t*cos(pz*math.pi/360)
     A[5,4] = t
 
     #A = SX(vertcat(Ax_temp, Ay_temp, Az_temp))
@@ -143,20 +144,17 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     Q[4,4]=0
     Q[5,5]=1
 
-    #print(Q)
-
     R = np.zeros((6,6))
     R[0,0]=1
     R[1,1]=1
-    #print(R)
-
+    
     R2 = np.zeros((6,6))
-    R2[0,0]=0.1
-    R2[1,1]=0.1
-    R2[2,2]=0.1
-    R2[3,3]=0.1
-    R2[4,4]=10
-    R2[5,5]=10
+    R2[0,0]=0.01
+    R2[1,1]=0.01
+    R2[2,2]=0.01
+    R2[3,3]=0.01
+    R2[4,4]=0.01
+    R2[5,5]=0.01
 
     v_input_temp = v_input_begin
 
@@ -181,7 +179,7 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
         #v_input_temp = V_INPUT_MATRIX[:,i]
 
         #obj = obj + 1.5*i*(X[:,i+1] - P[6:12]).T @ Q @ (X[:,i+1] - P[6:12]) + V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]
-        obj = obj + 10*(X[:,i+1] - P[6:12]).T @ Q @ (X[:,i+1] - P[6:12])+ V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]+ (control_diff.T @ R2 @ control_diff)
+        obj = obj + 10*(X[:,i+1] - P[6:12]).T @ Q @ (X[:,i+1] - P[6:12])+ V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]+ (control_diff.T @ R2 @control_diff)
 
         state_next_multi_shoot = X[:,i+1]
 
