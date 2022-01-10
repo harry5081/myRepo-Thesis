@@ -526,8 +526,8 @@ void plotX(){
         ///////////////////////////     Global Map    ///////////////////////////
         if(PosX_cor.size()==PosY_cor.size()){ 
             plt::figure(3);
-            plt::xlim(-200, 200);
-            plt::ylim(-200, 200);
+            plt::xlim(-400, 400);
+            plt::ylim(-400, 400);
 
             plot_map.update(PosY_cor,PosX_cor);
 

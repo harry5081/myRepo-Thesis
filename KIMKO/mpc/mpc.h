@@ -48,7 +48,7 @@ public:
     float y_pos_ref=0;
 
     float z_vel_ref=0;
-    float z_pos_ref=15;
+    float z_pos_ref=0;
     
 
     float x_vel_demand;
