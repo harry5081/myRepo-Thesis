@@ -1,7 +1,7 @@
 from casadi import *
 import numpy as np
 
-def functionTest2(v_ref=0, p_ref=100, v_init=0, p_init=0, v_input_begin=0, pre_vd=0, pre_pd=0):
+def functionTest2(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd, pre_pd):
 #def functionTest():
 
     kf=1
@@ -102,7 +102,7 @@ def functionTest2(v_ref=0, p_ref=100, v_init=0, p_init=0, v_input_begin=0, pre_v
         v_input_temp = V_INPUT_MATRIX[i]
 
         #obj = obj + 1.5*i*(X[:,i+1] - P[2:4]).T @ Q @ (X[:,i+1] - P[2:4]) + V_INPUT_MATRIX[i] **2
-        obj = obj + 10*(X[:,i+1] - P[2:4]).T @ Q @ (X[:,i+1] - P[2:4])+ V_INPUT_MATRIX[i] **2# + 0.001*(control_diff.T @ control_diff)
+        obj = obj + 10*(X[:,i+1] - P[2:4]).T @ Q @ (X[:,i+1] - P[2:4])+ V_INPUT_MATRIX[i] **2 + 0.001*(control_diff.T @ control_diff)
 
         state_next_multi_shoot = X[:,i+1]
 
