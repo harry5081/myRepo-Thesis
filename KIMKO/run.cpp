@@ -120,8 +120,8 @@ void run::start()
     //std::cout << "Robot Frame Value"<<std::endl;
     //std::cout <<  "vel_x: " << mRobot.vel_x <<  "     pos_x: " << mRobot.pos_x <<std::endl<<std::endl;   
     
-    mpc.mpcOperation(mpc.x_vel_ref, mpc.x_pos_ref, mRobot.vel_x, mRobot.pos_x_correct, mRobot.controlInput_x_vel);
-    //mpc.mpcOperation(v_ref, p_ref, v_init, p_init, v_input);
+    //mpc.mpcOperation(mpc.x_vel_ref, mpc.x_pos_ref, mRobot.vel_x, mRobot.pos_x_correct, mRobot.controlInput_x_vel);
+    mpc.mpcOperation(v_ref, p_ref, v_init, p_init, v_input);
     mRobot.vd_x = mpc.x_vel_demand;
     mRobot.pd_x = mpc.x_pos_demand;
     

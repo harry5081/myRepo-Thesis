@@ -16,7 +16,7 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
 
 
     a = 0.02
-    az = 0.02
+    az = 0.01
     t = 0.02
 
     window = 20
