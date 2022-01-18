@@ -120,18 +120,27 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
 
     Q = np.zeros((6,6))
     Q[0,0]=0
-    Q[1,1]=1
+    Q[1,1]=10
     Q[2,2]=0
-    Q[3,3]=1
+    Q[3,3]=0
     Q[4,4]=0
-    Q[5,5]=1
+    Q[5,5]=0
 
     #print(Q)
 
-    R = np.zeros((6,6))
+    R = np.zeros((3,3))
     R[0,0]=1
-    R[1,1]=1
+    R[1,1]=0
+    R[2,2]=0
     #print(R)
+
+    R2 = np.zeros((6,6))
+    R2[0,0]=0.001
+    R2[1,1]=0.001
+    R2[2,2]=0
+    R2[3,3]=0
+    R2[4,4]=0
+    R2[5,5]=0
 
     v_input_temp = v_input_begin
 
@@ -141,8 +150,6 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     #X[:,0]=P[0:2] # assign the initial state to the robot
     state_current = X[:,0]
     g = vertcat(g,state_current-P[0:6]) 
-
-
 
     for i in range(window): # fill out all prediction state within a predic horz
 
@@ -156,7 +163,7 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
         #v_input_temp = V_INPUT_MATRIX[:,i]
 
         #obj = obj + 1.5*i*(X[:,i+1] - P[6:12]).T @ Q @ (X[:,i+1] - P[6:12]) + V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]
-        obj = obj + 10*(X[:,i+1] - P[6:12]).T @ Q @ (X[:,i+1] - P[6:12])+ V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]+ 0.01*(control_diff.T @ control_diff)
+        obj = obj + (X[:,i+1] - P[6:12]).T @ Q @ (X[:,i+1] - P[6:12])+ (V_INPUT_MATRIX[:,i].T @ R @ V_INPUT_MATRIX[:,i])#+ (control_diff.T @ R2 @ control_diff)
 
 
         state_next_multi_shoot = X[:,i+1]
@@ -218,11 +225,15 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     final_state_temp = np.array([v_ref,p_ref])
     final_state = reshape(final_state_temp,6,1)
 
-    u0 = np.zeros((6,window)) # u0 used for initial guess of [vd1, pd1, vd2, pd2, vd3, pd3 ...]
-
+    #u0 = np.zeros((6,window)) # u0 used for initial guess of [vd1, pd1, vd2, pd2, vd3, pd3 ...]
+    #u0 = repmat(pre_control,window,1)
+    #u0 = repmat(final_state,window,1)
+    u0 = repmat(init_state,window,1)
 
     #init_v_input = np.array([0])
     #args["p"] = np.concatenate((init_state, final_state), axis=None)
+
+
 
     args["p"] =vertcat(init_state, final_state)
     args["x0"] = vertcat(reshape(u0,6*window,1),repmat(init_state,(window+1),1)) #initial guess of [vd1, pd1, vd2, pd2, vd3, pd3 ...]

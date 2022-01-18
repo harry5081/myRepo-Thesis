@@ -16,7 +16,7 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
 
 
     a = 0.02
-    az = 0.01
+    az = 0.02
     t = 0.02
 
     window = 20
@@ -106,10 +106,10 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     A[3,3] = 1
     A[5,5] = 1
 
-    A[1,0] = t*cos(pz*math.pi/360)
-    A[3,0] = t*sin(pz*math.pi/360)
-    A[1,2] = -t*sin(pz*math.pi/360)
-    A[3,2] = t*cos(pz*math.pi/360)
+    A[1,0] = t*cos(pz*2*math.pi/360)
+    A[3,0] = t*sin(pz*2*math.pi/360)
+    A[1,2] = -t*sin(pz*2*math.pi/360)
+    A[3,2] = t*cos(pz*2*math.pi/360)
     A[5,4] = t
 
     #A = SX(vertcat(Ax_temp, Ay_temp, Az_temp))
@@ -138,23 +138,23 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
 
     Q = np.zeros((6,6))
     Q[0,0]=0
-    Q[1,1]=1
+    Q[1,1]=10
     Q[2,2]=0
-    Q[3,3]=1
+    Q[3,3]=10
     Q[4,4]=0
-    Q[5,5]=1
+    Q[5,5]=10
 
     R = np.zeros((6,6))
     R[0,0]=1
     R[1,1]=1
     
     R2 = np.zeros((6,6))
-    R2[0,0]=0.01
-    R2[1,1]=0.01
-    R2[2,2]=0.01
-    R2[3,3]=0.01
-    R2[4,4]=0.01
-    R2[5,5]=0.01
+    R2[0,0]=0.001
+    R2[1,1]=0.001
+    R2[2,2]=0.001
+    R2[3,3]=0.001
+    R2[4,4]=0.001
+    R2[5,5]=0.001
 
     v_input_temp = v_input_begin
 
@@ -179,7 +179,7 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
         #v_input_temp = V_INPUT_MATRIX[:,i]
 
         #obj = obj + 1.5*i*(X[:,i+1] - P[6:12]).T @ Q @ (X[:,i+1] - P[6:12]) + V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]
-        obj = obj + 10*(X[:,i+1] - P[6:12]).T @ Q @ (X[:,i+1] - P[6:12])+ V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]+ (control_diff.T @ R2 @control_diff)
+        obj = obj + (X[:,i+1] - P[6:12]).T @ Q @ (X[:,i+1] - P[6:12])+ V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]+0.001*(control_current-state_current).T @(control_current-state_current) # + (control_diff.T @ R2 @control_diff)
 
         state_next_multi_shoot = X[:,i+1]
 
@@ -240,8 +240,10 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     final_state_temp = np.array([v_ref,p_ref])
     final_state = reshape(final_state_temp,6,1)
 
-    u0 = np.zeros((6,window)) # u0 used for initial guess of [vd1, pd1, vd2, pd2, vd3, pd3 ...]
-
+    #u0 = np.zeros((6,window)) # u0 used for initial guess of [vd1, pd1, vd2, pd2, vd3, pd3 ...]
+    #u0 = repmat(pre_control,window,1)
+    #u0 = repmat(final_state,window,1)
+    u0 = repmat(init_state,window,1)
 
     #init_v_input = np.array([0])
     #args["p"] = np.concatenate((init_state, final_state), axis=None)
@@ -286,16 +288,16 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     v_predichorz_update = np.zeros((1,3,window))
     v_predichorz_update[0,:,:] = VVV
 
-    np.set_printoptions(precision=2,suppress=True)
-    for i in range(1):
-        for j in range(1):
-            print("----Window Update----")
-            print("window: ", j)
-            print("state [v, p] = ",states_predichorz_update[i,:,j])
-            print("input [vd, pd] = ",u_predichorz_update[i,:,j])
-            print("v_input = ",v_predichorz_update[i,:,j])
-            print("")
-            print("")
+    # np.set_printoptions(precision=2,suppress=True)
+    # for i in range(1):
+    #     for j in range(1):
+    #         print("----Window Update----")
+    #         print("window: ", j)
+    #         print("state [v, p] = ",states_predichorz_update[i,:,j])
+    #         print("input [vd, pd] = ",u_predichorz_update[i,:,j])
+    #         print("v_input = ",v_predichorz_update[i,:,j])
+    #         print("")
+    #         print("")
 
 
     return list([u_sol[0],u_sol[1],u_sol[2],u_sol[3],u_sol[4],u_sol[5]])

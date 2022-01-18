@@ -106,10 +106,12 @@ int main(int argc, char **argv) {
     //initDemand();
       
     m_run = new run();
+
+    std::thread start_thread(&start);
         
     std::thread listen_thread(&listen);
     
-    std::thread start_thread(&start);
+    
 
     std::thread plot_thread(&writeDatatoFile);
    
