@@ -21,12 +21,12 @@
  float timeTemp;
 
 
-DOF dof =ALL_DIRECTION;
+DOF dof =X_DIRECTION;
 DRAW draw = PLOT;
 
-//PID pid_x(0,0.0,1,0.0);
+PID pid_x(3,0,0,0);
 //PID pid_x(3,0,1,0.3);
-PID pid_x(3,0,1,0.3);
+//PID pid_x(3,0,1,0.3);
 PID pid_y(3,0,1,0.3);
 //PID pid_z(3,0.01,1,1);
 PID pid_z(3,0,1,1);
@@ -121,9 +121,9 @@ void run::start()
     //std::cout <<  "vel_x: " << mRobot.vel_x <<  "     pos_x: " << mRobot.pos_x <<std::endl<<std::endl;   
     
     //mpc.mpcOperation(mpc.x_vel_ref, mpc.x_pos_ref, mRobot.vel_x, mRobot.pos_x_correct, mRobot.controlInput_x_vel);
-    mpc.mpcOperation(v_ref, p_ref, v_init, p_init, v_input);
-    mRobot.vd_x = mpc.x_vel_demand;
-    mRobot.pd_x = mpc.x_pos_demand;
+    // mpc.mpcOperation(v_ref, p_ref, v_init, p_init, v_input);
+    // mRobot.vd_x = mpc.x_vel_demand;
+    // mRobot.pd_x = mpc.x_pos_demand;
     
     
     //mRobot.pd_x = mpc.sinePosDemand(time);
@@ -131,6 +131,8 @@ void run::start()
 
     //mRobot.pd_x = mpc.sineToTenPosDemand(time);
     //mRobot.vd_x = mpc.cosToTenVelDemand(time);
+
+    mRobot.pd_x = mpc.stepPosDemand(time);
     //mRobot.vd_x = mpc.stepVelDemand(time);
 
     /////////////////////////////////////////////     Y      /////////////////////////////////////
@@ -138,16 +140,16 @@ void run::start()
     //std::cout << "Robot Value"<<std::endl;
     //std::cout <<  "vel_y: " << mRobot.vel_y <<  "     pos_y: " << mRobot.pos_y <<std::endl<<std::endl;   
     
-    mRobot.vd_y = mpc.y_vel_demand;
-    mRobot.pd_y = mpc.y_pos_demand;
+    // mRobot.vd_y = mpc.y_vel_demand;
+    // mRobot.pd_y = mpc.y_pos_demand;
     
     //mRobot.pd_y = mpc.sinePosDemand(time);
     //mRobot.vd_y = mpc.cosVelDemand(time);
 
     /////////////////////////////////////////////     Z      /////////////////////////////////////
     //std::cout <<  "vel_z: " << mRobot.vel_z <<  "     pos_z: " << mRobot.pos_z <<std::endl<<std::endl;   
-    mRobot.vd_z = mpc.z_vel_demand;
-    mRobot.pd_z = mpc.z_pos_demand;
+    // mRobot.vd_z = mpc.z_vel_demand;
+    // mRobot.pd_z = mpc.z_pos_demand;
     //mRobot.pd_z = mpc.sinePosDemand(time)/10;
     //mRobot.vd_z = mpc.cosVelDemand(time)/10;
     
@@ -157,8 +159,8 @@ void run::start()
 
     //int PID::pidExe(float posError, int velDemand, float velError)
     m_int16_desired_velocity_X = pid_x.pidExe(mRobot.pd_x-mRobot.pos_x_correct, mRobot.vd_x, mRobot.vd_x-mRobot.vel_x);
-    m_int16_desired_velocity_Y = pid_y.pidExe(mRobot.pd_y-mRobot.pos_y_correct, mRobot.vd_y, mRobot.vd_y-mRobot.vel_y);
-    m_f_desired_velocity_Z = pid_z.pidExeAngle(mRobot.pd_z-mRobot.pos_z,mRobot.vd_z,mRobot.vd_z-mRobot.vel_z);
+    //m_int16_desired_velocity_Y = pid_y.pidExe(mRobot.pd_y-mRobot.pos_y_correct, mRobot.vd_y, mRobot.vd_y-mRobot.vel_y);
+    //m_f_desired_velocity_Z = pid_z.pidExeAngle(mRobot.pd_z-mRobot.pos_z,mRobot.vd_z,mRobot.vd_z-mRobot.vel_z);
     
 
     // switch(dof){
@@ -194,7 +196,7 @@ void run::start()
     
 
     //ensure controller input security
-    if(m_int16_desired_velocity_X > 280){
+    if(m_int16_desired_velocity_X > 320){
         m_int16_desired_velocity_X=100;
         std::cout <<  "X Direction Controller Input too Fast!!!" << std::endl;
     }
@@ -459,12 +461,7 @@ void run::getVelocityValue(){
         mRobot.vel_y = y_vel;
         mRobot.vel_z = z_vel;
 
-        mRobot.controlInput_x_vel = x_vel;
-        mRobot.controlInput_y_vel = y_vel;
-        mRobot.controlInput_z_vel = z_vel;
-
-
-
+        
         if(draw == PLOT){
             // canReadTimePlot_X->writeDatatoFile((float)clock()/CLOCKS_PER_SEC, "plot/CAN_Read_Time");
             

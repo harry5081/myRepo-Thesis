@@ -107,9 +107,10 @@ int main(int argc, char **argv) {
       
     m_run = new run();
 
-    std::thread start_thread(&start);
+    
         
     std::thread listen_thread(&listen);
+    std::thread start_thread(&start);
     
     
 
@@ -131,7 +132,7 @@ int main(int argc, char **argv) {
 
 void  start()
 {   
-    pybind11::scoped_interpreter guard{};
+    //pybind11::scoped_interpreter guard{};
     while(1)
     {
         m_run->start();
