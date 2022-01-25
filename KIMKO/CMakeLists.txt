@@ -26,6 +26,12 @@ target_link_libraries(kimko PRIVATE plant)
 add_subdirectory(mpc)
 target_link_libraries(kimko PRIVATE mpc)
 
+add_subdirectory(leader)
+target_link_libraries(kimko PRIVATE leader)
+
+add_subdirectory(traj_plan)
+target_link_libraries(kimko PRIVATE traj_plan)
+
 
 
 

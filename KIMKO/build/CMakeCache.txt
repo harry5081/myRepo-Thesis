@@ -203,6 +203,9 @@ kimko_BINARY_DIR:STATIC=/home/kimko/myRepo-Thesis/KIMKO/build
 kimko_SOURCE_DIR:STATIC=/home/kimko/myRepo-Thesis/KIMKO
 
 //Dependencies for target
+leader_LIB_DEPENDS:STATIC=
+
+//Dependencies for target
 mpc_LIB_DEPENDS:STATIC=
 
 //Dependencies for target
@@ -216,6 +219,9 @@ plot_LIB_DEPENDS:STATIC=
 
 //The directory containing a CMake configuration file for pybind11.
 pybind11_DIR:PATH=/home/kimko/miniconda3/share/cmake/pybind11
+
+//Dependencies for target
+traj_plan_LIB_DEPENDS:STATIC=
 
 
 ########################
@@ -316,7 +322,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=5
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=7
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP
@@ -358,9 +364,9 @@ CMAKE_UNAME:INTERNAL=/bin/uname
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 //Details about finding PYTHON
-FIND_PACKAGE_MESSAGE_DETAILS_PYTHON:INTERNAL=/home/kimko/miniconda3/bin/python3.7.10
+FIND_PACKAGE_MESSAGE_DETAILS_PYTHON:INTERNAL=/home/kimko/miniconda3/bin/python3.7.12
 //Details about finding PythonInterp
-FIND_PACKAGE_MESSAGE_DETAILS_PythonInterp:INTERNAL=[/home/kimko/miniconda3/bin/python][v3.7.10()]
+FIND_PACKAGE_MESSAGE_DETAILS_PythonInterp:INTERNAL=[/home/kimko/miniconda3/bin/python][v3.7.12()]
 //Details about finding PythonLibs
 FIND_PACKAGE_MESSAGE_DETAILS_PythonLibs:INTERNAL=[/usr/lib/x86_64-linux-gnu/libpython3.6m.so][/usr/include/python3.6m][v3.6.9()]
 //Test HAS_FLTO
@@ -378,7 +384,7 @@ PYTHON_LIBRARY-ADVANCED:INTERNAL=1
 PYTHON_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
 PYTHON_MODULE_EXTENSION:INTERNAL=.cpython-37m-x86_64-linux-gnu.so
 PYTHON_MODULE_PREFIX:INTERNAL=
-PYTHON_VERSION:INTERNAL=3.7.10
+PYTHON_VERSION:INTERNAL=3.7.12
 PYTHON_VERSION_MAJOR:INTERNAL=3
 PYTHON_VERSION_MINOR:INTERNAL=7
 Python_ADDITIONAL_VERSIONS:INTERNAL=3.9;3.8;3.7;3.6;3.5;3.4

@@ -221,6 +221,32 @@ mpc/fast:
 	$(MAKE) -f mpc/CMakeFiles/mpc.dir/build.make mpc/CMakeFiles/mpc.dir/build
 .PHONY : mpc/fast
 
+#=============================================================================
+# Target rules for targets named leader
+
+# Build rule for target.
+leader: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 leader
+.PHONY : leader
+
+# fast build rule for target.
+leader/fast:
+	$(MAKE) -f leader/CMakeFiles/leader.dir/build.make leader/CMakeFiles/leader.dir/build
+.PHONY : leader/fast
+
+#=============================================================================
+# Target rules for targets named traj_plan
+
+# Build rule for target.
+traj_plan: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 traj_plan
+.PHONY : traj_plan
+
+# fast build rule for target.
+traj_plan/fast:
+	$(MAKE) -f traj_plan/CMakeFiles/traj_plan.dir/build.make traj_plan/CMakeFiles/traj_plan.dir/build
+.PHONY : traj_plan/fast
+
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -292,6 +318,8 @@ help:
 	@echo "... pid"
 	@echo "... plant"
 	@echo "... mpc"
+	@echo "... leader"
+	@echo "... traj_plan"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

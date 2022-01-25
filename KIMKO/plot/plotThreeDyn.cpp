@@ -21,6 +21,13 @@ void plotTheta();
 
 int wSize = 20;
 
+std::vector<float> leader_posx_temp;
+std::vector<float> leader_posy_temp;
+
+std::vector<float> planner_posx_temp;
+std::vector<float> planner_posy_temp;
+
+
 std::vector<float> posRef_Time_temp;
 std::vector<float> posRef_X_temp;
 std::vector<float> posRef_Y_temp;
@@ -318,6 +325,8 @@ void plotX(){
     // plt::plot(PosY_cor,PosX_cor,{{"label", "f(x)"}});
     // sleep(5);
     plt::Plot plot_map("Global Map",PosY_cor,PosX_cor,"k"); 
+    plt::Plot plot_map_leader("Leader",leader_posy_temp,leader_posx_temp,"m"); 
+    plt::Plot plot_map_planner("Planner",planner_posy_temp,planner_posx_temp,"b");
     plt::title("Global Map");
     plt::grid();
 
@@ -463,6 +472,13 @@ void plotX(){
         ///////////////////////////     position part     ///////////////////////////
         /////////////////////////////////////////////////////////////////////////////
 
+        readFileToVector("../build/plot/0_Leader_posx", leader_posx_temp);
+        readFileToVector("../build/plot/0_Leader_posy", leader_posy_temp);
+
+        readFileToVector("../build/plot/1_Planner_posx", planner_posx_temp);
+        readFileToVector("../build/plot/1_Planner_posy", planner_posy_temp);
+
+
         readFileToVector("../build/plot/PosDemand_Time", posDemand_Time_temp);
         readFileToVector("../build/plot/PosDemand_Data_X", posDemand_X_temp);
         readFileToVector("../build/plot/PosDemand_Data_Y", posDemand_Y_temp);
@@ -581,9 +597,28 @@ void plotX(){
 
             plot_map.update(PosY_cor,PosX_cor);
 
+            if(leader_posx_temp.size()== leader_posy_temp.size()){
+
+                plot_map_leader.update(leader_posy_temp,leader_posx_temp);
+            }
+
+            if(planner_posx_temp.size()== planner_posy_temp.size()){
+
+                plot_map_planner.update(planner_posy_temp,planner_posx_temp);
+            }
+
         }
 
         //plt::pause(0.05);
+
+
+        leader_posx_temp.clear();
+        leader_posy_temp.clear();
+
+        planner_posx_temp.clear();
+        planner_posy_temp.clear();
+
+
 
         //ref_vel
         velRef_Time_temp.clear();

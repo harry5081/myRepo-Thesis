@@ -1,0 +1,2 @@
+/usr/bin/ar qc libtraj_plan.a  CMakeFiles/traj_plan.dir/traj_plan.cpp.o
+/usr/bin/ranlib libtraj_plan.a

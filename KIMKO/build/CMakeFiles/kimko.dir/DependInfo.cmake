@@ -17,6 +17,8 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "../pid"
   "../controlPlant"
   "../mpc"
+  "../leader"
+  "../traj_plan"
   )
 
 # Targets to which this target links.
@@ -25,6 +27,8 @@ set(CMAKE_TARGET_LINKED_INFO_FILES
   "/home/kimko/myRepo-Thesis/KIMKO/build/pid/CMakeFiles/pid.dir/DependInfo.cmake"
   "/home/kimko/myRepo-Thesis/KIMKO/build/controlPlant/CMakeFiles/plant.dir/DependInfo.cmake"
   "/home/kimko/myRepo-Thesis/KIMKO/build/mpc/CMakeFiles/mpc.dir/DependInfo.cmake"
+  "/home/kimko/myRepo-Thesis/KIMKO/build/leader/CMakeFiles/leader.dir/DependInfo.cmake"
+  "/home/kimko/myRepo-Thesis/KIMKO/build/traj_plan/CMakeFiles/traj_plan.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

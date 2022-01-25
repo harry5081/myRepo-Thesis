@@ -3,6 +3,7 @@
 
 #include "pid.h"
 #include "mpc.h"
+#include "traj_plan.h"
 
 
 #include "PCANBasic.h"
@@ -35,9 +36,14 @@ public:
 
     PLANT mRobot;
     MPC mpc;
+    PLANNER planner;
+    
+   
 
     bool velButton;
     bool posButton;
+
+    bool runPlotButton = false;
 
     
 
@@ -68,5 +74,7 @@ private:
         tagTPCANMsg m_pcanMsg_writeTime;
         
 };
+
+
 
 #endif

@@ -5,6 +5,7 @@
 //#include "pid.h"
 #include "controlPlant.h"
 #include "readWritePlot.h"
+#include "leader.h"
 
 
 
@@ -12,6 +13,18 @@
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
+// leader
+//ReadWritePlot *leader_Plot_time = new ReadWritePlot;
+ReadWritePlot *leader_Plot_PosX = new ReadWritePlot;
+ReadWritePlot *leader_Plot_PosY = new ReadWritePlot;
+
+// planner
+//ReadWritePlot *leader_Plot_time = new ReadWritePlot;
+ReadWritePlot *planner_Plot_PosX = new ReadWritePlot;
+ReadWritePlot *planner_Plot_PosY = new ReadWritePlot;
+
+
+
 // ref
 ReadWritePlot *ref_Plot_Vel_time = new ReadWritePlot;
 ReadWritePlot *ref_Plot_Pos_time = new ReadWritePlot;
@@ -91,10 +104,14 @@ ReadWritePlot *canReadDataPlot_PosY_cor = new ReadWritePlot;
 
 
 run *m_run;
+LEADER leader;
+void virtualLeader();
+
 void start();
 void listen();
 
 void writeDatatoFile();
+void plotLeaderTraject();
 
 
 //std::shared_ptr<std::thread> start_thread;
@@ -104,20 +121,24 @@ int main(int argc, char **argv) {
         
     std::cout << "Hello, world!..." << std::endl;
     //initDemand();
-      
+    
+    
+    std::thread leader_thread(&virtualLeader);
+    
+    
+   
     m_run = new run();
+    
+    
 
     
-        
     std::thread listen_thread(&listen);
     std::thread start_thread(&start);
-    
-    
-
     std::thread plot_thread(&writeDatatoFile);
+    
    
 
-
+    leader_thread.join();
     plot_thread.join();
     start_thread.join();
     listen_thread.join();
@@ -130,12 +151,23 @@ int main(int argc, char **argv) {
     return 0;
 }
 
+void virtualLeader(){
+
+    std::cout << "Hello leader" << std::endl;
+    std::thread leader_plot(&plotLeaderTraject);
+    leader.cir_traject_init();
+    
+}
+
 void  start()
 {   
-    //pybind11::scoped_interpreter guard{};
+    pybind11::scoped_interpreter guard{};
     while(1)
     {
+        m_run->planner.s=leader.s_current;
         m_run->start();
+       
+        
         
     }
 }
@@ -144,7 +176,7 @@ void listen()
 {
     std::cout << "Start Listening to CAN" << std::endl;
 
-    //sleep(3);
+    //
 
     while(1)
     {
@@ -153,6 +185,18 @@ void listen()
         
     }
     
+}
+
+void plotLeaderTraject(){
+    while(1)
+    {
+        //leader_Plot_time->writeDatatoFile(time, "plot/       ");
+        leader_Plot_PosX->writeDatatoFile(leader.xs, "plot/0_Leader_posx");
+        leader_Plot_PosY->writeDatatoFile(leader.ys, "plot/0_Leader_posy");
+        usleep(5000);
+
+    }
+
 }
 
 
@@ -164,8 +208,19 @@ void writeDatatoFile()
     {
         float time = (float)clock()/CLOCKS_PER_SEC;
 
+        //for(int i=0;i<m_run->planner.pos_ref.size();i++){
+            
+            planner_Plot_PosX->writeDatatoFile(m_run->planner.pos_ref[0][0], "plot/1_Planner_posx");
+            planner_Plot_PosY->writeDatatoFile(m_run->planner.pos_ref[0][1], "plot/1_Planner_posy");
+
+        //}
+        
+
+
+        
         //ref
         ref_Plot_Vel_time->writeDatatoFile(time, "plot/VelRef_Time");
+        
         ref_Plot_VelX->writeDatatoFile(m_run->mpc.x_vel_ref, "plot/VelRef_Data_X");
         ref_Plot_VelY->writeDatatoFile(m_run->mpc.y_vel_ref, "plot/VelRef_Data_Y");
         ref_Plot_VelZ->writeDatatoFile(m_run->mpc.z_vel_ref, "plot/VelRef_Data_Z");
@@ -176,16 +231,16 @@ void writeDatatoFile()
         ref_Plot_PosZ->writeDatatoFile(m_run->mpc.z_pos_ref, "plot/PosRef_Data_Z");
 
 
-        // vd  pd
-         vd_Plot_Vel_time->writeDatatoFile(time, "plot/VelDemand_Time");
-         vd_Plot_VelX->writeDatatoFile(m_run->mRobot.vd_x, "plot/VelDemand_Data_X");
-         vd_Plot_VelY->writeDatatoFile(m_run->mRobot.vd_y, "plot/VelDemand_Data_Y");
-         vd_Plot_VelZ->writeDatatoFile(m_run->mRobot.vd_z, "plot/VelDemand_Data_Z");
+        // // vd  pd
+        vd_Plot_Vel_time->writeDatatoFile(time, "plot/VelDemand_Time");
+        vd_Plot_VelX->writeDatatoFile(m_run->mRobot.vd_x, "plot/VelDemand_Data_X");
+        vd_Plot_VelY->writeDatatoFile(m_run->mRobot.vd_y, "plot/VelDemand_Data_Y");
+        vd_Plot_VelZ->writeDatatoFile(m_run->mRobot.vd_z, "plot/VelDemand_Data_Z");
 
-         pd_Plot_Pos_time->writeDatatoFile(time, "plot/PosDemand_Time");
-         pd_Plot_PosX->writeDatatoFile(m_run->mRobot.pd_x, "plot/PosDemand_Data_X");
-         pd_Plot_PosY->writeDatatoFile(m_run->mRobot.pd_y, "plot/PosDemand_Data_Y");
-         pd_Plot_PosZ->writeDatatoFile(m_run->mRobot.pd_z, "plot/PosDemand_Data_Z");
+        pd_Plot_Pos_time->writeDatatoFile(time, "plot/PosDemand_Time");
+        pd_Plot_PosX->writeDatatoFile(m_run->mRobot.pd_x, "plot/PosDemand_Data_X");
+        pd_Plot_PosY->writeDatatoFile(m_run->mRobot.pd_y, "plot/PosDemand_Data_Y");
+        pd_Plot_PosZ->writeDatatoFile(m_run->mRobot.pd_z, "plot/PosDemand_Data_Z");
 
         // std::cout << m_run->mRobot.ref_pos_x << std::endl;
 
@@ -221,11 +276,13 @@ void writeDatatoFile()
             canReadDataPlot_PosX_cor->writeDatatoFile(m_run->mRobot.pos_x_correct, "plot/CAN_Read_Data_PosX_Correct");
             canReadDataPlot_PosY_cor->writeDatatoFile(m_run->mRobot.pos_y_correct, "plot/CAN_Read_Data_PosY_Correct");
 
-             canReadTimePlot_PosZ->writeDatatoFile((float)clock()/CLOCKS_PER_SEC, "plot/CAN_Read_Time_PosZ");   
+            canReadTimePlot_PosZ->writeDatatoFile((float)clock()/CLOCKS_PER_SEC, "plot/CAN_Read_Time_PosZ");   
             canReadDataPlot_PosZ->writeDatatoFile(m_run->mRobot.pos_z, "plot/CAN_Read_Data_PosZ");
 
 
 
+        
+        
             usleep(20000);
         
         

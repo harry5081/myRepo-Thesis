@@ -8,6 +8,14 @@
 
 ../controlPlant/controlPlant.h
 
+../leader/leader.h
+vector
+-
+unistd.h
+-
+iostream
+-
+
 ../mpc/mpc.h
 vector
 -
@@ -40,6 +48,16 @@ stdio.h
 iostream
 -
 fstream
+-
+
+../traj_plan/traj_plan.h
+../leader/leader.h
+../leader/leader.h
+vector
+-
+math.h
+-
+time.h
 -
 
 /home/kimko/miniconda3/include/pybind11/attr.h
@@ -217,6 +235,8 @@ controlPlant.h
 /home/kimko/myRepo-Thesis/KIMKO/controlPlant.h
 readWritePlot.h
 /home/kimko/myRepo-Thesis/KIMKO/readWritePlot.h
+leader.h
+/home/kimko/myRepo-Thesis/KIMKO/leader.h
 
 /home/kimko/myRepo-Thesis/KIMKO/matplotlib-cpp-master/matplotlibcpp.h
 algorithm
@@ -275,6 +295,8 @@ pid.h
 /home/kimko/myRepo-Thesis/KIMKO/pid.h
 mpc.h
 /home/kimko/myRepo-Thesis/KIMKO/mpc.h
+traj_plan.h
+/home/kimko/myRepo-Thesis/KIMKO/traj_plan.h
 PCANBasic.h
 /home/kimko/myRepo-Thesis/KIMKO/PCANBasic.h
 unistd.h

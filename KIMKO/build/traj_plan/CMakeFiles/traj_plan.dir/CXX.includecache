@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/kimko/myRepo-Thesis/KIMKO/leader/leader.h
+vector
+-
+unistd.h
+-
+iostream
+-
+
+/home/kimko/myRepo-Thesis/KIMKO/traj_plan/traj_plan.cpp
+traj_plan.h
+/home/kimko/myRepo-Thesis/KIMKO/traj_plan/traj_plan.h
+vector
+-
+
+/home/kimko/myRepo-Thesis/KIMKO/traj_plan/traj_plan.h
+../leader/leader.h
+/home/kimko/myRepo-Thesis/KIMKO/leader/leader.h
+vector
+-
+math.h
+-
+time.h
+-
+
