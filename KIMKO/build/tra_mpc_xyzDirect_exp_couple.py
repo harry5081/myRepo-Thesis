@@ -22,8 +22,8 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     window = 20
 
 
-    # v_ref=np.array([0,0,0])
-    # p_ref=np.array([200,0,0])
+    # v_ref=np.array([[0,0,0],[0,0,0],[0,0,0]])
+    # p_ref=np.array([[5.504,32.72,0],[21.41,61.84,0],[45.97,84.15,0]])
     # v_init=np.array([0,0,0])
     # p_init=np.array([0,0,0])
     # v_input_begin=np.array([0,0,0])
@@ -148,7 +148,7 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
 
 
     U = SX.sym('U',n_controls,window) # vd,pd during a window
-    P = SX.sym('P',n_state + n_state) # initial state and reference state of the robot
+    P = SX.sym('P',n_state + window*n_state) # initial state and reference state of the robot
     X = SX.sym('X',n_state,(window+1)) # states during prediction horizontal
 
     V_INPUT_MATRIX= SX.sym('V_INPUT_MATRIX',3,window)
@@ -193,6 +193,8 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
         state_current = X[:,i]
         control_current = U[:,i]
 
+        ref_current = P[(i+1)*n_state:(i+2)*n_state]
+
         control_diff = control_current-pre_control
 
         V_INPUT_MATRIX[:,i]= v_input_f(state_current,control_current)
@@ -200,7 +202,7 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
         v_input_temp = V_INPUT_MATRIX[:,i]
 
         #obj = obj + 1.5*i*(X[:,i+1] - P[6:12]).T @ Q @ (X[:,i+1] - P[6:12]) + V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]
-        obj = obj + 10*(X[:,i+1] - P[6:12]).T @ Q @ (X[:,i+1] - P[6:12])+ V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]+ 3*v_input_dff.T @ v_input_dff# + (control_diff.T @ R2 @control_diff)
+        obj = obj + 10*(X[:,i+1] - ref_current).T @ Q @ (X[:,i+1] - ref_current)+ V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]+ 3*v_input_dff.T @ v_input_dff# + (control_diff.T @ R2 @control_diff)
 
         state_next_multi_shoot = X[:,i+1]
 
@@ -257,10 +259,11 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
 
     init_state_temp = np.array([v_init,p_init])
     init_state = reshape(init_state_temp,6,1)
-
-    final_state_temp = np.array([v_ref,p_ref])
-    final_state = reshape(final_state_temp,6,1)
-
+########################################################################################################
+    temp = int(window*n_state/2)
+    ref_state_temp = np.concatenate((np.reshape(v_ref,(-1,temp)),np.reshape(p_ref,(-1,temp))),axis=0)
+    ref_state = reshape(ref_state_temp,window*n_state,1)
+#########################################################################################################
     #u0 = np.zeros((6,window)) # u0 used for initial guess of [vd1, pd1, vd2, pd2, vd3, pd3 ...]
     #u0 = repmat(pre_control,window,1)
     #u0 = repmat(final_state,window,1)
@@ -269,7 +272,7 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     #init_v_input = np.array([0])
     #args["p"] = np.concatenate((init_state, final_state), axis=None)
 
-    args["p"] =vertcat(init_state, final_state)
+    args["p"] =vertcat(init_state, ref_state)
     args["x0"] = vertcat(reshape(u0,6*window,1),repmat(init_state,(window+1),1)) #initial guess of [vd1, pd1, vd2, pd2, vd3, pd3 ...]
 
 

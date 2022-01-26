@@ -17,11 +17,11 @@ public:
 
     LEADER leaderData;
 
-    int window = 5;
+    int window = 20;
 
     
-    std::vector< std::vector<float>> pos_ref;
-    std::vector< std::vector<float>> vel_ref;
+    std::vector<std::vector<float>> pos_ref;
+    std::vector<std::vector<float>> vel_ref;
 
     void cir_traject();
 

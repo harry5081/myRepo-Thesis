@@ -36,10 +36,10 @@ void PLANNER::cir_traject(){
         std::vector<float> point = {xt,yt,0};
         pos_ref[w] = point;
         //pos_ref.push_back(point);
-        std::cout << xt    << " "<< yt <<std::endl;
+        //std::cout << xt    << " "<< yt <<std::endl;
                
          
-        usleep(100000);
+        //usleep(100000);
 
     }
 

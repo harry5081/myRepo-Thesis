@@ -34,7 +34,7 @@ public:
 
 private:
     
-    float ds = 100;
+    float ds = 50;
 
     float s=0;
     int index =0;
@@ -43,8 +43,8 @@ private:
     
     void cir_traject();
 
-    int point_cnt=3;
-    float period =3;
+    int point_cnt=7;
+    float period =2;
     float startTime = 3;
 
 

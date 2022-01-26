@@ -325,8 +325,8 @@ void plotX(){
     // plt::plot(PosY_cor,PosX_cor,{{"label", "f(x)"}});
     // sleep(5);
     plt::Plot plot_map("Global Map",PosY_cor,PosX_cor,"k"); 
-    plt::Plot plot_map_leader("Leader",leader_posy_temp,leader_posx_temp,"m"); 
-    plt::Plot plot_map_planner("Planner",planner_posy_temp,planner_posx_temp,"b");
+    plt::Plot plot_map_leader("Leader",leader_posy_temp,leader_posx_temp,"C11"); 
+    plt::Plot plot_map_planner("Planner",planner_posy_temp,planner_posx_temp,"g");
     plt::title("Global Map");
     plt::grid();
 
