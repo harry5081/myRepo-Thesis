@@ -19,9 +19,9 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     #az = 0.01
     t = 0.02
 
-    window = 20
-
-
+    #window = 20
+    window =len(p_ref)
+    
     # v_ref=np.array([[0,0,0],[0,0,0],[0,0,0]])
     # p_ref=np.array([[5.504,32.72,0],[21.41,61.84,0],[45.97,84.15,0]])
     # v_init=np.array([0,0,0])
@@ -159,9 +159,9 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
 
     Q = np.zeros((6,6))
     Q[0,0]=0.1
-    Q[1,1]=1
+    Q[1,1]=3
     Q[2,2]=0.1
-    Q[3,3]=1
+    Q[3,3]=3
     Q[4,4]=0.1
     Q[5,5]=1
 

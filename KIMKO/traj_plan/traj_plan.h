@@ -24,6 +24,8 @@ public:
     std::vector<std::vector<float>> vel_ref;
 
     void cir_traject();
+    void cir_traject_2();
+
 
 
 
@@ -39,6 +41,8 @@ private:
     
 
     float r;
+    float w=0.3;
+    float sampleTime=0.2;
 
     
 

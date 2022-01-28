@@ -12,7 +12,7 @@ public:
     LEADER();
 
     
-    float r=200;
+    float r=100;
 
     float xs;
     float ys;
@@ -28,13 +28,17 @@ public:
     float time;
 
     float s_current;
+    int point_cnt=32;//32;
+    float period =0;
+
+    std::vector< std::vector<float>> curve;
     
 
 
 
 private:
     
-    float ds = 50;
+    float ds = 20;
 
     float s=0;
     int index =0;
@@ -42,13 +46,14 @@ private:
     
     
     void cir_traject();
+    void static_cir_traject();
 
-    int point_cnt=7;
-    float period =2;
+    
+    
     float startTime = 3;
 
 
-    std::vector< std::vector<float>> curve;
+    
     std::vector< std::vector<float>> vel_TN;
 
     

@@ -25,7 +25,7 @@ void PLANNER::cir_traject(){
 
     t_current= t+dt;
     
-    for(int w =0;w<window;w++){
+    for(int i =0;i<window;i++){
 
         t=t+dt;
        
@@ -34,7 +34,7 @@ void PLANNER::cir_traject(){
         float yt = r*-cos(t)+r;
 
         std::vector<float> point = {xt,yt,0};
-        pos_ref[w] = point;
+        pos_ref[i] = point;
         //pos_ref.push_back(point);
         //std::cout << xt    << " "<< yt <<std::endl;
                
@@ -47,6 +47,44 @@ void PLANNER::cir_traject(){
 
     
     pre_s = t_current*r;
+
+
+
+}
+
+void PLANNER::cir_traject_2(){
+    
+    std::cout << s <<std::endl;
+    dt = sampleTime;
+
+    t=t_current;
+    
+
+    for(int i =0;i<window;i++){
+
+        if((t+dt)<=s/r/w){
+            t=t+dt;
+
+        }
+        float xt = r*sin(w*t);
+        float yt = r*-cos(w*t)+r;
+
+        std::vector<float> point = {xt,yt,0};
+        pos_ref[i] = point;
+        //pos_ref.push_back(point);
+        //std::cout << xt    << " "<< yt <<std::endl;
+               
+         
+        //usleep(100000);
+
+    }
+
+    if((t_current+dt)<=s/r/w){
+            t_current=t_current+dt;
+
+    }
+
+    
 
 
 

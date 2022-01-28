@@ -188,8 +188,26 @@ void listen()
 }
 
 void plotLeaderTraject(){
+    
+
+    // all trajectory given in advance
+    if(leader.period ==0){
+        static int i_static_traject=0;
+        
+        while(i_static_traject<leader.point_cnt){
+            leader_Plot_PosX->writeDatatoFile(leader.curve[i_static_traject][0], "plot/0_Leader_posx");
+            leader_Plot_PosY->writeDatatoFile(leader.curve[i_static_traject][1], "plot/0_Leader_posy");
+            i_static_traject++;
+         }
+
+    }
+    
+
+
+    // online dynamic trajectory
     while(1)
     {
+        
         //leader_Plot_time->writeDatatoFile(time, "plot/       ");
         leader_Plot_PosX->writeDatatoFile(leader.xs, "plot/0_Leader_posx");
         leader_Plot_PosY->writeDatatoFile(leader.ys, "plot/0_Leader_posy");
@@ -208,12 +226,15 @@ void writeDatatoFile()
     {
         float time = (float)clock()/CLOCKS_PER_SEC;
 
-        //for(int i=0;i<m_run->planner.pos_ref.size();i++){
+        for(int i=0;i<m_run->planner.pos_ref.size();i++){
             
-            planner_Plot_PosX->writeDatatoFile(m_run->planner.pos_ref[0][0], "plot/1_Planner_posx");
-            planner_Plot_PosY->writeDatatoFile(m_run->planner.pos_ref[0][1], "plot/1_Planner_posy");
+            planner_Plot_PosX->writeDatatoFile(m_run->planner.pos_ref[i][0], "plot/1_Planner_posx");
+            planner_Plot_PosY->writeDatatoFile(m_run->planner.pos_ref[i][1], "plot/1_Planner_posy");
 
-        //}
+        }
+
+        planner_Plot_PosX->writeFromEnd=false;
+        planner_Plot_PosY->writeFromEnd=false;
         
 
 

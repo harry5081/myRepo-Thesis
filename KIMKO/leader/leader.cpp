@@ -29,9 +29,9 @@ void LEADER::cir_traject_init(){
         if(time>=startTime){
 
             if(time-pre_time>=period){
-            cir_traject();
             
-            pre_time = time;
+                cir_traject();
+                pre_time = time;
 
             }
 
@@ -60,6 +60,23 @@ void LEADER::cir_traject(){
         // std::cout << time <<std::endl;
         
     }
+    
+
+
+}
+
+void LEADER::static_cir_traject(){
+
+    //index = int((time-startTime)/period);
+    
+    s_current = index*ds;
+    xs =curve[index][0];
+    ys =curve[index][1];
+    index++;
+
+    // std::cout << "Leader: "<< s_current <<std::endl;
+    // std::cout << "Leader: "<< xs<<  " "<<  ys<<std::endl;
+    // std::cout << time <<std::endl;
     
 
 

@@ -108,7 +108,7 @@ void run::start()
     //std::cout << "!!!!!!!!!!!!!!!!!!!  TimeTest  !!!!!!!!!!!!!!!!!!!!!    "<< timeDiff <<std::endl;
     timeTemp=time;
 
-    planner.cir_traject();
+    planner.cir_traject_2();
     
     std::vector<std::vector<float>> v_ref_dyn = planner.vel_ref;
     std::vector<std::vector<float>> p_ref_dyn = planner.pos_ref;
@@ -131,7 +131,7 @@ void run::start()
     //mpc.mpcOperation(v_ref, p_ref, v_init, p_init, v_input); // three dimention with fix ref
     mpc.mpcOperation(v_ref_dyn, p_ref_dyn, v_init, p_init, v_input); // dyn ref
 
-
+    //usleep(200000);
 
 
 
