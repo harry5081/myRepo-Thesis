@@ -65,19 +65,3 @@ void LEADER::cir_traject(){
 
 }
 
-void LEADER::static_cir_traject(){
-
-    //index = int((time-startTime)/period);
-    
-    s_current = index*ds;
-    xs =curve[index][0];
-    ys =curve[index][1];
-    index++;
-
-    // std::cout << "Leader: "<< s_current <<std::endl;
-    // std::cout << "Leader: "<< xs<<  " "<<  ys<<std::endl;
-    // std::cout << time <<std::endl;
-    
-
-
-}

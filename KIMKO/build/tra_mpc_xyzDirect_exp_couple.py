@@ -4,6 +4,7 @@ import math
 
 def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
 
+    print(v_ref)
     kp=3
     ki=0
     kf=1
@@ -22,7 +23,7 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     #window = 20
     window =len(p_ref)
     
-    # v_ref=np.array([[0,0,0],[0,0,0],[0,0,0]])
+    #v_ref=np.array([[0,0,0],[0,0,0],[0,0,0]])
     # p_ref=np.array([[5.504,32.72,0],[21.41,61.84,0],[45.97,84.15,0]])
     # v_init=np.array([0,0,0])
     # p_init=np.array([0,0,0])
@@ -158,12 +159,12 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     g=[]
 
     Q = np.zeros((6,6))
-    Q[0,0]=0.1
-    Q[1,1]=3
-    Q[2,2]=0.1
-    Q[3,3]=3
-    Q[4,4]=0.1
-    Q[5,5]=1
+    Q[0,0]=3
+    Q[1,1]=0
+    Q[2,2]=3
+    Q[3,3]=0
+    Q[4,4]=3
+    Q[5,5]=0
 
     R = np.zeros((6,6))
     R[0,0]=1
@@ -185,8 +186,6 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     #X[:,0]=P[0:2] # assign the initial state to the robot
     state_current = X[:,0]
     g = vertcat(g,state_current-P[0:6]) 
-
-
 
     for i in range(window): # fill out all prediction state within a predic horz
 

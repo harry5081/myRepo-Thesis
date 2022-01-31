@@ -41,7 +41,7 @@ private:
     
 
     float r;
-    float w=0.3;
+    float w=0.1;
     float sampleTime=0.2;
 
     

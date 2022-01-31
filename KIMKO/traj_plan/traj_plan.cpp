@@ -35,6 +35,12 @@ void PLANNER::cir_traject(){
 
         std::vector<float> point = {xt,yt,0};
         pos_ref[i] = point;
+
+
+
+
+
+
         //pos_ref.push_back(point);
         //std::cout << xt    << " "<< yt <<std::endl;
                
@@ -66,11 +72,41 @@ void PLANNER::cir_traject_2(){
             t=t+dt;
 
         }
+        /////////////////////////////////////  pos  ////////////////////////////////////////
         float xt = r*sin(w*t);
         float yt = r*-cos(w*t)+r;
 
         std::vector<float> point = {xt,yt,0};
         pos_ref[i] = point;
+
+
+        /////////////////////////////////////  vel  ////////////////////////////////////////
+        float vt_x = r*w*cos(w*t);
+        float vt_y = r*w*sin(w*t);
+        float vt = sqrt(pow(vt_x,2)+pow(vt_y,2));
+
+        float vn_x = -r*w*sin(w*t);
+        float vn_y = r*w*cos(w*t);
+        float vn = sqrt(pow(vn_x,2)+pow(vn_y,2));
+
+        float vx=vt_x;
+        float vy=vt_y;
+
+        if((t+dt)>=s/r/w){
+            vx=0;
+            vy=0;
+        std::cout << "-----------------------------------------" <<std::endl;
+        }
+
+        std::cout << vx    << " "<< vy <<std::endl;
+
+
+        std::vector<float> vel = {vx,vy,0};
+        //std::vector<float> vel = {0,0,0};
+        vel_ref[i] = vel;
+
+
+
         //pos_ref.push_back(point);
         //std::cout << xt    << " "<< yt <<std::endl;
                

@@ -46,11 +46,10 @@ private:
     
     
     void cir_traject();
-    void static_cir_traject();
-
+   
     
     
-    float startTime = 3;
+    float startTime = 10;
 
 
     
