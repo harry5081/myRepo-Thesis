@@ -15,10 +15,10 @@ void MPC::mpcOperation(float v_ref, float p_ref, float v_init, float p_init, int
     
     float time1 = (float)clock()/CLOCKS_PER_SEC;
 
-    pybind11::module_ mpc = pybind11::module_::import("mpc_xDirect_exp_multi");
+    pybind11::module_ mpc = pybind11::module_::import("mpc_xDirect_multi_test");
     //pybind11::object result = mpc.attr("functionTest")(v_ref, p_ref, v_init, p_init, v_input_begin);//(v_ref, p_ref, v_init, p_init, v_input_begin);
     
-    pybind11::object result = mpc.attr("functionTest")(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd, pre_pd);
+    pybind11::object result = mpc.attr("functionTest2")(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd, pre_pd);
     std::vector<float> result_value = result.cast<std::vector<float>>();
 
     float time2 = (float)clock()/CLOCKS_PER_SEC;
@@ -45,7 +45,7 @@ void MPC::mpcOperation(std::vector<float> v_ref, std::vector<float> p_ref, std::
 
     float time1 = (float)clock()/CLOCKS_PER_SEC;
     
-    pybind11::module_ mpc = pybind11::module_::import("mpc_xyzDirect_exp_couple");
+    pybind11::module_ mpc = pybind11::module_::import("mpc_xyzDirect_couple");
     pybind11::object result = mpc.attr("functionTest")(v_ref, p_ref, v_init, p_init, v_input, pre_vd_pd);
     std::vector<float> result_value = result.cast<std::vector<float>>();
 

@@ -137,24 +137,24 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     g=[]
 
     Q = np.zeros((6,6))
-    Q[0,0]=0
-    Q[1,1]=10
-    Q[2,2]=0
-    Q[3,3]=10
-    Q[4,4]=0
-    Q[5,5]=10
+    Q[0,0]=1
+    Q[1,1]=0
+    Q[2,2]=1
+    Q[3,3]=0
+    Q[4,4]=1
+    Q[5,5]=0
 
     R = np.zeros((6,6))
     R[0,0]=1
     R[1,1]=1
     
     R2 = np.zeros((6,6))
-    R2[0,0]=0.001
-    R2[1,1]=0.001
-    R2[2,2]=0.001
-    R2[3,3]=0.001
-    R2[4,4]=0.001
-    R2[5,5]=0.001
+    R2[0,0]=0.01
+    R2[1,1]=0.01
+    R2[2,2]=0.01
+    R2[3,3]=0.01
+    R2[4,4]=0.01
+    R2[5,5]=0.01
 
     v_input_temp = v_input_begin
 
@@ -175,11 +175,12 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
         control_diff = control_current-pre_control
 
         V_INPUT_MATRIX[:,i]= v_input_f(state_current,control_current)
-        #v_input_dff = V_INPUT_MATRIX[:,i]- v_input_temp.T
-        #v_input_temp = V_INPUT_MATRIX[:,i]
+        v_input_dff = V_INPUT_MATRIX[:,i]- v_input_temp
+        v_input_temp = V_INPUT_MATRIX[:,i]
 
         #obj = obj + 1.5*i*(X[:,i+1] - P[6:12]).T @ Q @ (X[:,i+1] - P[6:12]) + V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]
-        obj = obj + (X[:,i+1] - P[6:12]).T @ Q @ (X[:,i+1] - P[6:12])+ V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]+0.001*(control_current-state_current).T @(control_current-state_current) # + (control_diff.T @ R2 @control_diff)
+        #obj = obj + (X[:,i+1] - P[6:12]).T @ Q @ (X[:,i+1] - P[6:12])+ V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]+0.001*(control_current-state_current).T @(control_current-state_current) # + (control_diff.T @ R2 @control_diff)
+        obj = obj + 10*(X[:,i+1] - P[6:12]).T @ Q @ (X[:,i+1] - P[6:12])#+ V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]+ 3*v_input_dff.T @ v_input_dff + (control_diff.T @ R2 @control_diff)
 
         state_next_multi_shoot = X[:,i+1]
 

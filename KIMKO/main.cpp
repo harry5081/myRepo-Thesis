@@ -123,7 +123,7 @@ int main(int argc, char **argv) {
     //initDemand();
     
     
-    std::thread leader_thread(&virtualLeader);
+    //std::thread leader_thread(&virtualLeader);
     
     
    
@@ -138,7 +138,7 @@ int main(int argc, char **argv) {
     
    
 
-    leader_thread.join();
+    //leader_thread.join();
     plot_thread.join();
     start_thread.join();
     listen_thread.join();
@@ -154,14 +154,14 @@ int main(int argc, char **argv) {
 void virtualLeader(){
 
     std::cout << "Hello leader" << std::endl;
-    std::thread leader_plot(&plotLeaderTraject);
+    //std::thread leader_plot(&plotLeaderTraject);
     leader.cir_traject_init();
     
 }
 
 void  start()
 {   
-    pybind11::scoped_interpreter guard{};
+    //pybind11::scoped_interpreter guard{};
     while(1)
     {
         m_run->planner.s=leader.s_current;

@@ -105,20 +105,28 @@ void run::start()
 
     float time = (float)clock()/CLOCKS_PER_SEC;
     timeDiff=time - timeTemp;
-    //std::cout << "!!!!!!!!!!!!!!!!!!!  TimeTest  !!!!!!!!!!!!!!!!!!!!!    "<< timeDiff <<std::endl;
+    std::cout << "!!!!!!!!!!!!!!!!!!!  TimeTest  !!!!!!!!!!!!!!!!!!!!!    "<< timeDiff <<std::endl;
     timeTemp=time;
 
-    planner.cir_traject_2();
+    // planner.cir_traject_2();
     
-    std::vector<std::vector<float>> v_ref_dyn = planner.vel_ref;
-    std::vector<std::vector<float>> p_ref_dyn = planner.pos_ref;
+    // std::vector<std::vector<float>> v_ref_dyn = planner.vel_ref;
+    // std::vector<std::vector<float>> p_ref_dyn = planner.pos_ref;
+
+    // mpc.x_vel_ref = planner.vel_ref[0][0];
+    // mpc.y_vel_ref = planner.vel_ref[0][1];
+
+    // mpc.x_pos_ref = planner.pos_ref[0][0];
+    // mpc.y_pos_ref = planner.pos_ref[0][1];
+
+
 
     // std::vector<float> v_ref = {mpc.x_vel_ref, mpc.y_vel_ref, mpc.z_vel_ref};
     // std::vector<float> p_ref = {mpc.x_pos_ref, mpc.y_pos_ref, mpc.z_pos_ref};
     
-    std::vector<float> v_init = {mRobot.vel_x, mRobot.vel_y, mRobot.vel_z};
-    std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, mRobot.pos_z};
-    std::vector<float> v_input = {mRobot.controlInput_x_vel, mRobot.controlInput_y_vel, mRobot.controlInput_z_vel};
+    // std::vector<float> v_init = {mRobot.vel_x, mRobot.vel_y, mRobot.vel_z};
+    // std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, mRobot.pos_z};
+    // std::vector<float> v_input = {mRobot.controlInput_x_vel, mRobot.controlInput_y_vel, mRobot.controlInput_z_vel};
     
 
     //mpc vd pd from python
@@ -129,21 +137,21 @@ void run::start()
     
     //mpc.mpcOperation(mpc.x_vel_ref, mpc.x_pos_ref, mRobot.vel_x, mRobot.pos_x_correct, mRobot.controlInput_x_vel);  // one direction
     //mpc.mpcOperation(v_ref, p_ref, v_init, p_init, v_input); // three dimention with fix ref
-    mpc.mpcOperation(v_ref_dyn, p_ref_dyn, v_init, p_init, v_input); // dyn ref
+    //mpc.mpcOperation(v_ref_dyn, p_ref_dyn, v_init, p_init, v_input); // dyn ref
 
     //usleep(200000);
 
 
 
-    mRobot.vd_x = mpc.x_vel_demand;
-    mRobot.pd_x = mpc.x_pos_demand;
+    //mRobot.vd_x = mpc.x_vel_demand;
+    //mRobot.pd_x = mpc.x_pos_demand;
     
     
     //mRobot.pd_x = mpc.sinePosDemand(time);
     //mRobot.vd_x = mpc.cosVelDemand(time);
 
-    //mRobot.pd_x = mpc.sineToTenPosDemand(time);
-    //mRobot.vd_x = mpc.cosToTenVelDemand(time);
+    
+
 
     //mRobot.pd_x = mpc.stepPosDemand(time);
     //mRobot.vd_x = mpc.stepVelDemand(time);
@@ -153,21 +161,30 @@ void run::start()
     //std::cout << "Robot Value"<<std::endl;
     //std::cout <<  "vel_y: " << mRobot.vel_y <<  "     pos_y: " << mRobot.pos_y <<std::endl<<std::endl;   
     
-    mRobot.vd_y = mpc.y_vel_demand;
-    mRobot.pd_y = mpc.y_pos_demand;
+    //mRobot.vd_y = mpc.y_vel_demand;
+    //mRobot.pd_y = mpc.y_pos_demand;
     
     //mRobot.pd_y = mpc.sinePosDemand(time);
     //mRobot.vd_y = mpc.cosVelDemand(time);
 
     /////////////////////////////////////////////     Z      /////////////////////////////////////
     //std::cout <<  "vel_z: " << mRobot.vel_z <<  "     pos_z: " << mRobot.pos_z <<std::endl<<std::endl;   
-    mRobot.vd_z = mpc.z_vel_demand;
-    mRobot.pd_z = mpc.z_pos_demand;
+    //mRobot.vd_z = mpc.z_vel_demand;
+    //mRobot.pd_z = mpc.z_pos_demand;
+    
     //mRobot.pd_z = mpc.sinePosDemand(time)/10;
     //mRobot.vd_z = mpc.cosVelDemand(time)/10;
     
     //mRobot.pd_z = mpc.sineToTenPosDemand(time)/10;
     //mRobot.vd_z = mpc.cosToTenVelDemand(time)/10;
+
+
+
+    //mRobot.pd_x = mpc.sineToTenPosDemand(time);
+    //mRobot.vd_x = mpc.cosToTenVelDemand(time);
+
+    //mRobot.pd_x = (-1)*mpc.sineToTenPosDemand(time);
+    mRobot.vd_x = (-1)*mpc.cosToTenVelDemand(time);
     
 
     //int PID::pidExe(float posError, int velDemand, float velError)

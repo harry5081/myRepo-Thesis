@@ -89,16 +89,16 @@ void PLANNER::cir_traject_2(){
         float vn_y = r*w*cos(w*t);
         float vn = sqrt(pow(vn_x,2)+pow(vn_y,2));
 
-        float vx=vt_x;
+        float vx=0;//vt_x;
         float vy=vt_y;
 
         if((t+dt)>=s/r/w){
             vx=0;
             vy=0;
-        std::cout << "-----------------------------------------" <<std::endl;
+        //std::cout << "-----------------------------------------" <<std::endl;
         }
 
-        std::cout << vx    << " "<< vy <<std::endl;
+        //std::cout << vx    << " "<< vy <<std::endl;
 
 
         std::vector<float> vel = {vx,vy,0};

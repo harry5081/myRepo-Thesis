@@ -36,7 +36,7 @@ private:
 
 public:
     float posDemand;
-    int vRef;
+    int vInput;
     float posSenValue;
 
     PID(float Kp_set, float Ki_set, float Kf_set, float Kd_set);

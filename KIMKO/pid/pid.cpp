@@ -77,7 +77,7 @@ int PID::pidExe(float posError, int velDemand, float velError){
 
     //vRef = error * Kp + errorAccumulate * Ki;
     //vRef = error * Kp + errorAccumulate * Ki + (velDemand-velSenValue)*Kd;
-    vRef = posError * kp + errorAccumulate * ki + velDemand*kf + velError*kd;
+    vInput = posError * kp + errorAccumulate * ki + velDemand*kf + velError*kd;
 
 
 
@@ -106,7 +106,7 @@ int PID::pidExe(float posError, int velDemand, float velError){
     // std::cout<< std::endl;
     
 
-    return vRef;
+    return vInput;
 
 }
 
@@ -146,7 +146,7 @@ int PID::pidExeAngle(float posError, int velDemand, float velError){
 
     //vRef = error * Kp + errorAccumulate * Ki;
     //vRef = error * Kp + errorAccumulate * Ki + (velDemand-velSenValue)*Kd;
-    vRef = posError * kp + errorAccumulate * ki + velDemand*kf + velError*kd;
+    vInput = posError * kp + errorAccumulate * ki + velDemand*kf + velError*kd;
 
 
 
@@ -175,6 +175,6 @@ int PID::pidExeAngle(float posError, int velDemand, float velError){
     // std::cout<< std::endl;
     
 
-    return vRef;
+    return vInput;
 
 }

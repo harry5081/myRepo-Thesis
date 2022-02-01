@@ -4,7 +4,7 @@ import math
 
 def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
 
-    print(v_ref)
+    #print(v_ref)
     kp=3
     ki=0
     kf=1
@@ -159,11 +159,11 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     g=[]
 
     Q = np.zeros((6,6))
-    Q[0,0]=3
+    Q[0,0]=1
     Q[1,1]=0
-    Q[2,2]=3
+    Q[2,2]=1
     Q[3,3]=0
-    Q[4,4]=3
+    Q[4,4]=1
     Q[5,5]=0
 
     R = np.zeros((6,6))
