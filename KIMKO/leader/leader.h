@@ -24,11 +24,12 @@ public:
     float ny;
 
     void cir_traject_init();
+    void linear_traject_init();
 
     float time;
 
     float s_current;
-    int point_cnt=32;//32;
+    int point_cnt=64;//32;
     float period =0;
 
     std::vector< std::vector<float>> curve;
@@ -38,7 +39,7 @@ public:
 
 private:
     
-    float ds = 20;
+    float ds = 20;//50*1.414;//20;
 
     float s=0;
     int index =0;
@@ -46,10 +47,11 @@ private:
     
     
     void cir_traject();
+    void linear_traject();
    
     
     
-    float startTime = 10;
+    float startTime = 5;
 
 
     

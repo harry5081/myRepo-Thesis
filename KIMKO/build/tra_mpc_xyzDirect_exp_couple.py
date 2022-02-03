@@ -159,24 +159,24 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     g=[]
 
     Q = np.zeros((6,6))
-    Q[0,0]=1
-    Q[1,1]=0
-    Q[2,2]=1
-    Q[3,3]=0
-    Q[4,4]=1
-    Q[5,5]=0
+    Q[0,0]=0.5
+    Q[1,1]=10
+    Q[2,2]=0.5
+    Q[3,3]=10
+    Q[4,4]=0.5
+    Q[5,5]=10
 
     R = np.zeros((6,6))
     R[0,0]=1
     R[1,1]=1
 
     R2 = np.zeros((6,6))
-    R2[0,0]=0.01
-    R2[1,1]=0.01
-    R2[2,2]=0.01
-    R2[3,3]=0.01
-    R2[4,4]=0.01
-    R2[5,5]=0.01
+    R2[0,0]=0
+    R2[1,1]=0
+    R2[2,2]=0
+    R2[3,3]=0
+    R2[4,4]=0
+    R2[5,5]=0
 
     v_input_temp = v_input_begin
 
@@ -201,7 +201,7 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
         v_input_temp = V_INPUT_MATRIX[:,i]
 
         #obj = obj + 1.5*i*(X[:,i+1] - P[6:12]).T @ Q @ (X[:,i+1] - P[6:12]) + V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]
-        obj = obj + 10*(X[:,i+1] - ref_current).T @ Q @ (X[:,i+1] - ref_current)+ V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]+ 3*v_input_dff.T @ v_input_dff# + (control_diff.T @ R2 @control_diff)
+        obj = obj + 10*(X[:,i+1] - ref_current).T @ Q @ (X[:,i+1] - ref_current)+ 1*(V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]+ 3*v_input_dff.T @ v_input_dff)# + (control_diff.T @ R2 @control_diff)
 
         state_next_multi_shoot = X[:,i+1]
 
@@ -290,37 +290,37 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     u_sol =x_sol[0:6*(window)]
     state_sol=x_sol[6*(window):6*(window+1)+6*window]
 
-    #print(u_sol)
-    #print(state_sol)
+    # #print(u_sol)
+    # #print(state_sol)
 
-    u = reshape(u_sol,6,window) 
-    state = reshape(state_sol,6,window+1) 
+    # u = reshape(u_sol,6,window) 
+    # state = reshape(state_sol,6,window+1) 
 
-    # record the solved input vd, pd
-    u_predichorz_update = np.zeros((1,6,window))
-    u_predichorz_update[0,:,:] = u
+    # # record the solved input vd, pd
+    # u_predichorz_update = np.zeros((1,6,window))
+    # u_predichorz_update[0,:,:] = u
 
-    # calculate all the state within a predic_horz
-    states_predichorz_update = np.zeros((1,6,window+1))
-    states_predichorz_update[0,:,:] = state # get all states within a predic horz
-    #print(states_predichorz_update)
-    #print(u_predichorz_update)
+    # # calculate all the state within a predic_horz
+    # states_predichorz_update = np.zeros((1,6,window+1))
+    # states_predichorz_update[0,:,:] = state # get all states within a predic horz
+    # #print(states_predichorz_update)
+    # #print(u_predichorz_update)
 
-    # calculate all the v_input within a predic_horz
-    VVV = v_input_ff(u,state)
-    v_predichorz_update = np.zeros((1,3,window))
-    v_predichorz_update[0,:,:] = VVV
+    # # calculate all the v_input within a predic_horz
+    # VVV = v_input_ff(u,state)
+    # v_predichorz_update = np.zeros((1,3,window))
+    # v_predichorz_update[0,:,:] = VVV
 
-    # np.set_printoptions(precision=2,suppress=True)
-    # for i in range(1):
-    #     for j in range(window):
-    #         print("----Window Update----")
-    #         print("window: ", j)
-    #         print("state [v, p] = ",states_predichorz_update[i,:,j])
-    #         print("input [vd, pd] = ",u_predichorz_update[i,:,j])
-    #         print("v_input = ",v_predichorz_update[i,:,j])
-    #         print("")
-    #         print("")
+    # # np.set_printoptions(precision=2,suppress=True)
+    # # for i in range(1):
+    # #     for j in range(window):
+    # #         print("----Window Update----")
+    # #         print("window: ", j)
+    # #         print("state [v, p] = ",states_predichorz_update[i,:,j])
+    # #         print("input [vd, pd] = ",u_predichorz_update[i,:,j])
+    # #         print("v_input = ",v_predichorz_update[i,:,j])
+    # #         print("")
+    # #         print("")
 
 
     return list([u_sol[0],u_sol[1],u_sol[2],u_sol[3],u_sol[4],u_sol[5]])

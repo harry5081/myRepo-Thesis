@@ -123,7 +123,7 @@ int main(int argc, char **argv) {
     //initDemand();
     
     
-    //std::thread leader_thread(&virtualLeader);
+    std::thread leader_thread(&virtualLeader);
     
     
    
@@ -138,7 +138,7 @@ int main(int argc, char **argv) {
     
    
 
-    //leader_thread.join();
+    leader_thread.join();
     plot_thread.join();
     start_thread.join();
     listen_thread.join();
@@ -154,14 +154,15 @@ int main(int argc, char **argv) {
 void virtualLeader(){
 
     std::cout << "Hello leader" << std::endl;
-    //std::thread leader_plot(&plotLeaderTraject);
+    std::thread leader_plot(&plotLeaderTraject);
     leader.cir_traject_init();
+    //leader.linear_traject_init();
     
 }
 
 void  start()
 {   
-    //pybind11::scoped_interpreter guard{};
+    pybind11::scoped_interpreter guard{};
     while(1)
     {
         m_run->planner.s=leader.s_current;
@@ -178,19 +179,19 @@ void listen()
 
     //
 
-    while(1)
-    {
+    // while(1)
+    // {
         m_run->canReadData();
+        //usleep(50000);
         
-        
-    }
+    // }
     
 }
 
 void plotLeaderTraject(){
     
 
-    // all trajectory given in advance
+    //all trajectory given in advance
     if(leader.period ==0){
         static int i_static_traject=0;
         
@@ -211,7 +212,7 @@ void plotLeaderTraject(){
         //leader_Plot_time->writeDatatoFile(time, "plot/       ");
         leader_Plot_PosX->writeDatatoFile(leader.xs, "plot/0_Leader_posx");
         leader_Plot_PosY->writeDatatoFile(leader.ys, "plot/0_Leader_posy");
-        usleep(5000);
+        usleep(50000);
 
     }
 
@@ -304,7 +305,7 @@ void writeDatatoFile()
 
         
         
-            usleep(20000);
+            usleep(50000);
         
         
     }

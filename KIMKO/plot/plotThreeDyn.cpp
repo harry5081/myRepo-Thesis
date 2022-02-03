@@ -303,7 +303,7 @@ void plotX(){
     plt::Plot plot6_1("p_correct",canReadTime_Pos_temp,PosX_cor,"y--");
 
     plt::grid(); 
-    plt::legend();
+    //plt::legend();
 
     plt::subplot(3,1,2);
     plt::Plot plot7_1("p_ref_y",posRef_Time_temp,posRef_Y_temp,"g"); 
@@ -376,7 +376,7 @@ void plotX(){
             plt::figure(1);
             plt::subplot(3,1,1);
             plt::xlim(0, wSize);
-            plt::ylim(-280, 280);
+            plt::ylim(-100, 100);
             
             plot1.update(canWriteTime_temp,canWriteData_temp);
 
@@ -507,7 +507,8 @@ void plotX(){
             plt::figure(2);
             plt::subplot(3,1,1);
             plt::xlim(0, wSize);
-            plt::ylim(-300, 300);
+            plt::ylim(-200, 200);
+            
             //plt::ylim(-100, 200);
 
             plot5.update(posDemand_Time_temp,posDemand_X_temp);

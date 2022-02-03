@@ -89,8 +89,8 @@ void PLANNER::cir_traject_2(){
         float vn_y = r*w*cos(w*t);
         float vn = sqrt(pow(vn_x,2)+pow(vn_y,2));
 
-        float vx=0;//vt_x;
-        float vy=vt_y;
+        float vx=vt_x;//vt_x;//vt_x;
+        float vy=vt_y;//vt_y;
 
         if((t+dt)>=s/r/w){
             vx=0;
@@ -102,7 +102,7 @@ void PLANNER::cir_traject_2(){
 
 
         std::vector<float> vel = {vx,vy,0};
-        //std::vector<float> vel = {0,0,0};
+        // std::vector<float> vel = {0,0,0};
         vel_ref[i] = vel;
 
 
@@ -117,6 +117,76 @@ void PLANNER::cir_traject_2(){
 
     if((t_current+dt)<=s/r/w){
             t_current=t_current+dt;
+
+    }
+
+    
+
+
+
+}
+
+
+void PLANNER::linear_traject_2(){
+    
+    std::cout << s <<std::endl;
+    dt = sampleTime;
+
+    t=t_current;
+    
+
+    for(int i =0;i<window;i++){
+
+        if((t+dt)<=s/50/w){
+            t=t+dt;
+
+        }
+        /////////////////////////////////////  pos  ////////////////////////////////////////
+        float xt = 50*w*t;
+        float yt = 0;
+
+        std::vector<float> point = {xt,yt,0};
+        pos_ref[i] = point;
+
+
+        /////////////////////////////////////  vel  ////////////////////////////////////////
+        float vt_x = 50;//5;
+        float vt_y = 0;
+        // float vt = sqrt(pow(vt_x,2)+pow(vt_y,2));
+
+        // float vn_x = -r*w*sin(w*t);
+        // float vn_y = r*w*cos(w*t);
+        // float vn = sqrt(pow(vn_x,2)+pow(vn_y,2));
+
+        float vx=vt_x;//vt_x;
+        float vy=0;//vt_y;
+
+        if((t+dt)>=s/50/w){
+            vx=0;
+            vy=0;
+        //std::cout << "-----------------------------------------" <<std::endl;
+        }
+
+        //std::cout << vx    << " "<< vy <<std::endl;
+
+
+        std::vector<float> vel = {vx,vy,0};
+        // std::vector<float> vel = {0,0,0};
+        vel_ref[i] = vel;
+
+
+
+        //pos_ref.push_back(point);
+        //std::cout << xt    << " "<< yt <<std::endl;
+               
+         
+        //usleep(100000);
+
+    }
+
+    if((t_current+dt)<=s/50/w){
+            t_current=t_current+dt;
+            std::cout << "12345678998765432423546987456321123456789222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222" <<std::endl;
 
     }
 

@@ -82,7 +82,7 @@ int PID::pidExe(float posError, int velDemand, float velError){
 
 
 
-    usleep(10000);
+    //usleep(10000);
 
 
     // if(vRef > 500){
@@ -151,7 +151,7 @@ int PID::pidExeAngle(float posError, int velDemand, float velError){
 
 
 
-    usleep(10000);
+    //usleep(10000);
 
 
     // if(vRef > 50){
