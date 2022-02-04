@@ -13,6 +13,8 @@ PLANNER::PLANNER(){
         pos_ref.push_back(temp);
         vel_ref.push_back(temp);
 
+        fspeed_ref.push_back(temp);
+
      }
 
 
@@ -83,11 +85,16 @@ void PLANNER::cir_traject_2(){
         /////////////////////////////////////  vel  ////////////////////////////////////////
         float vt_x = r*w*cos(w*t);
         float vt_y = r*w*sin(w*t);
-        float vt = sqrt(pow(vt_x,2)+pow(vt_y,2));
+        //float vt = sqrt(pow(vt_x,2)+pow(vt_y,2));
 
         float vn_x = -r*w*sin(w*t);
         float vn_y = r*w*cos(w*t);
         float vn = sqrt(pow(vn_x,2)+pow(vn_y,2));
+
+        float fspeed = sqrt(pow(vt_x,2)+pow(vt_y,2));
+        float fsAngle = atan2(vt_x,vt_y) * 180 / PI;
+
+
 
         float vx=vt_x;//vt_x;//vt_x;
         float vy=vt_y;//vt_y;
@@ -95,6 +102,11 @@ void PLANNER::cir_traject_2(){
         if((t+dt)>=s/r/w){
             vx=0;
             vy=0;
+
+            fspeed=0;
+            fsAngle=90;
+
+
         //std::cout << "-----------------------------------------" <<std::endl;
         }
 
@@ -104,6 +116,12 @@ void PLANNER::cir_traject_2(){
         std::vector<float> vel = {vx,vy,0};
         // std::vector<float> vel = {0,0,0};
         vel_ref[i] = vel;
+
+        std::vector<float> fspeed_temp = {fspeed,fsAngle};
+        // std::vector<float> fspeed_temp = {0,0,0};
+        fspeed_ref[i] = fspeed_temp;
+
+
 
 
 

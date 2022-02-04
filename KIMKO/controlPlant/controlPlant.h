@@ -1,5 +1,7 @@
 #ifndef PLANT_H
 #define PLANT_H
+#include <math.h>
+
 
 #define PI 3.14159265
 
@@ -39,6 +41,11 @@ public:
     float pos_x;
     float pos_y;
     float pos_z;
+
+    void calFspeed();
+
+    float fspeed;
+    float fsAngle;
 
 
     // deadReckon

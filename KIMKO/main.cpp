@@ -25,9 +25,20 @@ ReadWritePlot *planner_Plot_PosY = new ReadWritePlot;
 
 
 
+
+
 // ref
 ReadWritePlot *ref_Plot_Vel_time = new ReadWritePlot;
 ReadWritePlot *ref_Plot_Pos_time = new ReadWritePlot;
+
+// ref forward speed
+ReadWritePlot *ref_Plot_fspeed = new ReadWritePlot;
+ReadWritePlot *ref_Plot_fsAngle = new ReadWritePlot;
+
+// robot forward speed
+ReadWritePlot *robot_Plot_fspeed = new ReadWritePlot;
+ReadWritePlot *robot_Plot_fsAngle = new ReadWritePlot;
+
 
 // plot ref_X_Vel
 ReadWritePlot *ref_Plot_VelX= new ReadWritePlot;
@@ -199,22 +210,28 @@ void plotLeaderTraject(){
             leader_Plot_PosX->writeDatatoFile(leader.curve[i_static_traject][0], "plot/0_Leader_posx");
             leader_Plot_PosY->writeDatatoFile(leader.curve[i_static_traject][1], "plot/0_Leader_posy");
             i_static_traject++;
+
+            usleep(20000);
          }
 
     }
     
 
-
+    
     // online dynamic trajectory
-    while(1)
-    {
+    else{
+        while(1)
+        {
         
         //leader_Plot_time->writeDatatoFile(time, "plot/       ");
         leader_Plot_PosX->writeDatatoFile(leader.xs, "plot/0_Leader_posx");
         leader_Plot_PosY->writeDatatoFile(leader.ys, "plot/0_Leader_posy");
-        usleep(50000);
+        //usleep(20000);
+
+        }
 
     }
+    
 
 }
 
@@ -227,6 +244,7 @@ void writeDatatoFile()
     {
         float time = (float)clock()/CLOCKS_PER_SEC;
 
+        // for Global Map
         for(int i=0;i<m_run->planner.pos_ref.size();i++){
             
             planner_Plot_PosX->writeDatatoFile(m_run->planner.pos_ref[i][0], "plot/1_Planner_posx");
@@ -247,10 +265,15 @@ void writeDatatoFile()
         ref_Plot_VelY->writeDatatoFile(m_run->mpc.y_vel_ref, "plot/VelRef_Data_Y");
         ref_Plot_VelZ->writeDatatoFile(m_run->mpc.z_vel_ref, "plot/VelRef_Data_Z");
 
+        ref_Plot_fspeed->writeDatatoFile(m_run->mpc.fspeed_ref, "plot/2_Fspeed_ref");
+        ref_Plot_fsAngle->writeDatatoFile(m_run->mpc.fsAngle_ref, "plot/2_FsAngle_ref");
+
         ref_Plot_Pos_time->writeDatatoFile(time, "plot/PosRef_Time");
         ref_Plot_PosX->writeDatatoFile(m_run->mpc.x_pos_ref, "plot/PosRef_Data_X");
         ref_Plot_PosY->writeDatatoFile(m_run->mpc.y_pos_ref, "plot/PosRef_Data_Y");
         ref_Plot_PosZ->writeDatatoFile(m_run->mpc.z_pos_ref, "plot/PosRef_Data_Z");
+
+        
 
 
         // // vd  pd
@@ -288,6 +311,14 @@ void writeDatatoFile()
             canReadDataPlot_Z->writeDatatoFile(m_run->mRobot.vel_z, "plot/CAN_Read_Data_Z");
 
 
+        // vel forward speed
+        robot_Plot_fspeed->writeDatatoFile(m_run->mRobot.fspeed, "plot/9_Fspeed_robot");
+        robot_Plot_fsAngle->writeDatatoFile(m_run->mRobot.fsAngle, "plot/9_FsAngle_robot");
+        
+
+
+
+
         // pos feedback
 
         canReadTimePlot_PosX->writeDatatoFile((float)clock()/CLOCKS_PER_SEC, "plot/CAN_Read_Time_Pos");    
@@ -301,11 +332,11 @@ void writeDatatoFile()
             canReadTimePlot_PosZ->writeDatatoFile((float)clock()/CLOCKS_PER_SEC, "plot/CAN_Read_Time_PosZ");   
             canReadDataPlot_PosZ->writeDatatoFile(m_run->mRobot.pos_z, "plot/CAN_Read_Data_PosZ");
 
-
+        
 
         
         
-            usleep(50000);
+            usleep(20000);
         
         
     }

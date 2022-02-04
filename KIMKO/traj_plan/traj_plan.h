@@ -7,6 +7,8 @@
 #include <math.h>
 #include <time.h>
 
+#define PI 3.14159265
+
 class PLANNER{
 
 public:
@@ -22,6 +24,8 @@ public:
     
     std::vector<std::vector<float>> pos_ref;
     std::vector<std::vector<float>> vel_ref;
+
+    std::vector<std::vector<float>> fspeed_ref;
 
     void cir_traject();
     void cir_traject_2();

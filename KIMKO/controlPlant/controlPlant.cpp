@@ -4,6 +4,12 @@
 
 #include <stdlib.h>     /* abs */
 
+void PLANT::calFspeed(){
+
+    fspeed = sqrt(pow(vel_x,2)+pow(vel_y,2));
+    fsAngle = atan2(vel_x,vel_y) * 180 / PI;
+}
+
 void PLANT::deadReckon(){
 
     // float sample_time = 0.02;

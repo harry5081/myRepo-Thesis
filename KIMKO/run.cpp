@@ -122,6 +122,9 @@ void run::start()
     mpc.x_pos_ref = planner.pos_ref[0][0]; //plot
     mpc.y_pos_ref = planner.pos_ref[0][1]; //plot
 
+    mpc.fspeed_ref = planner.fspeed_ref[0][0]; //plot
+    mpc.fsAngle_ref = planner.fspeed_ref[0][1]; //plot
+
 
 
     std::vector<float> v_ref = {mpc.x_vel_ref, mpc.y_vel_ref, mpc.z_vel_ref};
@@ -189,6 +192,9 @@ void run::start()
 
     // mRobot.pd_x = mpc.sineToTenPosDemand(time);
     // mRobot.vd_x = mpc.cosToTenVelDemand(time);
+
+    // mRobot.pd_y = 0;
+    // mRobot.vd_y = 0;
 
     // mRobot.pd_x = (-1)*mpc.sineToTenPosDemand(time);
     // mRobot.vd_x = (-1)*mpc.cosToTenVelDemand(time);
@@ -444,6 +450,9 @@ void run::canReadData(){
             getVelocityValue();
             getPositionValue();
 
+            mRobot.pos_sensor_correct();
+            mRobot.calFspeed();
+
             // // data processing
             // std::cout << "Robot Frame Value"<<std::endl;
             // std::cout <<  "     pos_x: " << mRobot.pos_x <<std::endl<<std::endl;
@@ -456,7 +465,7 @@ void run::canReadData(){
             // std::cout <<  "     World_y: " << mRobot.pos_y_global <<std::endl<<std::endl;
             // std::cout <<  "     World_theta: " << mRobot.theta_global <<std::endl<<std::endl;
 
-            mRobot.pos_sensor_correct();
+            
             // std::cout << "Correct Position Value"<<std::endl;
             // std::cout <<  "     Correct_x: " << mRobot.pos_x_correct <<std::endl<<std::endl;
             // std::cout <<  "     Correct_y: " << mRobot.pos_y_correct <<std::endl<<std::endl;

@@ -160,11 +160,11 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
 
     Q = np.zeros((6,6))
     Q[0,0]=0.5
-    Q[1,1]=10
+    Q[1,1]=3
     Q[2,2]=0.5
-    Q[3,3]=10
+    Q[3,3]=3
     Q[4,4]=0.5
-    Q[5,5]=10
+    Q[5,5]=3
 
     R = np.zeros((6,6))
     R[0,0]=1

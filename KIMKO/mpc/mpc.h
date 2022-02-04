@@ -41,6 +41,9 @@ private:
 
 public:
 
+    float fspeed_ref=0;
+    float fsAngle_ref=0;
+
     float x_vel_ref=0;
     float x_pos_ref=0;
 
