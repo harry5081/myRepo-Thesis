@@ -12,7 +12,7 @@ public:
     LEADER();
 
     
-    float r=200;
+    float r=100;
 
     float xs;
     float ys;

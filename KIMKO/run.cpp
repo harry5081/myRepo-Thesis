@@ -30,6 +30,7 @@ PID pid_y(3,0,1,0.3);
 
 //PID pid_z(3,0.01,1,1);
 PID pid_z(3,0,1,1);
+//PID pid_z(2,0,1,0.1);
 
 
 
@@ -195,6 +196,9 @@ void run::start()
 
     // mRobot.pd_y = 0;
     // mRobot.vd_y = 0;
+
+    //mRobot.pd_y = mpc.sineToTenPosDemand(time);
+    //mRobot.vd_y = mpc.cosToTenVelDemand(time);
 
     // mRobot.pd_x = (-1)*mpc.sineToTenPosDemand(time);
     // mRobot.vd_x = (-1)*mpc.cosToTenVelDemand(time);
@@ -568,26 +572,27 @@ void run::getPositionValue(){
         uint32_t z_pos_temp=static_cast<uint32_t>(m_pcanMsg_listen.DATA[0])|static_cast<uint32_t>(m_pcanMsg_listen.DATA[1]<<8)\
                         |static_cast<uint32_t>(m_pcanMsg_listen.DATA[2]<<16)|static_cast<uint32_t>(m_pcanMsg_listen.DATA[3]<<24);
         float z_pos = *((float *) &z_pos_temp);
-        // std::cout << "z_pos: ";
-        // std::cout <<  z_pos << std::endl;
-
+        z_pos = unwrap(mRobot.pos_z_pre_unwrap,z_pos);
+                
         mRobot.pos_z = z_pos-mRobot.originPos_z;
-       
+        mRobot.pos_z_pre_unwrap = mRobot.pos_z; // unwrap
+
+        
         //mRobot.pos_z = z_pos;
 
-         if(mRobot.pos_z>=180 && mRobot.pos_z<=360){
-             mRobot.pos_z=mRobot.pos_z-360;
-            //  std::cout <<  "Angle 180~360 convert to -180~0" << std::endl;
-            //  std::cout <<  "Angle 180~360 convert to -180~0" << std::endl;
-            //  std::cout <<  "Angle 180~360 convert to -180~0" << std::endl;
-        }
+        //  if(mRobot.pos_z>=180 && mRobot.pos_z<=360){
+        //      mRobot.pos_z=mRobot.pos_z-360;
+        //       std::cout <<  "Angle 180~360 convert to -180~0" << std::endl;
+        //       std::cout <<  "Angle 180~360 convert to -180~0" << std::endl;
+        //       std::cout <<  "Angle 180~360 convert to -180~0" << std::endl;
+        // }
 
-        else if(mRobot.pos_z>=-360 && mRobot.pos_z<=-180){
-             mRobot.pos_z=mRobot.pos_z+360;
-            //  std::cout <<  "Angle -180~-360 convert to 180~0" << std::endl;
-            //  std::cout <<  "Angle -180~-360 convert to 180~0" << std::endl;
-            //  std::cout <<  "Angle -180~-360 convert to 180~0" << std::endl;
-        }
+        // else if(mRobot.pos_z>=-360 && mRobot.pos_z<=-180){
+        //      mRobot.pos_z=mRobot.pos_z+360;
+        //       std::cout <<  "Angle -180~-360 convert to 180~0" << std::endl;
+        //       std::cout <<  "Angle -180~-360 convert to 180~0" << std::endl;
+        //       std::cout <<  "Angle -180~-360 convert to 180~0" << std::endl;
+        // }
         
     }// if(m_pcanMsg_listen.ID == 0x1C1)
             
@@ -629,8 +634,11 @@ void run::initOriginPos(){
             uint32_t z_pos_temp=static_cast<uint32_t>(m_pcanMsg_listen.DATA[0])|static_cast<uint32_t>(m_pcanMsg_listen.DATA[1]<<8)\
                                 |static_cast<uint32_t>(m_pcanMsg_listen.DATA[2]<<16)|static_cast<uint32_t>(m_pcanMsg_listen.DATA[3]<<24);
             float z_pos = *((float *) &z_pos_temp);
-        
+            std::cout <<  "initOrigin Z Pos: " << z_pos << std::endl;
+            z_pos=unwrap(0,z_pos);
+            
             mRobot.originPos_z = z_pos;
+            mRobot.pos_z_pre_unwrap = mRobot.originPos_z;
             mRobot.initZPosButton=true;   
 
             
@@ -641,7 +649,7 @@ void run::initOriginPos(){
             std::cout <<  std::endl;
             std::cout <<  "initOrigin X Pos: " << mRobot.originPos_x <<std::endl;
             std::cout <<  "initOrigin Y Pos: " << mRobot.originPos_y <<std::endl;
-            std::cout <<  "initOrigin Z Pos: " << mRobot.originPos_z << std::endl;   
+            std::cout <<  "initOrigin Z Pos_unwrap: " << mRobot.originPos_z << std::endl;   
             std::cout <<  std::endl;
         }
 

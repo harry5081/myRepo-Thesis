@@ -66,7 +66,7 @@ void PLANNER::cir_traject_2(){
     dt = sampleTime;
 
     t=t_current;
-    
+    fsAngle_pre_window = fsAngle_pre; /********* angle unwrap *********/
 
     for(int i =0;i<window;i++){
 
@@ -91,11 +91,23 @@ void PLANNER::cir_traject_2(){
         float vn_y = r*w*cos(w*t);
         float vn = sqrt(pow(vn_x,2)+pow(vn_y,2));
 
+
+        /////////////////////////////////////  forward speed  ////////////////////////////////////////
         float fspeed = sqrt(pow(vt_x,2)+pow(vt_y,2));
-        float fsAngle = atan2(vt_x,vt_y) * 180 / PI;
+        float fsAngle = atan2(vt_x,vt_y)*180/PI;
+        
+        /********* angle unwrap *********/
+        float fsAngle_unwrap = unwrap(fsAngle_pre_window,fsAngle);
+        fsAngle_pre_window=fsAngle_unwrap;
 
+        if(i==0){
 
+            fsAngle_pre = fsAngle_pre_window;
+        }
+        /********* angle unwrap *********/
 
+        
+        
         float vx=vt_x;//vt_x;//vt_x;
         float vy=vt_y;//vt_y;
 
@@ -104,29 +116,18 @@ void PLANNER::cir_traject_2(){
             vy=0;
 
             fspeed=0;
-            fsAngle=90;
-
-
-        //std::cout << "-----------------------------------------" <<std::endl;
+            //fsAngle=90;
         }
-
-        //std::cout << vx    << " "<< vy <<std::endl;
-
 
         std::vector<float> vel = {vx,vy,0};
         // std::vector<float> vel = {0,0,0};
         vel_ref[i] = vel;
 
-        std::vector<float> fspeed_temp = {fspeed,fsAngle};
+        std::vector<float> fspeed_temp = {fspeed,fsAngle_unwrap};
+        //std::vector<float> fspeed_temp = {fspeed,fsAngle};
         // std::vector<float> fspeed_temp = {0,0,0};
         fspeed_ref[i] = fspeed_temp;
 
-
-
-
-
-        //pos_ref.push_back(point);
-        //std::cout << xt    << " "<< yt <<std::endl;
                
          
         //usleep(100000);

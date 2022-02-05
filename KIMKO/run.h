@@ -13,6 +13,8 @@
 
 #include "controlPlant.h"
 
+#include "unwrap.h"
+
 enum DOF {X_DIRECTION=0, Y_DIRECTION, Z_DIRECTION, ALL_DIRECTION};
 enum DRAW {NO_PLOT=0, PLOT};
 

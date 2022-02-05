@@ -226,7 +226,7 @@ void plotLeaderTraject(){
         //leader_Plot_time->writeDatatoFile(time, "plot/       ");
         leader_Plot_PosX->writeDatatoFile(leader.xs, "plot/0_Leader_posx");
         leader_Plot_PosY->writeDatatoFile(leader.ys, "plot/0_Leader_posy");
-        //usleep(20000);
+        usleep(20000);
 
         }
 

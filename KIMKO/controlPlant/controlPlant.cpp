@@ -6,8 +6,17 @@
 
 void PLANT::calFspeed(){
 
-    fspeed = sqrt(pow(vel_x,2)+pow(vel_y,2));
+    fspeed = sqrt(pow(controlInput_x_vel,2)+pow(controlInput_y_vel,2));
     fsAngle = atan2(vel_x,vel_y) * 180 / PI;
+
+    fsAngle = unwrap(fsAngle_pre, fsAngle);
+    fsAngle_pre = fsAngle;
+
+    // fspeed = sqrt(pow(vel_x,2)+pow(vel_y,2));
+    // fsAngle = atan2(vel_x,vel_y) * 180 / PI;
+
+    // fsAngle = unwrap(fsAngle_pre, fsAngle);
+    // fsAngle_pre = fsAngle;
 }
 
 void PLANT::deadReckon(){
@@ -75,7 +84,7 @@ void PLANT::pos_sensor_correct(){
 
     pos_x_diff = abs(pos_x_cur-pos_x_pre);
     pos_y_diff = abs(pos_y_cur-pos_y_pre);
-    pos_z_diff = abs(pos_z_cur-pos_z_pre);
+    //pos_z_diff = abs(pos_z_cur-pos_z_pre);
 
 
     if(quadrant == 1){
@@ -107,7 +116,7 @@ void PLANT::pos_sensor_correct(){
 
     pos_x_pre = pos_x_cur;
     pos_y_pre = pos_y_cur;
-    pos_z_pre = pos_z_cur;
+    //pos_z_pre = pos_z_cur;
     
 
 
@@ -115,67 +124,67 @@ void PLANT::pos_sensor_correct(){
 }
 
 
-void PLANT::pos_sensor_correct2(){
+// void PLANT::pos_sensor_correct2(){
 
-    bool xdiretion = false;
-    bool ydiretion = false;
+//     bool xdiretion = false;
+//     bool ydiretion = false;
 
-    if( vel_x >=2 ||  vel_x <=-2){
-        xdiretion = true;
-        }
-    if(vel_y >=2 ||  vel_y <=-2){
-        ydiretion = true;
-        }
+//     if( vel_x >=2 ||  vel_x <=-2){
+//         xdiretion = true;
+//         }
+//     if(vel_y >=2 ||  vel_y <=-2){
+//         ydiretion = true;
+//         }
 
-    pos_x_cur = pos_x;
-    pos_y_cur = pos_y;
-    pos_z_cur = pos_z;
+//     pos_x_cur = pos_x;
+//     pos_y_cur = pos_y;
+//     pos_z_cur = pos_z;
 
-    pos_x_diff = pos_x_cur-pos_x_pre;
-    pos_y_diff = pos_y_cur-pos_y_pre;
-    pos_z_diff = pos_z_cur-pos_z_pre;
-
-
+//     pos_x_diff = pos_x_cur-pos_x_pre;
+//     pos_y_diff = pos_y_cur-pos_y_pre;
+//     pos_z_diff = pos_z_cur-pos_z_pre;
 
 
 
-    if( pos_z_cur > 0.1 || pos_z_cur < -0.1){
 
-        if(xdiretion == true && ydiretion == false){
-            pos_x_correct = pos_x_correct + pos_x_diff;
-            pos_y_correct = pos_y_correct - pos_y_diff;
-            std::cout <<   "X" <<std::endl;
 
-        }
+//     if( pos_z_cur > 0.1 || pos_z_cur < -0.1){
 
-        else if(xdiretion == false && ydiretion == true){
-            pos_x_correct = pos_x_correct - pos_x_diff;
-            pos_y_correct = pos_y_correct + pos_y_diff;
-            std::cout <<   "Y" <<std::endl;
+//         if(xdiretion == true && ydiretion == false){
+//             pos_x_correct = pos_x_correct + pos_x_diff;
+//             pos_y_correct = pos_y_correct - pos_y_diff;
+//             std::cout <<   "X" <<std::endl;
 
-        }
+//         }
 
-        else{
-            pos_x_correct = pos_x_correct + pos_x_diff;
-            pos_y_correct = pos_y_correct + pos_y_diff;
-            std::cout <<   "X & Y" <<std::endl;
+//         else if(xdiretion == false && ydiretion == true){
+//             pos_x_correct = pos_x_correct - pos_x_diff;
+//             pos_y_correct = pos_y_correct + pos_y_diff;
+//             std::cout <<   "Y" <<std::endl;
 
-        }
+//         }
 
-    }
+//         else{
+//             pos_x_correct = pos_x_correct + pos_x_diff;
+//             pos_y_correct = pos_y_correct + pos_y_diff;
+//             std::cout <<   "X & Y" <<std::endl;
 
-    else{
+//         }
 
-        pos_x_correct = pos_x_correct + pos_x_diff;
-        pos_y_correct = pos_y_correct + pos_y_diff;
-        std::cout <<   "OOO" <<std::endl;
-    }
+//     }
 
-    pos_x_pre = pos_x_cur;
-    pos_y_pre = pos_y_cur;
-    pos_z_pre = pos_z_cur;
+//     else{
+
+//         pos_x_correct = pos_x_correct + pos_x_diff;
+//         pos_y_correct = pos_y_correct + pos_y_diff;
+//         std::cout <<   "OOO" <<std::endl;
+//     }
+
+//     pos_x_pre = pos_x_cur;
+//     pos_y_pre = pos_y_cur;
+//     pos_z_pre = pos_z_cur;
     
 
 
 
-}
+// }

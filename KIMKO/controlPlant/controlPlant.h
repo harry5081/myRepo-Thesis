@@ -1,6 +1,7 @@
 #ifndef PLANT_H
 #define PLANT_H
 #include <math.h>
+#include "../unwrap.h"
 
 
 #define PI 3.14159265
@@ -15,7 +16,7 @@ public:
     
     float originPos_x;
     float originPos_y;
-    float originPos_z;
+    float originPos_z; // unwrap
 
     int vd_x;
     int vd_y;
@@ -40,12 +41,15 @@ public:
 
     float pos_x;
     float pos_y;
-    float pos_z;
+    float pos_z; // unwrap
+
+    float pos_z_pre_unwrap; // for purpose of angle unwrap
 
     void calFspeed();
 
     float fspeed;
     float fsAngle;
+    float fsAngle_pre = 0; // for purpose of angle unwrap
 
 
     // deadReckon
@@ -57,7 +61,7 @@ public:
     // position value correction
     float pos_x_pre;
     float pos_y_pre;
-    float pos_z_pre;
+    //float pos_z_pre;
 
     float pos_x_cur;
     float pos_y_cur;
@@ -74,7 +78,7 @@ public:
 
     void deadReckon();
     void pos_sensor_correct();
-    void pos_sensor_correct2();
+    //void pos_sensor_correct2();
 
     
 
