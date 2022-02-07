@@ -41,7 +41,7 @@ private:
 
 public:
 
-    float fspeed_ref=0;
+    float fspeedVel_ref=0;
     float fsAngle_ref=0;
 
     float x_vel_ref=0;
@@ -66,6 +66,7 @@ public:
     void mpcOperation(float v_ref=0, float p_ref=100, float v_init=0, float p_init=0, int v_input_begin=0);
     void mpcOperation(std::vector<float> v_ref, std::vector<float> p_ref, std::vector<float> v_init, std::vector<float> p_init, std::vector<float> v_input);
     void mpcOperation(std::vector<std::vector<float>> v_ref, std::vector<std::vector<float>> p_ref, std::vector<float> v_init, std::vector<float> p_init, std::vector<float> v_input);
+    void mpcOperation(std::vector<std::vector<float>> v_ref, std::vector<std::vector<float>> p_ref, std::vector<float> v_init, std::vector<float> p_init, std::vector<float> v_input,std::vector<std::vector<float>>fspeed_ref, std::vector<float> fspeed_init);
 
 
     float sinePosDemand(float time);

@@ -41,15 +41,18 @@ public:
 
     float pos_x;
     float pos_y;
-    float pos_z; // unwrap
+    float pos_z; // unwrap for pid
+    
 
     float pos_z_pre_unwrap; // for purpose of angle unwrap
 
     void calFspeed();
 
-    float fspeed;
+    float fspeedVel;
     float fsAngle;
     float fsAngle_pre = 0; // for purpose of angle unwrap
+
+    float fsAngle_world;
 
 
     // deadReckon

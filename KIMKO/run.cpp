@@ -29,8 +29,8 @@ PID pid_x(3,0,1,0.3);
 PID pid_y(3,0,1,0.3);
 
 //PID pid_z(3,0.01,1,1);
-PID pid_z(3,0,1,1);
-//PID pid_z(2,0,1,0.1);
+//PID pid_z(3,0,1,1);
+PID pid_z(2,0,1,0.1);
 
 
 
@@ -116,6 +116,7 @@ void run::start()
     
     std::vector<std::vector<float>> v_ref_dyn = planner.vel_ref;
     std::vector<std::vector<float>> p_ref_dyn = planner.pos_ref;
+    std::vector<std::vector<float>> fspeed_ref = planner.fspeed_ref;
 
     mpc.x_vel_ref = planner.vel_ref[0][0]; //plot
     mpc.y_vel_ref = planner.vel_ref[0][1]; //plot
@@ -123,18 +124,21 @@ void run::start()
     mpc.x_pos_ref = planner.pos_ref[0][0]; //plot
     mpc.y_pos_ref = planner.pos_ref[0][1]; //plot
 
-    mpc.fspeed_ref = planner.fspeed_ref[0][0]; //plot
+    mpc.z_pos_ref = planner.pos_ref[0][2]; //plot
+
+    mpc.fspeedVel_ref = planner.fspeed_ref[0][0]; //plot
     mpc.fsAngle_ref = planner.fspeed_ref[0][1]; //plot
 
 
-
+    
     std::vector<float> v_ref = {mpc.x_vel_ref, mpc.y_vel_ref, mpc.z_vel_ref};
     std::vector<float> p_ref = {mpc.x_pos_ref, mpc.y_pos_ref, mpc.z_pos_ref};
+    
     
     std::vector<float> v_init = {mRobot.vel_x, mRobot.vel_y, mRobot.vel_z};
     std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, mRobot.pos_z};
     std::vector<float> v_input = {mRobot.controlInput_x_vel, mRobot.controlInput_y_vel, mRobot.controlInput_z_vel};
-    
+    std::vector<float> fspeed_init = {mRobot.fspeedVel, mRobot.fsAngle};
     
 
     float time1 = (float)clock()/CLOCKS_PER_SEC;
@@ -146,7 +150,8 @@ void run::start()
     
     //mpc.mpcOperation(mpc.x_vel_ref, mpc.x_pos_ref, mRobot.vel_x, mRobot.pos_x_correct, mRobot.controlInput_x_vel);  // one direction
     //mpc.mpcOperation(v_ref, p_ref, v_init, p_init, v_input); // three dimention with fix ref
-    mpc.mpcOperation(v_ref_dyn, p_ref_dyn, v_init, p_init, v_input); // dyn ref
+    //mpc.mpcOperation(v_ref_dyn, p_ref_dyn, v_init, p_init, v_input); // dyn ref
+    mpc.mpcOperation(v_ref_dyn, p_ref_dyn, v_init, p_init, v_input, fspeed_ref, fspeed_init); // dyn ref fspeed
 
     
     float time2 = (float)clock()/CLOCKS_PER_SEC;
@@ -180,8 +185,8 @@ void run::start()
 
     /////////////////////////////////////////////     Z      /////////////////////////////////////
     //std::cout <<  "vel_z: " << mRobot.vel_z <<  "     pos_z: " << mRobot.pos_z <<std::endl<<std::endl;   
-    //mRobot.vd_z = mpc.z_vel_demand;
-    //mRobot.pd_z = mpc.z_pos_demand;
+    mRobot.vd_z = mpc.z_vel_demand;
+    mRobot.pd_z = mpc.z_pos_demand;
     
     //mRobot.pd_z = mpc.sinePosDemand(time)/10;
     //mRobot.vd_z = mpc.cosVelDemand(time)/10;
@@ -189,7 +194,8 @@ void run::start()
     //mRobot.pd_z = mpc.sineToTenPosDemand(time)/10;
     //mRobot.vd_z = mpc.cosToTenVelDemand(time)/10;
 
-
+    // mRobot.pd_x = 0;
+    // mRobot.vd_x = 0;
 
     // mRobot.pd_x = mpc.sineToTenPosDemand(time);
     // mRobot.vd_x = mpc.cosToTenVelDemand(time);
@@ -202,6 +208,13 @@ void run::start()
 
     // mRobot.pd_x = (-1)*mpc.sineToTenPosDemand(time);
     // mRobot.vd_x = (-1)*mpc.cosToTenVelDemand(time);
+
+    // mRobot.pd_z = mpc.sineToTenPosDemand(time)/10;
+    // mRobot.vd_z = mpc.cosToTenVelDemand(time)/10;
+
+    // mRobot.pd_z = (-1)*mpc.sineToTenPosDemand(time)/10;
+    // mRobot.vd_z = (-1)*mpc.cosToTenVelDemand(time)/10;
+    
     
 
     //int PID::pidExe(float posError, int velDemand, float velError)

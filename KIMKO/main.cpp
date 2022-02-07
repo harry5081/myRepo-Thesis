@@ -273,7 +273,7 @@ void writeDatatoFile()
         ref_Plot_VelY->writeDatatoFile(m_run->mpc.y_vel_ref, "plot/VelRef_Data_Y");
         ref_Plot_VelZ->writeDatatoFile(m_run->mpc.z_vel_ref, "plot/VelRef_Data_Z");
 
-        ref_Plot_fspeed->writeDatatoFile(m_run->mpc.fspeed_ref, "plot/2_Fspeed_ref");
+        ref_Plot_fspeed->writeDatatoFile(m_run->mpc.fspeedVel_ref, "plot/2_Fspeed_ref");
         ref_Plot_fsAngle->writeDatatoFile(m_run->mpc.fsAngle_ref, "plot/2_FsAngle_ref");
 
         ref_Plot_Pos_time->writeDatatoFile(time, "plot/PosRef_Time");
@@ -320,7 +320,8 @@ void writeDatatoFile()
 
 
         // vel forward speed
-        robot_Plot_fspeed->writeDatatoFile(m_run->mRobot.fspeed, "plot/9_Fspeed_robot");
+        robot_Plot_fspeed->writeDatatoFile(m_run->mRobot.fspeedVel, "plot/9_Fspeed_robot");
+        //robot_Plot_fsAngle->writeDatatoFile(m_run->mRobot.fsAngle_world, "plot/9_FsAngle_robot");
         robot_Plot_fsAngle->writeDatatoFile(m_run->mRobot.fsAngle, "plot/9_FsAngle_robot");
         
 

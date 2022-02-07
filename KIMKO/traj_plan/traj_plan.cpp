@@ -77,9 +77,9 @@ void PLANNER::cir_traject_2(){
         /////////////////////////////////////  pos  ////////////////////////////////////////
         float xt = r*sin(w*t);
         float yt = r*-cos(w*t)+r;
+        float zt =20;
 
-        std::vector<float> point = {xt,yt,0};
-        pos_ref[i] = point;
+        
 
 
         /////////////////////////////////////  vel  ////////////////////////////////////////
@@ -116,15 +116,23 @@ void PLANNER::cir_traject_2(){
             vy=0;
 
             fspeed=0;
-            //fsAngle=90;
+            fsAngle=0;
+
+            zt =0;
         }
+
+
+
+        std::vector<float> point = {xt,yt,zt};
+        pos_ref[i] = point;
+
 
         std::vector<float> vel = {vx,vy,0};
         // std::vector<float> vel = {0,0,0};
         vel_ref[i] = vel;
 
-        std::vector<float> fspeed_temp = {fspeed,fsAngle_unwrap};
-        //std::vector<float> fspeed_temp = {fspeed,fsAngle};
+        //std::vector<float> fspeed_temp = {fspeed,fsAngle_unwrap};
+        std::vector<float> fspeed_temp = {fspeed,fsAngle};
         // std::vector<float> fspeed_temp = {0,0,0};
         fspeed_ref[i] = fspeed_temp;
 
