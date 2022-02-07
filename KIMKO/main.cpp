@@ -210,9 +210,11 @@ void plotLeaderTraject(){
             leader_Plot_PosX->writeDatatoFile(leader.curve[i_static_traject][0], "plot/0_Leader_posx");
             leader_Plot_PosY->writeDatatoFile(leader.curve[i_static_traject][1], "plot/0_Leader_posy");
             i_static_traject++;
-
             usleep(20000);
+            
          }
+
+         
 
     }
     
@@ -231,6 +233,8 @@ void plotLeaderTraject(){
         }
 
     }
+
+    
     
 
 }
@@ -252,8 +256,12 @@ void writeDatatoFile()
 
         }
 
+        
+
         planner_Plot_PosX->writeFromEnd=false;
         planner_Plot_PosY->writeFromEnd=false;
+
+
         
 
 
