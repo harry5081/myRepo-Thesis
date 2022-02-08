@@ -40,8 +40,10 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     vz = SX.sym('vz')
     pz = SX.sym('pz')
     states = vertcat(vx, px, vy, py, vz, pz)
-
+    
     n_state = states.shape[0]
+
+    
 
     # Control
     vdx = SX.sym('vdx')
