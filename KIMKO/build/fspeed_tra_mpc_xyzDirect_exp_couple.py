@@ -123,7 +123,7 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd, fspeed_
 
     ex = exp(-3000*t/(fabs(v_input[0]-vx)+200))
     ey = exp(-3000*t/(fabs(v_input[1]-vy)+200))
-    ez = exp(-3000*t/(fabs(v_input[2]-vz)+200))
+    ez = exp(-3000*t/(fabs(v_input[2]-vz)+3000))
     #ef = Function('ef',[states,controls],[e])
 
     A = SX.zeros(6,6)
@@ -187,15 +187,21 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd, fspeed_
 
     Q = np.zeros((6,6))
     Q[0,0]=0
-    Q[1,1]=5
+    Q[1,1]=3
     Q[2,2]=0
-    Q[3,3]=5
+    Q[3,3]=3
     Q[4,4]=0
-    Q[5,5]=0.5
+    Q[5,5]=3
 
-    R = np.zeros((6,6))
+    R = np.zeros((3,3))
     R[0,0]=1
     R[1,1]=1
+    R[2,2]=0.5
+
+    R1 = np.zeros((3,3))
+    R1[0,0]=1
+    R1[1,1]=1
+    R1[2,2]=0.5
 
     R2 = np.zeros((6,6))
     R2[0,0]=0
@@ -207,7 +213,7 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd, fspeed_
 
     R_fs = np.zeros((2,2))
     R_fs[0,0]=20
-    R_fs[1,1]=0.1
+    R_fs[1,1]=5
 
     v_input_temp = v_input_begin
 
@@ -239,7 +245,7 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd, fspeed_
       #  obj = ( obj + 10*(X[:,i+1] - ref_current).T @ Q @ (X[:,i+1] - ref_current) +
       #          fspeed_err.T @ R_fs @ fspeed_err+
       #          +1*(V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]+ 3*v_input_dff.T @ v_input_dff) )# + (control_diff.T @ R2 @control_diff)
-        obj = obj + (fspeed_err.T @ R_fs @ fspeed_err) + 10*(X[:,i+1] - ref_current).T @ Q @ (X[:,i+1] - ref_current) + 1*(V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]+ 3*v_input_dff.T @ v_input_dff)
+        obj = obj + (fspeed_err.T @ R_fs @ fspeed_err) + 10*(X[:,i+1] - ref_current).T @ Q @ (X[:,i+1] - ref_current) + 1*(V_INPUT_MATRIX[:,i].T @ R @ V_INPUT_MATRIX[:,i]+ 3*v_input_dff.T @ R1 @ v_input_dff)
         
         #obj = obj + 10*(FSPEED_STATE[:,i][0]-fspeed_ref_current[0])**2+ 0.1*(FSPEED_STATE[:,i][1]-fspeed_ref_current[1])**2+1*(V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]+ 3*v_input_dff.T @ v_input_dff)
         #+ 0.1*(FSPEED_STATE[:,i][1]-90)**2 +1*(V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]+ 3*v_input_dff.T @ v_input_dff)

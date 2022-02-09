@@ -44,11 +44,11 @@ private:
     float t_current;
 
     float r;
-    float w=0.3;//0.1;
+    float w=0.5;//0.1;
     float sampleTime=0.2;//0.2
 
-    float fsAngle_pre =90;
-    float fsAngle_pre_window =90;
+    float fsAngle_pre =0;
+    float fsAngle_pre_window =0;
 
     
 

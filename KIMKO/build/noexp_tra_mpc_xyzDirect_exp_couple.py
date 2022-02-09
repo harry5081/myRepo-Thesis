@@ -104,18 +104,18 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     v_input_f = Function('v_input_f',[states,controls],[v_input])
 
 
-    ex = exp(-3000*t/(fabs(v_input[0]-vx)+200))
-    ey = exp(-3000*t/(fabs(v_input[1]-vy)+200))
-    ez = exp(-3000*t/(fabs(v_input[2]-vz)+3000))
+    # ex = exp(-3000*t/(fabs(v_input[0]-vx)+200))
+    # ey = exp(-3000*t/(fabs(v_input[1]-vy)+200))
+    # ez = exp(-3000*t/(fabs(v_input[2]-vz)+3000))
     #ef = Function('ef',[states,controls],[e])
 
     A = SX.zeros(6,6)
-    A[0,0]=ex
+    A[0,0]=0
     A[0,1]=0
     A[1,0] = t*cos(pz*2*math.pi/360)
     A[1,1]=1
 
-    A[2,2]=ey
+    A[2,2]=0
     A[2,3]=0
     A[3,2] = t*cos(pz*2*math.pi/360)
     A[3,3]=1
@@ -123,7 +123,7 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     A[3,0] = t*sin(pz*2*math.pi/360)
     A[1,2] = -t*sin(pz*2*math.pi/360)
 
-    A[4,4]=ez
+    A[4,4]=0
     A[4,5]=0
     A[5,4] = t
     A[5,5]=1
@@ -134,9 +134,9 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
 
     h = SX.zeros(6,3)
 
-    h[0,0] = 1-ex
-    h[2,1] = 1-ey
-    h[4,2] = 1-ez
+    h[0,0] = 1
+    h[2,1] = 1
+    h[4,2] = 1
 
     hf = Function('hf',[states,controls],[h])
 

@@ -150,8 +150,8 @@ void run::start()
     
     //mpc.mpcOperation(mpc.x_vel_ref, mpc.x_pos_ref, mRobot.vel_x, mRobot.pos_x_correct, mRobot.controlInput_x_vel);  // one direction
     //mpc.mpcOperation(v_ref, p_ref, v_init, p_init, v_input); // three dimention with fix ref
-    //mpc.mpcOperation(v_ref_dyn, p_ref_dyn, v_init, p_init, v_input); // dyn ref
-    mpc.mpcOperation(v_ref_dyn, p_ref_dyn, v_init, p_init, v_input, fspeed_ref, fspeed_init); // dyn ref fspeed
+    mpc.mpcOperation(v_ref_dyn, p_ref_dyn, v_init, p_init, v_input); // dyn ref
+    //mpc.mpcOperation(v_ref_dyn, p_ref_dyn, v_init, p_init, v_input, fspeed_ref, fspeed_init); // dyn ref fspeed
 
     
     float time2 = (float)clock()/CLOCKS_PER_SEC;

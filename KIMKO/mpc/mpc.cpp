@@ -73,7 +73,8 @@ void MPC::mpcOperation(std::vector<std::vector<float>> v_ref, std::vector<std::v
 
     float time1 = (float)clock()/CLOCKS_PER_SEC;
     
-    pybind11::module_ mpc = pybind11::module_::import("tra_mpc_xyzDirect_exp_couple");
+    //pybind11::module_ mpc = pybind11::module_::import("tra_mpc_xyzDirect_exp_couple");
+    pybind11::module_ mpc = pybind11::module_::import("noexp_tra_mpc_xyzDirect_exp_couple");
     pybind11::object result = mpc.attr("functionTest")(v_ref, p_ref, v_init, p_init, v_input, pre_vd_pd);
     std::vector<float> result_value = result.cast<std::vector<float>>();
 
