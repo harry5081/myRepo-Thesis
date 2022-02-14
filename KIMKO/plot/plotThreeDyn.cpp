@@ -449,7 +449,7 @@ void plotX(){
             plt::figure(1);
             plt::subplot(3,1,1);
             plt::xlim(0, wSize);
-            plt::ylim(-100, 100);
+            plt::ylim(-100, 300);
             
             plot1.update(canWriteTime_temp,canWriteData_temp);
 
@@ -580,7 +580,7 @@ void plotX(){
             plt::figure(2);
             plt::subplot(3,1,1);
             plt::xlim(0, wSize);
-            plt::ylim(-200, 200);
+            plt::ylim(-200, 500);
             
             //plt::ylim(-100, 200);
 

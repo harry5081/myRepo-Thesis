@@ -134,7 +134,7 @@ int main(int argc, char **argv) {
     //initDemand();
     
     
-    std::thread leader_thread(&virtualLeader);
+    //std::thread leader_thread(&virtualLeader);
     
     
    
@@ -149,7 +149,7 @@ int main(int argc, char **argv) {
     
    
 
-    leader_thread.join();
+    //leader_thread.join();
     plot_thread.join();
     start_thread.join();
     listen_thread.join();
