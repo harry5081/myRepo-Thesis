@@ -6,5 +6,5 @@ CXX_FLAGS =
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/usr/include/python3.6m -I/home/kimko/miniconda3/include 
+CXX_INCLUDES = -I/usr/include/python3.6m -I/home/kimko/miniconda3/include -I/home/kimko/miniconda3/include/python3.7m 
 

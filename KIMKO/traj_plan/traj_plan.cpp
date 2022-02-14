@@ -77,7 +77,7 @@ void PLANNER::cir_traject_2(){
         /////////////////////////////////////  pos  ////////////////////////////////////////
         float xt = r*sin(w*t);
         float yt = r*-cos(w*t)+r;
-        float zt =5;
+        float zt =20;
 
         
 

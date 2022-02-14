@@ -12,6 +12,7 @@ set(CMAKE_CXX_COMPILER_ID "GNU")
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "/usr/include/python3.6m"
   "/home/kimko/miniconda3/include"
+  "/home/kimko/miniconda3/include/python3.7m"
   "../traj_plan"
   )
 

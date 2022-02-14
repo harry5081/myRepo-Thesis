@@ -6,5 +6,5 @@ CXX_FLAGS =   -std=gnu++11
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -isystem /usr/include/python3.6m -isystem /home/kimko/miniconda3/include -I/home/kimko/myRepo-Thesis/KIMKO/plot -I/home/kimko/myRepo-Thesis/KIMKO/pid -I/home/kimko/myRepo-Thesis/KIMKO/controlPlant -I/home/kimko/myRepo-Thesis/KIMKO/mpc -I/home/kimko/myRepo-Thesis/KIMKO/leader -I/home/kimko/myRepo-Thesis/KIMKO/traj_plan 
+CXX_INCLUDES = -I/usr/include/python3.6m -isystem /home/kimko/miniconda3/include -isystem /home/kimko/miniconda3/include/python3.7m -I/home/kimko/myRepo-Thesis/KIMKO/plot -I/home/kimko/myRepo-Thesis/KIMKO/pid -I/home/kimko/myRepo-Thesis/KIMKO/controlPlant -I/home/kimko/myRepo-Thesis/KIMKO/mpc -I/home/kimko/myRepo-Thesis/KIMKO/leader -I/home/kimko/myRepo-Thesis/KIMKO/traj_plan 
 

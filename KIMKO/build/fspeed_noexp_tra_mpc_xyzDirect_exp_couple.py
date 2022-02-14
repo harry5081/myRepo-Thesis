@@ -2,7 +2,7 @@ from casadi import *
 import numpy as np
 import math
 
-def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
+def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd, fspeed_ref, fspeed_init):
 
     #print(v_ref)
     kp=3
@@ -20,17 +20,20 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     #az = 0.01
     t = 0.02
 
-    #window = 20
+    #window = 3
     window =len(p_ref)
-    
-    #v_ref=np.array([[0,0,0],[0,0,0],[0,0,0]])
+
+    # v_ref=np.array([[0,0,0],[0,0,0],[0,0,0]])
     # p_ref=np.array([[5.504,32.72,0],[21.41,61.84,0],[45.97,84.15,0]])
     # v_init=np.array([0,0,0])
     # p_init=np.array([0,0,0])
     # v_input_begin=np.array([0,0,0])
     # pre_vd_pd=np.array([0,0,0,0,0,0])
 
+    # pre_control = np.array([0,0,0,0,0,0])
     pre_control = pre_vd_pd
+
+    # fspeed_ref=np.array([[100,90],[100,90],[100,90]])
 
 
 
@@ -51,6 +54,13 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     states = vertcat(vx, px, vy, py, vz, pz)
 
     n_state = states.shape[0]
+
+#     fspeed_vel = sqrt((vx+0.01)**2+(vy+0.01)**2)
+#     fspeed_angle = np.arctan2(vx+0.01, vy+0.01) * 180 / np.pi + pz  ### still need unwrap
+#     fspeed_states = vertcat(fspeed_vel, fspeed_angle)
+#     n_fspeed_states = fspeed_states.shape[0]
+#     fs = Function('fs',[vx,vy,pz],[fspeed_states])
+
 
     # Control
     vdx = SX.sym('vdx')
@@ -103,19 +113,26 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     v_input = B @ states + C @ controls
     v_input_f = Function('v_input_f',[states,controls],[v_input])
 
+    fspeed_vel = sqrt((v_input[0])**2+(v_input[1]+0.01)**2)
+    #fs = Function('fs',[states,controls],[fspeed_vel])
+    fspeed_angle = np.arctan2(v_input[0], v_input[1]+0.01) * 180 / np.pi  + p_init[2]### still need unwrap
+    fspeed_states = vertcat(fspeed_vel, fspeed_angle)
+    n_fspeed_states = fspeed_states.shape[0]
+    fs = Function('fs',[states,controls],[fspeed_states])
 
-    # ex = exp(-3000*t/(fabs(v_input[0]-vx)+200))
-    # ey = exp(-3000*t/(fabs(v_input[1]-vy)+200))
-    # ez = exp(-3000*t/(fabs(v_input[2]-vz)+3000))
+
+    ex = exp(-3000*t/(fabs(v_input[0]-vx)+200))
+    ey = exp(-3000*t/(fabs(v_input[1]-vy)+200))
+    ez = exp(-3000*t/(fabs(v_input[2]-vz)+3000))
     #ef = Function('ef',[states,controls],[e])
 
     A = SX.zeros(6,6)
-    A[0,0]=0
+    A[0,0]=0  #ex
     A[0,1]=0
     A[1,0] = t*cos(pz*2*math.pi/360)
     A[1,1]=1
 
-    A[2,2]=0
+    A[2,2]=0  #ey
     A[2,3]=0
     A[3,2] = t*cos(pz*2*math.pi/360)
     A[3,3]=1
@@ -123,7 +140,7 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     A[3,0] = t*sin(pz*2*math.pi/360)
     A[1,2] = -t*sin(pz*2*math.pi/360)
 
-    A[4,4]=0
+    A[4,4]=0  #ez
     A[4,5]=0
     A[5,4] = t
     A[5,5]=1
@@ -134,25 +151,35 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
 
     h = SX.zeros(6,3)
 
-    h[0,0] = 1
-    h[2,1] = 1
-    h[4,2] = 1
+    h[0,0] = 1  # 1-ex
+    h[2,1] = 1  #1-ey
+    h[4,2] = 1  #1-ez
 
     hf = Function('hf',[states,controls],[h])
 
     model = A @ states + h @ B @ states + h @ C @ controls
+    f = Function('f',[states,controls],[model])
+
+#     fspeed_vel = sqrt((model[0])**2+(model[2]+0.01)**2)
+#     #fs = Function('fs',[states,controls],[fspeed_vel])
+#     fspeed_angle = np.arctan2(model[0], model[2]+0.01) * 180 / np.pi + p_init[2]  ### still need unwrap
+#     fspeed_states = vertcat(fspeed_vel, fspeed_angle)
+#     n_fspeed_states = fspeed_states.shape[0]
+#     fs = Function('fs',[states,controls],[fspeed_states])
+
 
 
     ###########################################################################
     # Make mathematical model as function object
-    f = Function('f',[states,controls],[model])
+
 
 
     U = SX.sym('U',n_controls,window) # vd,pd during a window
-    P = SX.sym('P',n_state + window*n_state) # initial state and reference state of the robot
+    P = SX.sym('P',n_state + window*n_state + window*n_fspeed_states) # initial state and reference state of the robot
     X = SX.sym('X',n_state,(window+1)) # states during prediction horizontal
 
-    V_INPUT_MATRIX= SX.sym('V_INPUT_MATRIX',3,window)
+    V_INPUT_MATRIX = SX.sym('V_INPUT_MATRIX',3,window)
+    FSPEED_STATE = SX.sym('FSPEED_STATE',2,window)
 
     # Construct obj function
     obj = 0
@@ -160,9 +187,9 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
 
     Q = np.zeros((6,6))
     Q[0,0]=0
-    Q[1,1]=3
+    Q[1,1]=0
     Q[2,2]=0
-    Q[3,3]=3
+    Q[3,3]=0
     Q[4,4]=0
     Q[5,5]=1
 
@@ -184,6 +211,10 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     R2[4,4]=0
     R2[5,5]=0
 
+    R_fs = np.zeros((2,2))
+    R_fs[0,0]=20         #  20
+    R_fs[1,1]=5        #  5
+
     v_input_temp = v_input_begin
 
     ############################################################################    
@@ -199,6 +230,8 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
         control_current = U[:,i]
 
         ref_current = P[(i+1)*n_state:(i+2)*n_state]
+        fspeed_ref_current = P[(1+window)*n_state + i*n_fspeed_states:(1+window)*n_state +i*n_fspeed_states+n_fspeed_states]
+        
 
         control_diff = control_current-pre_control
 
@@ -206,9 +239,22 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
         v_input_dff = V_INPUT_MATRIX[:,i]- v_input_temp
         v_input_temp = V_INPUT_MATRIX[:,i]
 
-        #obj = obj + 1.5*i*(X[:,i+1] - P[6:12]).T @ Q @ (X[:,i+1] - P[6:12]) + V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]
-        obj = obj + 10*(X[:,i+1] - ref_current).T @ Q @ (X[:,i+1] - ref_current)+ 1*(V_INPUT_MATRIX[:,i].T @ R @ V_INPUT_MATRIX[:,i]+ 3*v_input_dff.T @ R1 @ v_input_dff)# + (control_diff.T @ R2 @control_diff)
+        FSPEED_STATE[:,i]= fs(state_current,control_current)
+        fspeed_err=FSPEED_STATE[:,i]-fspeed_ref_current
 
+      #  obj = ( obj + 10*(X[:,i+1] - ref_current).T @ Q @ (X[:,i+1] - ref_current) +
+      #          fspeed_err.T @ R_fs @ fspeed_err+
+      #          +1*(V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]+ 3*v_input_dff.T @ v_input_dff) )# + (control_diff.T @ R2 @control_diff)
+        obj = obj + (fspeed_err.T @ R_fs @ fspeed_err) + 10*(X[:,i+1] - ref_current).T @ Q @ (X[:,i+1] - ref_current) + 1*(V_INPUT_MATRIX[:,i].T @ R @ V_INPUT_MATRIX[:,i]+ 3*v_input_dff.T @ R1 @ v_input_dff)
+        
+        #obj = obj + 10*(FSPEED_STATE[:,i][0]-fspeed_ref_current[0])**2+ 0.1*(FSPEED_STATE[:,i][1]-fspeed_ref_current[1])**2+1*(V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]+ 3*v_input_dff.T @ v_input_dff)
+        #+ 0.1*(FSPEED_STATE[:,i][1]-90)**2 +1*(V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]+ 3*v_input_dff.T @ v_input_dff)
+        #1*(V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i]+ 3*v_input_dff.T @ v_input_dff)
+        # + 0.0001*(FSPEED_STATE[:,i][1]-fspeed_ref_current[1])**2+ 1*(V_INPUT_MATRIX[:,i].T @ V_INPUT_MATRIX[:,i])
+        
+        # + 0.0001*(FSPEED_STATE[:,i][1]-fspeed_ref_current[1])**2
+        
+        
         state_next_multi_shoot = X[:,i+1]
 
         state_next = f(state_current,control_current)
@@ -261,14 +307,23 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
 
     solver = nlpsol('solver', 'ipopt', nlp_prob, opts)
 
-
+    ########################################################################################################
     init_state_temp = np.array([v_init,p_init])
     init_state = reshape(init_state_temp,6,1)
-########################################################################################################
+    ########################################################################################################
     temp = int(window*n_state/2)
     ref_state_temp = np.concatenate((np.reshape(v_ref,(-1,temp)),np.reshape(p_ref,(-1,temp))),axis=0)
     ref_state = reshape(ref_state_temp,window*n_state,1)
-#########################################################################################################
+    #########################################################################################################
+    #fspeed_ref = np.reshape(fspeed_ref,n_fspeed_states*window,1)
+    
+    fspeed_ref=np.reshape(fspeed_ref,n_fspeed_states*window)
+    #fspeed_ref=np.reshape(fspeed_ref,(n_fspeed_states*window,1))
+    #print(fspeed_ref[0],fspeed_ref[2],fspeed_ref[4],fspeed_ref[6])
+    #fspeed_ref = np.array((fspeed_ref))
+    
+
+
     #u0 = np.zeros((6,window)) # u0 used for initial guess of [vd1, pd1, vd2, pd2, vd3, pd3 ...]
     #u0 = repmat(pre_control,window,1)
     #u0 = repmat(final_state,window,1)
@@ -277,9 +332,11 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
     #init_v_input = np.array([0])
     #args["p"] = np.concatenate((init_state, final_state), axis=None)
 
-    args["p"] =vertcat(init_state, ref_state)
-    args["x0"] = vertcat(reshape(u0,6*window,1),repmat(init_state,(window+1),1)) #initial guess of [vd1, pd1, vd2, pd2, vd3, pd3 ...]
+      
 
+    args["p"] =vertcat(init_state, ref_state,fspeed_ref)
+    args["x0"] = vertcat(reshape(u0,6*window,1),repmat(init_state,(window+1),1)) #initial guess of [vd1, pd1, vd2, pd2, vd3, pd3 ...]
+    
 
 
     sol = solver(lbx=args["lbx"], ubx=args["ubx"], lbg=args["lbg"], ubg=args["ubg"],\
@@ -330,9 +387,9 @@ def functionTest(v_ref, p_ref, v_init, p_init, v_input_begin, pre_vd_pd):
 
 
     return list([u_sol[0],u_sol[1],u_sol[2],u_sol[3],u_sol[4],u_sol[5]])
-    # print(x_sol[0:2])
+        # print(x_sol[0:2])
 
-    #return list([x_sol[0],x_sol[1]])
+        #return list([x_sol[0],x_sol[1]])
 
 
 
