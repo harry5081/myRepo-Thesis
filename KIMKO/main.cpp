@@ -167,7 +167,7 @@ void virtualLeader(){
     std::cout << "Hello leader" << std::endl;
     std::thread leader_plot(&plotLeaderTraject);
     leader.cir_traject_init();
-    //leader.linear_traject_init();
+    leader.linear_traject_init();
     
 }
 

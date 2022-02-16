@@ -12,12 +12,57 @@ void MPC::mpcErrDyn(std::vector<float> p_ref, std::vector<float> v_ref, std::vec
     
     float time1 = (float)clock()/CLOCKS_PER_SEC;
     
-    pybind11::module_ mpc = pybind11::module_::import("errorDyn5");
+    pybind11::module_ mpc = pybind11::module_::import("errorDyn5_fixRef_forY");
     pybind11::object result = mpc.attr("errDynFunction")(p_ref, v_ref, p_init, v_init);
     std::vector<float> result_value = result.cast<std::vector<float>>();
 
     float time2 = (float)clock()/CLOCKS_PER_SEC;
-    std::cout << " MPC_XYZ operation time: "<< time2-time1 << std::endl;
+    std::cout << " MPC_Y_errorDyn operation time: "<< time2-time1 << std::endl;
+
+    // x_pos_demand = result_value[0];
+    // y_pos_demand = result_value[1];
+    // float phi_demand = result_value[2];
+
+
+    // float v_demand = result_value[3];
+    // x_vel_demand=v_demand;
+    // float blank = result_value[4];
+    // float w_demand = result_value[5];
+    
+
+    x_pos_demand = result_value[0];
+    y_pos_demand = result_value[1];
+    float phi_demand = result_value[2];
+
+
+    float v_demand = result_value[3];
+    y_vel_demand=v_demand*sin(phi_demand);
+
+    y_vel_ref = fspeedVel_ref; // for plot
+
+    float blank = result_value[4];
+    float w_demand = result_value[5];
+
+    std::cout << "fspeed: "<< v_demand << std::endl;
+    std::cout << "angle: "<< sin(phi_demand)*180/PI << std::endl;
+    std::cout << y_vel_demand << std::endl;
+
+    //pre_vd_pd = {x_vel_demand, x_pos_demand, y_vel_demand, y_pos_demand, z_vel_demand, z_pos_demand};
+
+
+    //std::cout << z_vel_demand << std::endl;
+    //std::cout << z_pos_demand << std::endl;
+}   
+
+void MPC::mpcErrDyn(std::vector<std::vector<float>> p_ref, std::vector<std::vector<float>> v_ref, std::vector<float> p_init, std::vector<float> v_init){
+    float time1 = (float)clock()/CLOCKS_PER_SEC;
+    
+    pybind11::module_ mpc = pybind11::module_::import("errorDyn5_dynRef");
+    pybind11::object result = mpc.attr("errDynFunction")(p_ref, v_ref, p_init, v_init);
+    std::vector<float> result_value = result.cast<std::vector<float>>();
+
+    float time2 = (float)clock()/CLOCKS_PER_SEC;
+    std::cout << " MPC_DYN_errorDyn operation time: "<< time2-time1 << std::endl;
 
     x_pos_demand = result_value[0];
     y_pos_demand = result_value[1];
@@ -29,14 +74,8 @@ void MPC::mpcErrDyn(std::vector<float> p_ref, std::vector<float> v_ref, std::vec
     float blank = result_value[4];
     float w_demand = result_value[5];
 
+}
     
-
-    //pre_vd_pd = {x_vel_demand, x_pos_demand, y_vel_demand, y_pos_demand, z_vel_demand, z_pos_demand};
-
-
-    //std::cout << z_vel_demand << std::endl;
-    //std::cout << z_pos_demand << std::endl;
-}    
 
 
 void MPC::mpcOperation(float v_ref, float p_ref, float v_init, float p_init, int v_input_begin){

@@ -8,7 +8,11 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     window = 10
     dt = 0.2
 
-    acc_max = 500 #(mm^2/s)
+    acc_max = 1000 #(mm^2/s)
+    p_ref_temp =p_ref
+    v_ref_temp =v_ref
+    print("p_ref: ",p_ref)
+    print("v_ref: ",v_ref)
 
     #p_ref=np.array([[5.504,32.72,0],[21.41,61.84,0],[45.97,84.15,0]])
     #p_ref=np.array([[10,0,0],[10,0,0]]) # give phi 90 check radius degree!!!!!!!!!!!!
@@ -113,13 +117,17 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     Q = np.zeros((3,3))
     Q[0,0]=10    # ex
     Q[1,1]=10    # ey
-    Q[2,2]=10    # e_phi
+    Q[2,2]=0    # e_phi
 
 
 
     state_init = P[0:6]
     ref_init = P[6:12]
-    err_init=E[:,0]
+    
+    # state_init = vertcat(p_init,v_init)
+    # ref_init = vertcat(p_ref_temp,v_ref_temp)
+
+    #err_init=E[:,0]
     err_init = (state_init[0:3]-ref_init[0:3])  # err_init = e_current_substract_f(state_init,ref_init)
     #print(err_init)
     g2 = vertcat(g2,E[:,0]-err_init)
@@ -140,9 +148,9 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
         g2 = vertcat(g2,E[:,i+1]-err_cur)
 
         demand_state_current = D[:,i]
-        
+        #demand_state_current[0] = 0
         demand_state_current[4] = 0
-        demand_state_current[5] = 0
+        #demand_state_current[5] = 0
         
         ref_current = P[n_demand_state + (i+1)*n_ref : n_demand_state + (i+2)*n_ref]
 
@@ -157,11 +165,12 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
         
         # obj=obj+8*(E[:,i][0])**2+ 10*(demand_state_current[0]**2+demand_state_current[3]**2)\
         #     +1000*(demand_state_current[0]-ref_current[0])**2
-
+        
         err_next = err_cur + dt * err_dyn_f(demand_state_current,ref_current)
         g = vertcat(g,demand_state_current[0:3]-ref_current[0:3]-err_next)
-        obj=obj+err_next.T @ Q @ err_next + 0.8*(demand_state_current[0]**2+demand_state_current[3]**2)
-        
+        obj=obj+err_next.T @ Q @ err_next + 0.8*(10*demand_state_current[3]**2)
+        #obj=obj+(err_cur[0])**2+(err_cur[1])**2+(err_cur[2])**2+ 0.8*(10*demand_state_current[3]**2)
+
         acc = (demand_state_current[3]-fspeed_temp)/dt
         ACC[:,i] = acc
         fspeed_temp = demand_state_current[3]
@@ -211,11 +220,14 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     init_state = np.concatenate((p_init,v_init),axis=0)
     #print(init_state)
 
-    ref_state_temp = np.concatenate((p_ref,v_ref),axis=1)
+    #ref_state_temp = np.concatenate((p_ref.T,v_ref.T),axis=0)
+    ref_state_temp =np.concatenate((np.reshape(p_ref,(-1,3)),np.reshape(v_ref,(-1,3))),axis=1)
     ref_state = np.reshape(ref_state_temp, newshape=(window+1)*n_ref)
     #print(ref_state)
+    
 
     d0 = repmat(init_state,window,1)
+    #d0 = ref_state[0:6*(window)]
     #u0 = ref_state[n_ref:]  #initial guess of [x1, y1, phi1, v1, 0, w1, ...]
 
     init_error = np.array([-10,0,0])
@@ -260,7 +272,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     print("")
     np.set_printoptions(precision=3,suppress=True)
     for i in range(1):
-        for j in range(window):
+        for j in range(4):
             print("----Window Update----")
             print("window: ", j)
             print("demand state [x, y, phi, v, 0, w] = ",demand_predichorz_update[i,:,j])

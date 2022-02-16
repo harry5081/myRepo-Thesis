@@ -17,6 +17,8 @@
  #include <pybind11/stl.h>
 //#include <pybind11/numpy.h>
 
+#define PI 3.14159265
+
  float timeDiff;
  float timeTemp;
 
@@ -155,13 +157,45 @@ void run::start()
 
 
 
-    std::vector<float> p_ref = {mpc.x_pos_ref, mpc.y_pos_ref, 0};
-    std::vector<float> v_ref = {mpc.x_vel_ref, 0, 0};
+
+
+    ///////////////////////////////////  Error Dynamic  ///////////////////////////////////
+    //fix Ref for x
+
+    // std::vector<float> p_ref = {mpc.x_pos_ref, mpc.y_pos_ref, 0};
+    // std::vector<float> v_ref = {mpc.x_vel_ref,0 , 0};
     
-    std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, 0};
-    std::vector<float> v_init = {mRobot.vel_x, 0, 0};
+    // std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, 0};
+    // std::vector<float> v_init = {mRobot.vel_x, 0, 0};
+    
+    // mpc.mpcErrDyn(p_ref, v_ref, p_init, v_init);
+
+    //fix Ref for y
+    std::vector<float> p_ref = {mpc.x_pos_ref, mpc.y_pos_ref, mpc.fsAngle_ref*float(PI/180)};
+    std::vector<float> v_ref = {mpc.fspeedVel_ref, 0, 0};
+    
+    std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, mRobot.fsAngle*float(PI/180)};
+    std::vector<float> v_init = {mRobot.vel_y, 0, 0};
     
     mpc.mpcErrDyn(p_ref, v_ref, p_init, v_init);
+
+    //dyn Ref
+    // std::vector<std::vector<float>> v_ref_dyn = planner.vel_ref;
+    // std::vector<std::vector<float>> p_ref_dyn = planner.pos_ref;
+    // //std::vector<std::vector<float>> fspeed_ref = planner.fspeed_ref;
+
+    // std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, 0};
+    // std::vector<float> v_init = {mRobot.vel_x, 0, 0};
+
+    // mpc.x_vel_ref = planner.vel_ref[0][0]; //plot
+    // mpc.y_vel_ref = planner.vel_ref[0][1]; //plot
+
+    // mpc.x_pos_ref = planner.pos_ref[0][0]; //plot
+    // mpc.y_pos_ref = planner.pos_ref[0][1]; //plot
+
+    // mpc.z_pos_ref = planner.pos_ref[0][2]; //plot
+
+    // mpc.mpcErrDyn(p_ref_dyn, v_ref_dyn, p_init, v_init);
     
 
 
@@ -189,8 +223,8 @@ void run::start()
     //std::cout << "Robot Value"<<std::endl;
     //std::cout <<  "vel_y: " << mRobot.vel_y <<  "     pos_y: " << mRobot.pos_y <<std::endl<<std::endl;   
     
-    //mRobot.vd_y = mpc.y_vel_demand;
-    //mRobot.pd_y = mpc.y_pos_demand;
+    mRobot.vd_y = mpc.y_vel_demand;
+    mRobot.pd_y = mpc.y_pos_demand;
     
     //mRobot.pd_y = mpc.sinePosDemand(time);
     //mRobot.vd_y = mpc.cosVelDemand(time);
@@ -275,7 +309,7 @@ void run::start()
         m_int16_desired_velocity_X=100;
         std::cout <<  "X Direction Controller Input too Fast!!!" << std::endl;
     }
-    else if (m_int16_desired_velocity_X < -280){
+    else if (m_int16_desired_velocity_X < -320){
         m_int16_desired_velocity_X=-100;
         std::cout <<  "X Direction Controller Input too Fast!!!" << std::endl;
     }
