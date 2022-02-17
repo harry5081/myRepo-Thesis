@@ -171,15 +171,17 @@ void run::start()
     // mpc.mpcErrDyn(p_ref, v_ref, p_init, v_init);
 
     //fix Ref for y
-    std::vector<float> p_ref = {mpc.x_pos_ref, mpc.y_pos_ref, mpc.fsAngle_ref*float(PI/180)};
-    std::vector<float> v_ref = {mpc.fspeedVel_ref, 0, 0};
+    // std::vector<float> p_ref = {mpc.x_pos_ref, mpc.y_pos_ref, mpc.fsAngle_ref*float(PI/180)};
+    // std::vector<float> v_ref = {mpc.fspeedVel_ref, 0, 0};
     
-    std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, mRobot.fsAngle*float(PI/180)};
-    std::vector<float> v_init = {mRobot.vel_y, 0, 0};
+    // std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, mRobot.fsAngle*float(PI/180)};
+    // std::vector<float> v_init = {mRobot.vel_y, 0, 0};
     
-    mpc.mpcErrDyn(p_ref, v_ref, p_init, v_init);
+    // mpc.mpcErrDyn(p_ref, v_ref, p_init, v_init);
+
 
     //dyn Ref
+    // for x
     // std::vector<std::vector<float>> v_ref_dyn = planner.vel_ref;
     // std::vector<std::vector<float>> p_ref_dyn = planner.pos_ref;
     // //std::vector<std::vector<float>> fspeed_ref = planner.fspeed_ref;
@@ -196,6 +198,31 @@ void run::start()
     // mpc.z_pos_ref = planner.pos_ref[0][2]; //plot
 
     // mpc.mpcErrDyn(p_ref_dyn, v_ref_dyn, p_init, v_init);
+
+    //dyn Ref
+    // for xy
+
+    std::vector<std::vector<float>> v_ref_dyn = planner.vel_ref;
+    std::vector<std::vector<float>> p_ref_dyn = planner.pos_ref;
+    //std::vector<std::vector<float>> fspeed_ref = planner.fspeed_ref;
+
+    float fspeed_temp = sqrt(pow(mRobot.vel_x,2) + pow(mRobot.vel_y,2));
+
+    std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, mRobot.fsAngle*float(PI/180)};
+    std::vector<float> v_init = {fspeed_temp, 0, 0};
+
+    mpc.x_vel_ref = planner.vel_ref[0][0]; //plot
+    mpc.y_vel_ref = planner.vel_ref[0][1]; //plot
+
+    mpc.x_pos_ref = planner.pos_ref[0][0]; //plot
+    mpc.y_pos_ref = planner.pos_ref[0][1]; //plot
+
+    mpc.z_pos_ref = planner.pos_ref[0][2]; //plot
+
+    mpc.mpcErrDyn_xy(p_ref_dyn, v_ref_dyn, p_init, v_init);
+
+
+   
     
 
 

@@ -67,6 +67,9 @@ ReadWritePlot *vd_Plot_VelY= new ReadWritePlot;
 // plot demand_Z_Vel
 ReadWritePlot *vd_Plot_VelZ= new ReadWritePlot;
 
+ReadWritePlot *fsd_Vel_Plot= new ReadWritePlot;
+ReadWritePlot *fsd_Angle_Plot= new ReadWritePlot;
+
 
 // plot demand_X_Pos
 ReadWritePlot *pd_Plot_PosX= new ReadWritePlot;
@@ -290,11 +293,16 @@ void writeDatatoFile()
         vd_Plot_VelY->writeDatatoFile(m_run->mRobot.vd_y, "plot/VelDemand_Data_Y");
         vd_Plot_VelZ->writeDatatoFile(m_run->mRobot.vd_z, "plot/VelDemand_Data_Z");
 
+        fsd_Vel_Plot->writeDatatoFile(m_run->mpc.fspeedVel_demand, "plot/3_Fspeed_demand");
+        fsd_Angle_Plot->writeDatatoFile(m_run->mpc.fsAngle_demand, "plot/3_FsAngle_demand");
+
         pd_Plot_Pos_time->writeDatatoFile(time, "plot/PosDemand_Time");
         pd_Plot_PosX->writeDatatoFile(m_run->mRobot.pd_x, "plot/PosDemand_Data_X");
         pd_Plot_PosY->writeDatatoFile(m_run->mRobot.pd_y, "plot/PosDemand_Data_Y");
         pd_Plot_PosZ->writeDatatoFile(m_run->mRobot.pd_z, "plot/PosDemand_Data_Z");
 
+        
+        
         // std::cout << m_run->mRobot.ref_pos_x << std::endl;
 
 

@@ -51,7 +51,8 @@ std::vector<float> velDemand_X_temp;
 std::vector<float> velDemand_Y_temp;
 std::vector<float> velDemand_Z_temp;
 
-
+std::vector<float> fspeedDemand_temp;
+std::vector<float> fsAngleDemand_temp;
 
 std::vector<float> canWriteTime_temp;
 std::vector<float> canReadTime_temp;
@@ -343,6 +344,7 @@ void plotX(){
     plt::subplot(2,1,1);
     plt::title("Forward Speed");
     plt::Plot plot20_0("vel_ref",velRef_Time_temp,fspeedRef_temp,"g"); 
+    plt::Plot plot20_1("vel_d",velDemand_Time_temp,fspeedDemand_temp,"b");
     plt::Plot plot20_2("vel_sensor",canReadTime_temp,fspeedRobot_temp,"r");  
     plt::grid();
     plt::legend();
@@ -350,6 +352,7 @@ void plotX(){
     plt::subplot(2,1,2);
     
     plt::Plot plot21_0("angle_ref",velRef_Time_temp,fsAngleRef_temp,"g");
+    plt::Plot plot21_1("angle_d",velDemand_Time_temp,fsAngleDemand_temp,"b");
     plt::Plot plot21_2("angle_sensor",canReadTime_temp,fsAngleRobot_temp,"r"); 
     plt::grid();
     plt::legend();
@@ -386,6 +389,10 @@ void plotX(){
         readFileToVector("../build/plot/VelDemand_Data_Y", velDemand_Y_temp);
         readFileToVector("../build/plot/VelDemand_Data_Z", velDemand_Z_temp);
 
+        readFileToVector("../build/plot/3_Fspeed_demand", fspeedDemand_temp);
+        readFileToVector("../build/plot/3_FsAngle_demand", fsAngleDemand_temp);
+
+
         readFileToVector("../build/plot/VelRef_Time", velRef_Time_temp);
         readFileToVector("../build/plot/VelRef_Data_X", velRef_X_temp);
         readFileToVector("../build/plot/VelRef_Data_Y", velRef_Y_temp);
@@ -407,6 +414,12 @@ void plotX(){
             plt::ylim(-100, 100);
             
             plot20_0.update(velRef_Time_temp,fspeedRef_temp);
+
+            if(velDemand_Time_temp.size()==fspeedDemand_temp.size()){
+               
+                plot20_1.update(velDemand_Time_temp,fspeedDemand_temp);
+                
+            }
 
             if(canReadTime_temp.size()==fspeedRobot_temp.size()){
                
@@ -430,6 +443,11 @@ void plotX(){
          
           plot21_0.update(velRef_Time_temp,fsAngleRef_temp);
           
+          if(velDemand_Time_temp.size()==fsAngleDemand_temp.size()){
+               
+                plot21_1.update(velDemand_Time_temp,fsAngleDemand_temp);
+                
+            }
         
           if(canReadTime_temp.size()==fsAngleRobot_temp.size()){
                 plot21_2.update(canReadTime_temp,fsAngleRobot_temp);
@@ -716,6 +734,9 @@ void plotX(){
         velDemand_X_temp.clear();
         velDemand_Y_temp.clear();
         velDemand_Z_temp.clear();
+
+        fspeedDemand_temp.clear();
+        fsAngleDemand_temp.clear();
 
         //demand_pos
         posDemand_Time_temp.clear();

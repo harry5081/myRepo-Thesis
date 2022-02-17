@@ -48,7 +48,7 @@ public:
     float x_pos_ref=0;
 
     float y_vel_ref=0;
-    float y_pos_ref=100;
+    float y_pos_ref=0;
 
     float z_vel_ref=0;
     float z_pos_ref=0;
@@ -72,6 +72,7 @@ public:
 
     void mpcErrDyn(std::vector<float> p_ref, std::vector<float> v_ref, std::vector<float> p_init, std::vector<float> v_init);
     void mpcErrDyn(std::vector<std::vector<float>> p_ref, std::vector<std::vector<float>> v_ref, std::vector<float> p_init, std::vector<float> v_init);
+    void mpcErrDyn_xy(std::vector<std::vector<float>> p_ref, std::vector<std::vector<float>> v_ref, std::vector<float> p_init, std::vector<float> v_init);
     
 
     float sinePosDemand(float time);

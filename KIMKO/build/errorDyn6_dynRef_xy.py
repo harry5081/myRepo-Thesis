@@ -6,21 +6,21 @@ import math
 def errDynFunction(p_ref, v_ref, p_init, v_init):
     
     #ws = 1 # check ws direction and sign
-    window = 10
+    window =len(p_ref)-1
     dt = 0.2
 
     acc_max = 1000 #(mm^2/s)
-    p_ref_temp =p_ref
-    v_ref_temp =v_ref
-    print("p_ref: ",p_ref)
-    print("v_ref: ",v_ref)
+    # p_ref_temp =p_ref
+    # v_ref_temp =v_ref
+    print("p_ref: ",p_ref[0])
+    print("v_ref: ",v_ref[0])
 
     #p_ref=np.array([[5.504,32.72,0],[21.41,61.84,0],[45.97,84.15,0]])
     #p_ref=np.array([[10,0,0],[10,0,0]]) # give phi 90 check radius degree!!!!!!!!!!!!
 
     #p_ref=np.array([[0,100,math.pi/2]])
     #p_ref=np.array([[100,0,0]])
-    p_ref=repmat(p_ref,(window+1),1)
+    #p_ref=repmat(p_ref,(window+1),1)
 
 
 
@@ -29,7 +29,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     #p_ref=np.array([[0,10,math.pi],[0,10,math.pi],[0,10,math.pi]]) # give phi 90 check radius degree!!!!!!!!!!!!
     #v_ref=np.array([[0,0,0],[0,0,0]])   # vs, 0, ws
     #v_ref=np.array([[0,0,0]])
-    v_ref=repmat(v_ref,(window+1),1)
+    #v_ref=repmat(v_ref,(window+1),1)
 
     
     print("p_init: ",p_init)

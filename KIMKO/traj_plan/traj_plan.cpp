@@ -125,17 +125,18 @@ void PLANNER::cir_traject_2(){
 
 
 
-        std::vector<float> point = {xt,0,0};
+        //std::vector<float> point = {xt,0,0};
+        std::vector<float> point = {0,100,0};
         pos_ref[i] = point;
 
 
-        std::vector<float> vel = {vx,0,0};
-        // std::vector<float> vel = {0,0,0};
+        //std::vector<float> vel = {vx,0,0};
+         std::vector<float> vel = {0,0,0};
         vel_ref[i] = vel;
 
-        std::vector<float> fspeed_temp = {fspeed,fsAngle};
         //std::vector<float> fspeed_temp = {fspeed,fsAngle};
-        // std::vector<float> fspeed_temp = {0,0,0};
+        //std::vector<float> fspeed_temp = {fspeed,fsAngle};
+         std::vector<float> fspeed_temp = {0,0,0};
         fspeed_ref[i] = fspeed_temp;
 
                
