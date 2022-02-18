@@ -20,7 +20,7 @@ public:
 
     LEADER leaderData;
 
-    int window = 13;
+    int window = 10;
 
     
     std::vector<std::vector<float>> pos_ref;

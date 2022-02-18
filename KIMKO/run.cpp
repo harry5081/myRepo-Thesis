@@ -209,6 +209,7 @@ void run::start()
 
     float fspeed_temp = sqrt(pow(mRobot.vel_x,2) + pow(mRobot.vel_y,2));
 
+    
     std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, mRobot.fsAngle*float(PI/180)};
     std::vector<float> v_init = {fspeed_temp, 0, 0};
 
@@ -288,8 +289,8 @@ void run::start()
     //mRobot.pd_x = (1)*mpc.sineToTenPosDemand(time);
     //mRobot.vd_x = (1)*mpc.cosToTenVelDemand(time);
 
-    //mRobot.pd_z = mpc.sineToTenPosDemand(time)/10;
-    //mRobot.vd_z = mpc.cosToTenVelDemand(time)/10;
+    mRobot.pd_z = mpc.sineToTenPosDemand(time)/10;
+    mRobot.vd_z = mpc.cosToTenVelDemand(time)/10;
 
     // mRobot.pd_z = (-1)*mpc.sineToTenPosDemand(time)/10;
     // mRobot.vd_z = (-1)*mpc.cosToTenVelDemand(time)/10;

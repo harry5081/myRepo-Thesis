@@ -159,7 +159,7 @@ void PLANNER::cir_traject_2(){
 void PLANNER::cir_traject_TNB(){
     // std::cout << "TNB" <<std::endl;
     // std::cout << s <<std::endl;
-    dt = 20;
+    dt = 10;
     float s_dot = dt/sampleTime;
     float k = 1/r;
     float ws =0;
@@ -202,7 +202,7 @@ void PLANNER::cir_traject_TNB(){
         
         
         /********* angle unwrap *********/
-        float fsAngle_unwrap = unwrap(fsAngle_pre_window,fsAngle);
+        float fsAngle_unwrap = unwrapRad(fsAngle_pre_window,fsAngle);
         fsAngle_pre_window=fsAngle_unwrap;
 
         if(i==0){
@@ -230,7 +230,7 @@ void PLANNER::cir_traject_TNB(){
 
 
 
-        //std::vector<float> pos = {xt,yt,0};
+        //std::vector<float> pos = {xt,yt,fsAngle_unwrap};
         std::vector<float> pos = {xt,yt,fsAngle};
         pos_ref[i] = pos;
 

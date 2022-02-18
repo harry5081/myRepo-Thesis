@@ -12,7 +12,8 @@ void MPC::mpcErrDyn_xy(std::vector<std::vector<float>> p_ref, std::vector<std::v
     // for dyn ref x direction
     float time1 = (float)clock()/CLOCKS_PER_SEC;
     
-    pybind11::module_ mpc = pybind11::module_::import("errorDyn6_dynRef_xy");
+    pybind11::module_ mpc = pybind11::module_::import("errorDyn7_dynRef");
+    //pybind11::module_ mpc = pybind11::module_::import("errorDyn6_dynRef_xy");
     pybind11::object result = mpc.attr("errDynFunction")(p_ref, v_ref, p_init, v_init);
     std::vector<float> result_value = result.cast<std::vector<float>>();
 
