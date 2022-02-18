@@ -118,7 +118,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     Q = np.zeros((3,3))
     Q[0,0]=10    # ex
     Q[1,1]=10    # ey
-    Q[2,2]=10    # e_phi
+    Q[2,2]=30    # e_phi
 
 
 
@@ -131,12 +131,13 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     #err_init=E[:,0]
     err_init = (state_init[0:3]-ref_init[0:3])  # err_init = e_current_substract_f(state_init,ref_init)
     #print(err_init)
-    g2 = vertcat(g2,E[:,0]-err_init)
+    #g2 = vertcat(g2,E[:,0]-err_init)
 
 
     obj = err_init.T @ Q @ err_init
 
     err_next = err_init + dt*err_dyn_f(state_init,ref_init)
+    g2 = vertcat(g2,E[:,0]-err_next)
 
     fspeed_init = state_init[3]      # for acc constraint
     fspeed_temp = fspeed_init           # for acc constraint

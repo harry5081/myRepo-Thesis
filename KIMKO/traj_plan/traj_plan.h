@@ -20,7 +20,7 @@ public:
 
     LEADER leaderData;
 
-    int window = 10;
+    int window = 13;
 
     
     std::vector<std::vector<float>> pos_ref;
@@ -30,6 +30,8 @@ public:
 
     void cir_traject();
     void cir_traject_2();
+
+    void cir_traject_TNB();
 
     void linear_traject_2();
 
@@ -44,7 +46,7 @@ private:
     float t_current;
 
     float r;
-    float w=0.5;//0.1;
+    float w=0.8;//0.1;
     float sampleTime=0.2;//0.2
 
     float fsAngle_pre =0;

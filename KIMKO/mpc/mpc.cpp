@@ -21,12 +21,14 @@ void MPC::mpcErrDyn_xy(std::vector<std::vector<float>> p_ref, std::vector<std::v
 
     x_pos_demand = result_value[0];
     y_pos_demand = result_value[1];
-    fsAngle_demand = result_value[2];
-
-
+    
+    float fsAngle_temp = result_value[2];
     fspeedVel_demand = result_value[3];
-    x_vel_demand=fspeedVel_demand*cos(fsAngle_demand);
-    y_vel_demand=fspeedVel_demand*sin(fsAngle_demand);
+
+    //x_vel_demand=fspeedVel_demand*cos(fsAngle_temp);
+    //y_vel_demand=fspeedVel_demand*sin(fsAngle_temp);
+
+    fsAngle_demand = fsAngle_temp*180/PI;
 
 
     float blank = result_value[4];

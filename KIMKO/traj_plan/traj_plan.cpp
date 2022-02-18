@@ -126,7 +126,7 @@ void PLANNER::cir_traject_2(){
 
 
         //std::vector<float> point = {xt,0,0};
-        std::vector<float> point = {0,100,0};
+        std::vector<float> point = {xt,yt,0};
         pos_ref[i] = point;
 
 
@@ -146,6 +146,108 @@ void PLANNER::cir_traject_2(){
     }
 
     if((t_current+dt)<=s/r/w){
+            t_current=t_current+dt;
+
+    }
+
+    
+
+
+
+}
+
+void PLANNER::cir_traject_TNB(){
+    // std::cout << "TNB" <<std::endl;
+    // std::cout << s <<std::endl;
+    dt = 20;
+    float s_dot = dt/sampleTime;
+    float k = 1/r;
+    float ws =0;
+
+    t=t_current;
+    fsAngle_pre_window = fsAngle_pre; /********* angle unwrap *********/
+    //std::cout << t <<std::endl;
+    for(int i =0;i<window;i++){
+
+        if((t+dt)<=s){
+            t=t+dt;
+
+        }
+
+        ws =k*s_dot;
+        /////////////////////////////////////  pos  ////////////////////////////////////////
+        float xt = r*sin(t/r);
+        float yt = r*-cos(t/r)+r;
+        float zt =0;
+
+        
+
+
+        /////////////////////////////////////  vel  ////////////////////////////////////////
+        float vt_x = cos(t/r);
+        float vt_y = sin(t/r);
+        //float vt = sqrt(pow(vt_x,2)+pow(vt_y,2));
+
+        float vn_x = -(1/r)*sin(t/r);
+        float vn_y = (1/r)*cos(t/r);
+        float vn = sqrt(pow(vn_x,2)+pow(vn_y,2));
+
+
+        /////////////////////////////////////  forward speed  ////////////////////////////////////////
+        // float fspeed = sqrt(pow(vt_x,2)+pow(vt_y,2));
+        float fspeed = s_dot;
+        float fsAngle = atan2(vt_y,vt_x);
+
+
+        
+        
+        /********* angle unwrap *********/
+        float fsAngle_unwrap = unwrap(fsAngle_pre_window,fsAngle);
+        fsAngle_pre_window=fsAngle_unwrap;
+
+        if(i==0){
+
+            fsAngle_pre = fsAngle_pre_window;
+        }
+        /********* angle unwrap *********/
+
+        
+        
+        float vx=vt_x;//vt_x;//vt_x;
+        float vy=vt_y;//vt_y;
+
+        if((t+dt)>s){
+            vx=0;
+            vy=0;
+
+            fspeed=0;
+            fsAngle=0;
+            fsAngle_unwrap=0;
+
+            zt =0;
+            ws =0;
+        }
+
+
+
+        //std::vector<float> pos = {xt,yt,0};
+        std::vector<float> pos = {xt,yt,fsAngle};
+        pos_ref[i] = pos;
+
+
+        //std::vector<float> vel = {0,0,0};
+        std::vector<float> vel = {fspeed,0,ws};
+        vel_ref[i] = vel;
+
+        
+
+               
+         
+        //usleep(100000);
+
+    }
+
+    if((t_current+dt)<=s){
             t_current=t_current+dt;
 
     }

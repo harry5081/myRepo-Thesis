@@ -114,7 +114,8 @@ void run::start()
     usleep(150000);
 
     //planner.linear_traject_2();
-    planner.cir_traject_2();
+    //planner.cir_traject_2();
+    planner.cir_traject_TNB();
     
     // std::vector<std::vector<float>> v_ref_dyn = planner.vel_ref;
     // std::vector<std::vector<float>> p_ref_dyn = planner.pos_ref;
@@ -211,18 +212,20 @@ void run::start()
     std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, mRobot.fsAngle*float(PI/180)};
     std::vector<float> v_init = {fspeed_temp, 0, 0};
 
-    mpc.x_vel_ref = planner.vel_ref[0][0]; //plot
-    mpc.y_vel_ref = planner.vel_ref[0][1]; //plot
+    //mpc.x_vel_ref = planner.vel_ref[0][0]; //plot
+    //mpc.y_vel_ref = planner.vel_ref[0][1]; //plot
 
     mpc.x_pos_ref = planner.pos_ref[0][0]; //plot
     mpc.y_pos_ref = planner.pos_ref[0][1]; //plot
+    mpc.fsAngle_ref = planner.pos_ref[0][2]*180/PI; //plot
+    mpc.fspeedVel_ref = planner.vel_ref[0][0]; //plot
 
-    mpc.z_pos_ref = planner.pos_ref[0][2]; //plot
 
     mpc.mpcErrDyn_xy(p_ref_dyn, v_ref_dyn, p_init, v_init);
 
 
-   
+    mpc.x_vel_demand=mpc.fspeedVel_demand*cos((mpc.fsAngle_demand-mRobot.pos_z)*PI/180);
+    mpc.y_vel_demand=mpc.fspeedVel_demand*sin((mpc.fsAngle_demand-mRobot.pos_z)*PI/180);
     
 
 
@@ -261,8 +264,8 @@ void run::start()
     //mRobot.vd_z = mpc.z_vel_demand;
     //mRobot.pd_z = mpc.z_pos_demand;
     
-    //mRobot.pd_z = mpc.sinePosDemand(time)/10;
-    //mRobot.vd_z = mpc.cosVelDemand(time)/10;
+    // mRobot.pd_z = mpc.sinePosDemand(time)/10;
+    // mRobot.vd_z = mpc.cosVelDemand(time)/10;
     
     // mRobot.pd_z = -mpc.sineToTenPosDemand(time)/10;
     // mRobot.vd_z = -mpc.cosToTenVelDemand(time)/10;
@@ -285,8 +288,8 @@ void run::start()
     //mRobot.pd_x = (1)*mpc.sineToTenPosDemand(time);
     //mRobot.vd_x = (1)*mpc.cosToTenVelDemand(time);
 
-    // mRobot.pd_z = mpc.sineToTenPosDemand(time)/10;
-    // mRobot.vd_z = mpc.cosToTenVelDemand(time)/10;
+    //mRobot.pd_z = mpc.sineToTenPosDemand(time)/10;
+    //mRobot.vd_z = mpc.cosToTenVelDemand(time)/10;
 
     // mRobot.pd_z = (-1)*mpc.sineToTenPosDemand(time)/10;
     // mRobot.vd_z = (-1)*mpc.cosToTenVelDemand(time)/10;
