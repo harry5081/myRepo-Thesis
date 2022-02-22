@@ -3,7 +3,7 @@ import numpy as np
 import math
 
 
-def errDynFunction(p_ref, v_ref, p_init, v_init):
+def errDynFunction(p_ref, v_ref, p_init, v_init, ori_ref, ori_init):
     np.set_printoptions(precision=3,suppress=True)
     #ws = 1 # check ws direction and sign
     window =len(p_ref)-1
@@ -15,6 +15,10 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     v_init= np.array(v_init)
 
     acc_max = 1000 #(mm^2/s)
+
+    ori_ref= np.array(ori_ref)
+    ori_init= np.array(ori_init)
+
     # p_ref_temp =p_ref
     # v_ref_temp =v_ref
     #print("p_ref: ",p_ref[0])
@@ -65,6 +69,11 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     ref = vertcat(xs, ys, phi_ps, vs, blanck_s, ws)
     n_ref = ref.shape[0]
 
+    
+    ori_ref_theta = SX.sym('ori_ref_theta')
+    ori_ref_w = SX.sym('ori_ref_w')
+    ori_ref = vertcat(ori_ref_theta, ori_ref_w)
+
 
     ### Demand State, output of mpc
     demand_x = SX.sym('demand_x')
@@ -77,6 +86,11 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
 
     demand_state = vertcat(demand_x, demand_y, demand_phi_p, demand_vp, demand_blanck, demand_wp)
     n_demand_state = demand_state.shape[0]
+
+    ori_init_theta = SX.sym('ori_init_theta')
+    ori_init_w = SX.sym('ori_init_w')
+    ori_init = vertcat(ori_init_theta, ori_init_w)
+
 
 
     #e_state = vertcat(ex, ey, e_phi, ev, e_blanck, e_blanck2)

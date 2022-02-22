@@ -7,10 +7,10 @@
 void PLANT::calFspeed(){
 
     fspeedVel = sqrt(pow(controlInput_x_vel,2)+pow(controlInput_y_vel,2));
-    fsAngle = atan2(vel_y,vel_x) * 180 / PI+ pos_z;
+    fsAngle = atan2(controlInput_y_vel,controlInput_x_vel) * 180/PI+ pos_z;
 
-    // fsAngle = unwrap(fsAngle_pre, fsAngle);
-    // fsAngle_pre = fsAngle;
+    fsAngle = unwrap(fsAngle_pre, fsAngle);
+    fsAngle_pre = fsAngle;
     
 
     //fsAngle = unwrap(fsAngle_pre, fsAngle);

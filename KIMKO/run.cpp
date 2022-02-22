@@ -210,8 +210,11 @@ void run::start()
     float fspeed_temp = sqrt(pow(mRobot.vel_x,2) + pow(mRobot.vel_y,2));
 
     
-    std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, mRobot.fsAngle*float(PI/180)};
+    std::vector<float> p_init = {mRobot.pos_x, mRobot.pos_y, mRobot.fsAngle*float(PI/180)};
     std::vector<float> v_init = {fspeed_temp, 0, 0};
+    //std::vector<float> v_init = {mRobot.fspeedVel, 0, 0};
+    // std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, mRobot.fsAngle*float(PI/180)};
+    // std::vector<float> v_init = {fspeed_temp, 0, 0};
 
     //mpc.x_vel_ref = planner.vel_ref[0][0]; //plot
     //mpc.y_vel_ref = planner.vel_ref[0][1]; //plot
@@ -224,15 +227,16 @@ void run::start()
 
     mpc.mpcErrDyn_xy(p_ref_dyn, v_ref_dyn, p_init, v_init);
 
+    // mpc.x_vel_demand=mpc.fspeedVel_demand*cos((mpc.fsAngle_demand)*PI/180);
+    // mpc.y_vel_demand=mpc.fspeedVel_demand*sin((mpc.fsAngle_demand)*PI/180);
 
     mpc.x_vel_demand=mpc.fspeedVel_demand*cos((mpc.fsAngle_demand-mRobot.pos_z)*PI/180);
     mpc.y_vel_demand=mpc.fspeedVel_demand*sin((mpc.fsAngle_demand-mRobot.pos_z)*PI/180);
     
-
-
+    
 
     float time2 = (float)clock()/CLOCKS_PER_SEC;
-    std::cout << " MPC_XYZ operation time: "<< time2-time1 << std::endl;
+    //std::cout << " MPC_XYZ operation time: "<< time2-time1 << std::endl;
 
 
     /////////////////////////////////////////////     X      /////////////////////////////////////
@@ -288,9 +292,9 @@ void run::start()
 
     //mRobot.pd_x = (1)*mpc.sineToTenPosDemand(time);
     //mRobot.vd_x = (1)*mpc.cosToTenVelDemand(time);
-
-    mRobot.pd_z = mpc.sineToTenPosDemand(time)/10;
-    mRobot.vd_z = mpc.cosToTenVelDemand(time)/10;
+    
+    mRobot.pd_z = 1*mpc.sineToTenPosDemand(time)/10;
+    mRobot.vd_z = 1*mpc.cosToTenVelDemand(time)/10;
 
     // mRobot.pd_z = (-1)*mpc.sineToTenPosDemand(time)/10;
     // mRobot.vd_z = (-1)*mpc.cosToTenVelDemand(time)/10;
@@ -298,8 +302,12 @@ void run::start()
     
 
     //int PID::pidExe(float posError, int velDemand, float velError)
-    m_int16_desired_velocity_X = pid_x.pidExe(mRobot.pd_x-mRobot.pos_x_correct, mRobot.vd_x, mRobot.vd_x-mRobot.vel_x);
-    m_int16_desired_velocity_Y = pid_y.pidExe(mRobot.pd_y-mRobot.pos_y_correct, mRobot.vd_y, mRobot.vd_y-mRobot.vel_y);
+    // m_int16_desired_velocity_X = pid_x.pidExe(mRobot.pd_x-mRobot.pos_x_correct, mRobot.vd_x, mRobot.vd_x-mRobot.vel_x);
+    // m_int16_desired_velocity_Y = pid_y.pidExe(mRobot.pd_y-mRobot.pos_y_correct, mRobot.vd_y, mRobot.vd_y-mRobot.vel_y);
+    // m_f_desired_velocity_Z = pid_z.pidExeAngle(mRobot.pd_z-mRobot.pos_z,mRobot.vd_z,mRobot.vd_z-mRobot.vel_z);
+
+    m_int16_desired_velocity_X = pid_x.pidExe(mRobot.pd_x-mRobot.pos_x, mRobot.vd_x, mRobot.vd_x-mRobot.vel_x);
+    m_int16_desired_velocity_Y = pid_y.pidExe(mRobot.pd_y-mRobot.pos_y, mRobot.vd_y, mRobot.vd_y-mRobot.vel_y);
     m_f_desired_velocity_Z = pid_z.pidExeAngle(mRobot.pd_z-mRobot.pos_z,mRobot.vd_z,mRobot.vd_z-mRobot.vel_z);
     
 

@@ -34,6 +34,7 @@ public:
     void cir_traject_TNB();
 
     void linear_traject_2();
+    bool circleFinished = false;
 
 
 

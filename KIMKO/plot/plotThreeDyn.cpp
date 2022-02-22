@@ -71,9 +71,11 @@ std::vector<float> canReadData_Z_temp;
 
 std::vector<float> canReadTime_Pos_temp;
 std::vector<float> canReadTime_PosZ_temp;
+
+std::vector<float> canReadData_PosZ_temp;
+
 std::vector<float> canReadData_PosX_temp;
 std::vector<float> canReadData_PosY_temp;
-std::vector<float> canReadData_PosZ_temp;
 
 std::vector<float> PosX_cor;
 std::vector<float> PosY_cor;
@@ -182,8 +184,12 @@ void intp(){
 
 void plotTheta(){
     
-    readFileToVector("../build/plot/CAN_Read_Data_PosX_Correct", PosX_cor);
-    readFileToVector("../build/plot/CAN_Read_Data_PosY_Correct", PosY_cor);
+    readFileToVector("../build/plot/CAN_Read_Data_PosX", canReadData_PosX_temp);
+    readFileToVector("../build/plot/CAN_Read_Data_PosY", canReadData_PosX_temp);
+
+    //readFileToVector("../build/plot/CAN_Read_Data_PosX_Correct", PosX_cor);
+    //readFileToVector("../build/plot/CAN_Read_Data_PosY_Correct", PosY_cor);
+
     readFileToVector("../build/plot/CAN_Read_Data_PosZ", canReadData_PosZ_temp);
     
     
@@ -305,8 +311,8 @@ void plotX(){
     plt::title("Pos");
     plt::Plot plot5_1("p_ref",posRef_Time_temp,posRef_X_temp,"g");   
     plt::Plot plot5("p_d",posDemand_Time_temp,posDemand_X_temp,"b");
-    plt::Plot plot6("p_sensor",canReadTime_Pos_temp,canReadData_PosX_temp,"y--");
-    plt::Plot plot6_1("p_correct",canReadTime_Pos_temp,PosX_cor,"r");
+    plt::Plot plot6("p_sensor",canReadTime_Pos_temp,canReadData_PosX_temp,"r");
+    //plt::Plot plot6_1("p_correct",canReadTime_Pos_temp,PosX_cor,"y--");
 
     plt::grid(); 
     plt::legend();
@@ -314,8 +320,8 @@ void plotX(){
     plt::subplot(3,1,2);
     plt::Plot plot7_1("p_ref_y",posRef_Time_temp,posRef_Y_temp,"g"); 
     plt::Plot plot7("PosDemandY",posDemand_Time_temp,posDemand_Y_temp,"b");
-    plt::Plot plot8("WritereadPosY",canReadTime_Pos_temp,canReadData_PosY_temp,"y--");
-    plt::Plot plot8_1("p_Y_correct",canReadTime_Pos_temp,PosY_cor,"r");
+    plt::Plot plot8("WritereadPosY",canReadTime_Pos_temp,canReadData_PosY_temp,"r");
+    //plt::Plot plot8_1("p_Y_correct",canReadTime_Pos_temp,PosY_cor,"y--");
     plt::grid(); 
 
     plt::subplot(3,1,3);
@@ -330,7 +336,8 @@ void plotX(){
     plt::figure(3);
     // plt::plot(PosY_cor,PosX_cor,{{"label", "f(x)"}});
     // sleep(5);
-    plt::Plot plot_map("Global Map",PosY_cor,PosX_cor,"k"); 
+    plt::Plot plot_map("Global Map",canReadData_PosY_temp,canReadData_PosX_temp,"k"); 
+    //plt::Plot plot_map_cor("Global Map",PosY_cor, PosX_cor,"y--"); 
     plt::Plot plot_map_leader("Leader",leader_posy_temp,leader_posx_temp,"xm"); 
     plt::Plot plot_map_planner("Planner",planner_posy_temp,planner_posx_temp,"g*");
     plt::title("Global Map");
@@ -439,7 +446,7 @@ void plotX(){
           plt::figure(5);
           plt::subplot(2,1,2);
           plt::xlim(0, wSize);
-          plt::ylim(-200, 800);
+          plt::ylim(-360, 400);
          
           plot21_0.update(velRef_Time_temp,fsAngleRef_temp);
           
@@ -579,8 +586,8 @@ void plotX(){
         readFileToVector("../build/plot/CAN_Read_Data_PosX", canReadData_PosX_temp);
         readFileToVector("../build/plot/CAN_Read_Data_PosY", canReadData_PosY_temp);
 
-        readFileToVector("../build/plot/CAN_Read_Data_PosX_Correct", PosX_cor);
-        readFileToVector("../build/plot/CAN_Read_Data_PosY_Correct", PosY_cor);
+        // readFileToVector("../build/plot/CAN_Read_Data_PosX_Correct", PosX_cor);
+        // readFileToVector("../build/plot/CAN_Read_Data_PosY_Correct", PosY_cor);
 
         readFileToVector("../build/plot/CAN_Read_Time_PosZ", canReadTime_PosZ_temp);
         readFileToVector("../build/plot/CAN_Read_Data_PosZ", canReadData_PosZ_temp);
@@ -607,9 +614,9 @@ void plotX(){
             if(canReadTime_Pos_temp.size()==canReadData_PosX_temp.size()){
                 plot6.update(canReadTime_Pos_temp,canReadData_PosX_temp);
             }
-            if(canReadTime_Pos_temp.size()==PosX_cor.size()){
-                plot6_1.update(canReadTime_Pos_temp,PosX_cor);
-            }
+            // if(canReadTime_Pos_temp.size()==PosX_cor.size()){
+            //     plot6_1.update(canReadTime_Pos_temp,PosX_cor);
+            // }
             else{
                 std::cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<std::endl;
             }
@@ -633,7 +640,7 @@ void plotX(){
             plt::figure(2);
             plt::subplot(3,1,2);
             plt::xlim(0, wSize);
-            plt::ylim(-300, 300);
+            plt::ylim(-100, 650);
             //plt::ylim(-100, 200);
 
             plot7.update(posDemand_Time_temp,posDemand_Y_temp);
@@ -641,9 +648,9 @@ void plotX(){
             if(canReadTime_Pos_temp.size()==canReadData_PosY_temp.size()){
                 plot8.update(canReadTime_Pos_temp,canReadData_PosY_temp);
             }
-            if(canReadTime_Pos_temp.size()==PosY_cor.size()){
-                plot8_1.update(canReadTime_Pos_temp,PosY_cor);
-            }
+            // if(canReadTime_Pos_temp.size()==PosY_cor.size()){
+            //     plot8_1.update(canReadTime_Pos_temp,PosY_cor);
+            // }
             if(posRef_Time_temp.size()==posRef_Y_temp.size()){
                 plot7_1.update(posRef_Time_temp,posRef_Y_temp);
             }
@@ -682,12 +689,12 @@ void plotX(){
         }
 
         ///////////////////////////     Global Map    ///////////////////////////
-        if(PosX_cor.size()==PosY_cor.size()){ 
+        if(canReadData_PosY_temp.size()==canReadData_PosX_temp.size()){ 
             plt::figure(3);
-            plt::xlim(-100, 450);
-            plt::ylim(-275, 275);
+            plt::xlim(-100, 900);
+            plt::ylim(-500, 500);
 
-            plot_map.update(PosY_cor,PosX_cor);
+            plot_map.update(canReadData_PosY_temp,canReadData_PosX_temp);
 
             if(leader_posx_temp.size()== leader_posy_temp.size()){
 
@@ -698,6 +705,15 @@ void plotX(){
 
                 plot_map_planner.update(planner_posy_temp,planner_posx_temp);
             }
+
+            // if(PosY_cor.size()== PosX_cor.size()){
+
+            //     plot_map_cor.update(PosY_cor,PosX_cor);
+            // }
+
+            
+
+            
 
         }
 

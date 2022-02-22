@@ -3,7 +3,7 @@ import numpy as np
 import math
 
 
-def errDynFunction(p_ref, v_ref, p_init, v_init):
+def errDynFunction(p_ref, v_ref, p_init, v_init, pre_sol):
     np.set_printoptions(precision=3,suppress=True)
     #ws = 1 # check ws direction and sign
     window =len(p_ref)-1
@@ -13,6 +13,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     v_ref = np.array(v_ref)
     p_init= np.array(p_init)
     v_init= np.array(v_init)
+    pre_sol = pre_sol
 
     acc_max = 1000 #(mm^2/s)
     # p_ref_temp =p_ref
@@ -120,14 +121,11 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     g2=[]
     g3=[]
 
-    
 
     Q = np.zeros((3,3))
     Q[0,0]=20    # ex
     Q[1,1]=20    # ey
-    Q[2,2]=20    # e_phi
-
-
+    Q[2,2]=2    # e_phi
 
     state_init = P[0:6]
     ref_init = P[6:12]
@@ -158,7 +156,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
         err_cur = E[:,i]
         
         err_next =  err_cur + dt * err_dyn_f(demand_cur,ref_current)# get vp
-        obj=obj+err_next.T @ Q @ err_next + 5*demand_cur[3]**2
+        obj=obj+err_next.T @ Q @ err_next+ 5*demand_cur[3]**2 + 20*(demand_cur[3]-ref_current[3])**2# + 10*demand_cur[3]**2 + 10*(demand_cur[3]-ref_current[3])**2
         
         g2 = vertcat(g2,E[:,i+1]-err_next)
         g = vertcat(g,demand_cur[0:3]-ref_current[0:3]-err_next)  # derive x and y
@@ -243,13 +241,16 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     ref_state = np.reshape(ref_state_temp, newshape=(window+1)*n_ref)
     #print(ref_state)
     
-
+    #d0_temp = np.array([0,0,0,0,0,0])
+    #d0_temp = np.array([0,0,math.pi/2,0,0,0])
+    #d0 = repmat(d0_temp,window,1)
     d0 = repmat(init_state,window,1)
     #d0 = ref_state[0:6*(window)]
     #u0 = ref_state[n_ref:]  #initial guess of [x1, y1, phi1, v1, 0, w1, ...]
+    #d0 = repmat(pre_sol,window,1)
+    #print(d0)
 
-    init_error = np.array([-10,0,0])
-
+    #init_error = np.array([-10,0,0])
 
     args["p"] =vertcat(init_state, ref_state)
     args["x0"] = vertcat(reshape(d0,6*(window),1),repmat(np.zeros(3),(window+1),1)) #initial guess of demand state
@@ -293,7 +294,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     print("")
     np.set_printoptions(precision=3,suppress=True)
     for i in range(1):
-        for j in range(window):
+        for j in range(window-1):
             print("----Window Update----")
             print("window: ", j)
             print("ref     [x, y, phi, v, 0, w] = ",ref_state[j*n_ref : (j+1)*n_ref])

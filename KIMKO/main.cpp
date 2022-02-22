@@ -340,11 +340,13 @@ void writeDatatoFile()
 
         canReadTimePlot_PosX->writeDatatoFile((float)clock()/CLOCKS_PER_SEC, "plot/CAN_Read_Time_Pos");    
                 
-            canReadDataPlot_PosX->writeDatatoFile(m_run->mRobot.pos_x, "plot/CAN_Read_Data_PosX");
-            canReadDataPlot_PosY->writeDatatoFile(m_run->mRobot.pos_y, "plot/CAN_Read_Data_PosY");
+          
 
-            canReadDataPlot_PosX_cor->writeDatatoFile(m_run->mRobot.pos_x_correct, "plot/CAN_Read_Data_PosX_Correct");
-            canReadDataPlot_PosY_cor->writeDatatoFile(m_run->mRobot.pos_y_correct, "plot/CAN_Read_Data_PosY_Correct");
+             canReadDataPlot_PosX->writeDatatoFile(m_run->mRobot.pos_x, "plot/CAN_Read_Data_PosX");
+             canReadDataPlot_PosY->writeDatatoFile(m_run->mRobot.pos_y, "plot/CAN_Read_Data_PosY");
+
+            // canReadDataPlot_PosX_cor->writeDatatoFile(m_run->mRobot.pos_x_correct, "plot/CAN_Read_Data_PosX_Correct");
+            // canReadDataPlot_PosY_cor->writeDatatoFile(m_run->mRobot.pos_y_correct, "plot/CAN_Read_Data_PosY_Correct");
 
             canReadTimePlot_PosZ->writeDatatoFile((float)clock()/CLOCKS_PER_SEC, "plot/CAN_Read_Time_PosZ");   
             canReadDataPlot_PosZ->writeDatatoFile(m_run->mRobot.pos_z, "plot/CAN_Read_Data_PosZ");

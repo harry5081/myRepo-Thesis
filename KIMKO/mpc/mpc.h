@@ -35,7 +35,7 @@ private:
     float pre_pd = 0;
 
     std::vector<float> pre_vd_pd ={0,0,0,0,0,0}; // pre_vdx, pre_pdx, pre_vdy, pre_pdy, pre_vdz, pre_pdz, 
-
+    std::vector<float> pre_sol ={0,0,0,0,0,0};
     
     
 

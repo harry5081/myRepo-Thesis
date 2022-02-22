@@ -80,6 +80,7 @@ void PLANNER::cir_traject_2(){
         float zt =20;
 
         
+        
 
 
         /////////////////////////////////////  vel  ////////////////////////////////////////
@@ -171,7 +172,7 @@ void PLANNER::cir_traject_TNB(){
 
         if((t+dt)<=s){
             t=t+dt;
-
+  
         }
 
         ws =k*s_dot;
@@ -179,6 +180,11 @@ void PLANNER::cir_traject_TNB(){
         float xt = r*sin(t/r);
         float yt = r*-cos(t/r)+r;
         float zt =0;
+
+        // if((t+dt)<=s){
+        // xt = 200;
+        // }
+
 
         
 
@@ -226,12 +232,14 @@ void PLANNER::cir_traject_TNB(){
 
             zt =0;
             ws =0;
+
+            
         }
 
 
-
-        //std::vector<float> pos = {xt,yt,fsAngle_unwrap};
-        std::vector<float> pos = {xt,yt,fsAngle};
+        //std::vector<float> pos = {xt,yt,0};
+        std::vector<float> pos = {xt,yt,fsAngle_unwrap};
+        //std::vector<float> pos = {xt,yt,fsAngle};
         pos_ref[i] = pos;
 
 
