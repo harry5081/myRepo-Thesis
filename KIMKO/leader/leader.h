@@ -39,7 +39,7 @@ public:
 
 private:
     
-    float ds = 10;//50*1.414;//20;
+    float ds = 100;//50*1.414;//20;
 
     float s=0;
     int index =0;
@@ -51,7 +51,7 @@ private:
    
     
     
-    float startTime = 5;
+    float startTime = 10;
 
 
     

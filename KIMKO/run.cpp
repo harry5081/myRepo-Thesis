@@ -211,10 +211,12 @@ void run::start()
 
     
     std::vector<float> p_init = {mRobot.pos_x, mRobot.pos_y, mRobot.fsAngle*float(PI/180)};
+    //std::vector<float> p_init = {mRobot.pos_x, mRobot.pos_y, planner.fsAngle};
     std::vector<float> v_init = {fspeed_temp, 0, 0};
+    //std::vector<float> v_init = {fspeed_temp, 0, 0};
     //std::vector<float> v_init = {mRobot.fspeedVel, 0, 0};
     // std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, mRobot.fsAngle*float(PI/180)};
-    // std::vector<float> v_init = {fspeed_temp, 0, 0};
+    // 
 
     //mpc.x_vel_ref = planner.vel_ref[0][0]; //plot
     //mpc.y_vel_ref = planner.vel_ref[0][1]; //plot
@@ -269,8 +271,8 @@ void run::start()
     //mRobot.vd_z = mpc.z_vel_demand;
     //mRobot.pd_z = mpc.z_pos_demand;
     
-    // mRobot.pd_z = mpc.sinePosDemand(time)/10;
-    // mRobot.vd_z = mpc.cosVelDemand(time)/10;
+    mRobot.pd_z = mpc.sinePosDemand(time)/10;
+    mRobot.vd_z = mpc.cosVelDemand(time)/10;
     
     // mRobot.pd_z = -mpc.sineToTenPosDemand(time)/10;
     // mRobot.vd_z = -mpc.cosToTenVelDemand(time)/10;
@@ -290,11 +292,11 @@ void run::start()
     //mRobot.pd_y = mpc.sineToTenPosDemand(time);
     //mRobot.vd_y = mpc.cosToTenVelDemand(time);
 
-    //mRobot.pd_x = (1)*mpc.sineToTenPosDemand(time);
-    //mRobot.vd_x = (1)*mpc.cosToTenVelDemand(time);
+    // mRobot.pd_x = (1)*mpc.sineToTenPosDemand(time);
+    // mRobot.vd_x = (1)*mpc.cosToTenVelDemand(time);
     
-    mRobot.pd_z = 1*mpc.sineToTenPosDemand(time)/10;
-    mRobot.vd_z = 1*mpc.cosToTenVelDemand(time)/10;
+    // mRobot.pd_z = 3*mpc.sineToTenPosDemand(time)/10;
+    // mRobot.vd_z = 3*mpc.cosToTenVelDemand(time)/10;
 
     // mRobot.pd_z = (-1)*mpc.sineToTenPosDemand(time)/10;
     // mRobot.vd_z = (-1)*mpc.cosToTenVelDemand(time)/10;

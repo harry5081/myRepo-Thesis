@@ -418,7 +418,7 @@ void plotX(){
             plt::figure(5);
             plt::subplot(2,1,1);
             plt::xlim(0, wSize);
-            plt::ylim(-100, 100);
+            plt::ylim(-200, 200);
             
             plot20_0.update(velRef_Time_temp,fspeedRef_temp);
 
@@ -446,7 +446,7 @@ void plotX(){
           plt::figure(5);
           plt::subplot(2,1,2);
           plt::xlim(0, wSize);
-          plt::ylim(-360, 400);
+          plt::ylim(-720, 720);
          
           plot21_0.update(velRef_Time_temp,fsAngleRef_temp);
           

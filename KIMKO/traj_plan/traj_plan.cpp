@@ -181,6 +181,8 @@ void PLANNER::cir_traject_TNB(){
         float yt = r*-cos(t/r)+r;
         float zt =0;
 
+        
+
         // if((t+dt)<=s){
         // xt = 200;
         // }
@@ -202,6 +204,7 @@ void PLANNER::cir_traject_TNB(){
         /////////////////////////////////////  forward speed  ////////////////////////////////////////
         // float fspeed = sqrt(pow(vt_x,2)+pow(vt_y,2));
         float fspeed = s_dot;
+        //float fspeed = 40;
         float fsAngle = atan2(vt_y,vt_x);
 
 
@@ -238,13 +241,15 @@ void PLANNER::cir_traject_TNB(){
 
 
         //std::vector<float> pos = {xt,yt,0};
-        std::vector<float> pos = {xt,yt,fsAngle_unwrap};
-        //std::vector<float> pos = {xt,yt,fsAngle};
+        //std::vector<float> pos = {xt,yt,fsAngle_unwrap};
+        std::vector<float> pos = {xt,yt,fsAngle};
+        //std::vector<float> pos = {xt,0,0};
         pos_ref[i] = pos;
 
 
-        //std::vector<float> vel = {0,0,0};
         std::vector<float> vel = {fspeed,0,ws};
+        //std::vector<float> vel = {0,0,0};
+        //std::vector<float> vel = {25,0,ws};
         vel_ref[i] = vel;
 
         
