@@ -240,15 +240,15 @@ void PLANNER::cir_traject_TNB(){
         }
 
 
-        //std::vector<float> pos = {xt,yt,0};
+        //std::vector<float> pos = {xt,yt,fsAngle};
         //std::vector<float> pos = {xt,yt,fsAngle_unwrap};
-        std::vector<float> pos = {xt,yt,fsAngle};
+        std::vector<float> pos = {xt,yt,fsAngle_unwrap};
         //std::vector<float> pos = {xt,0,0};
         pos_ref[i] = pos;
 
 
+        //std::vector<float> vel = {fspeed,0,ws};
         std::vector<float> vel = {fspeed,0,ws};
-        //std::vector<float> vel = {0,0,0};
         //std::vector<float> vel = {25,0,ws};
         vel_ref[i] = vel;
 

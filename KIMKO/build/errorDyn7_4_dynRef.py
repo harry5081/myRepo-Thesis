@@ -7,14 +7,14 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     np.set_printoptions(precision=3,suppress=True)
     #ws = 1 # check ws direction and sign
     window =len(p_ref)-1
-    dt = 0.20
+    dt = 0.2
 
     p_ref = np.array(p_ref)
     v_ref = np.array(v_ref)
     p_init= np.array(p_init)
     v_init= np.array(v_init)
 
-    acc_max = 100000000000 #(mm^2/s)
+    acc_max = 250 #(mm^2/s)
     # p_ref_temp =p_ref
     # v_ref_temp =v_ref
     #print("p_ref: ",p_ref[0])
@@ -99,10 +99,10 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
 
 
     Rz = SX.zeros(3,3)   # check direction of angle and radius or degree of angle!!!!!!!!!!!!!!!!!
-    Rz[0,0] = cos(demand_phi_p-phi_ps)
-    Rz[1,0] = sin(demand_phi_p-phi_ps)
-    Rz[0,1] = -sin(demand_phi_p-phi_ps)
-    Rz[1,1] = cos(demand_phi_p-phi_ps)
+    Rz[0,0] = cos(e_phi)
+    Rz[1,0] = sin(e_phi)
+    Rz[0,1] = -sin(e_phi)
+    Rz[1,1] = cos(e_phi)
     Rz[2,2] = 1
 
     err_dyn = T @ e_state + (Rz @ demand_state[3:6]) - ref[3:6]
@@ -137,9 +137,9 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     
 
     Q = np.zeros((3,3))
-    Q[0,0]=5    # ex
-    Q[1,1]=5    # ey
-    Q[2,2]=0    # e_phi
+    Q[0,0]=10    # ex
+    Q[1,1]=10    # ey
+    Q[2,2]=2000    # e_phi
 
     state_init = P[0:6]
     ref_init = P[6:12]
@@ -152,7 +152,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     #err_init = err_init + 0.2*err_dyn_f(err_init,state_init,ref_init)
     #obj = err_init.T @ Q0 @ err_init   # this is a problem code
     g2 = vertcat(g2,E[:,0]-err_init)
-    
+    #obj = (err_init.T @ Q @ err_init)
     # err_cur=err_init
 
     fspeed_init = state_init[3]      # for acc constraint
@@ -168,7 +168,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     
         err_next =  err_cur + dt * err_dyn_f(err_cur,demand_cur,ref_pre)# get vp
 
-        obj=obj+(err_next.T @ Q @ err_next + 5*demand_cur[3]**2)# + (demand_cur[3]-ref_current[3])**2     #5*demand_cur[3]**2#+ 10*(demand_cur[5]-ref_current[5])**2
+        obj=obj+(err_next.T @ Q @ err_next + 7*(demand_cur[3]-ref_current[3])**2)# + (demand_cur[3]-ref_current[3])**2     #5*demand_cur[3]**2#+ 10*(demand_cur[5]-ref_current[5])**2
         g2 = vertcat(g2,E[:,i+1]-err_next)
         g = vertcat(g,demand_cur[0:3]-ref_current[0:3]-err_next[0:3])  # derive x and y
         
@@ -210,7 +210,8 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     temp_ubx1=float('inf')*np.ones(6)
     
     #temp_ubx1[2]=math.pi                # demand_phi
-    temp_ubx1[2]=1*math.pi              # demand_phi
+    temp_ubx1[2]=4*math.pi              # demand_phi
+    temp_ubx1[3]=150                      # fspeed <150
     temp_ubx1[4]=0                      # blank
     temp_ubx1=repmat(temp_ubx1,window)
     temp_ubx2=float('inf')*np.ones(3) # err state
@@ -218,7 +219,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     au=vertcat(temp_ubx1,temp_ubx2)
 
     temp_lbx1=-float('inf')*np.ones(6)
-    temp_lbx1[2]=(-1)*math.pi           # demand_phi
+    temp_lbx1[2]=(-4)*math.pi           # demand_phi
     #temp_lbx1[2]=0                     # demand_phi
     temp_lbx1[3]=0                      # fspeed >0
     temp_lbx1[4]=0                      # blank
