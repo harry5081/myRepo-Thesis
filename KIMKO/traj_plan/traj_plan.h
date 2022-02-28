@@ -48,7 +48,7 @@ private:
 
     float r;
     float w=0.8;//0.1;
-    float sampleTime=0.25;//0.2  //0.4
+    float sampleTime=0.2;//0.2;//0.2  //0.4
 
     float fsAngle_pre =0;
     float fsAngle_pre_window =0;

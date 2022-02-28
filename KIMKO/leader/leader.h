@@ -29,7 +29,7 @@ public:
     float time;
 
     float s_current;
-    int point_cnt=128;//32;
+    int point_cnt=64;//32;
     float period =0;
 
     std::vector< std::vector<float>> curve;
@@ -51,7 +51,7 @@ private:
    
     
     
-    float startTime = 10;
+    float startTime = 5;
 
 
     

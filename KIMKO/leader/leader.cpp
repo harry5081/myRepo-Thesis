@@ -35,6 +35,11 @@ void LEADER::cir_traject_init(){
                 cir_traject();
                 pre_time = time;
 
+                if(index>=point_cnt){
+                    break;
+                }
+                
+
             }
 
         }//if(time>=startTime)
@@ -62,6 +67,8 @@ void LEADER::cir_traject(){
         // std::cout << time <<std::endl;
         
     }
+
+    
     
 
 

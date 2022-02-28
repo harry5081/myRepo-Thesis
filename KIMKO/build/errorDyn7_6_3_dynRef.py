@@ -4,17 +4,10 @@ import math
 
 
 def errDynFunction(p_ref, v_ref, p_init, v_init):
+
     np.set_printoptions(precision=3,suppress=True)
     #ws = 1 # check ws direction and sign
-    window =len(p_ref)-1
-    dt = 0.2
 
-    p_ref = np.array(p_ref)
-    v_ref = np.array(v_ref)
-    p_init= np.array(p_init)
-    v_init= np.array(v_init)
-
-    acc_max = 1000000 #(mm^2/s)
     # p_ref_temp =p_ref
     # v_ref_temp =v_ref
     #print("p_ref: ",p_ref[0])
@@ -36,17 +29,34 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     #v_ref=np.array([[0,0,0]])
     #v_ref=repmat(v_ref,(window+1),1)
 
-    
+
     #print("p_init: ",p_init)
     #print("v_init: ",v_init)
-    #p_init=np.array([0,0,0]) # x, y, phi_p
+
+    #p_init=np.array([10,190,3.1]) # x, y, phi_p
     #v_init=np.array([0,0,0]) # vp, 0, wp
 
-    # p_ref=np.array([[10,0,0],[10,0,0]]) # give phi 90 check radius degree!!!!!!!!!!!!
-    # v_ref=np.array([[0,0,0],[0,0,0]])   # vp, 0, wp
+    #p_ref=np.array([[8,191,3.12],[4,200,3.15],[-1,198,3.19],[-1,198,3.19],[-1,198,3.19]]) # give phi 90 check radius degree!!!!!!!!!!!!
+    #v_ref=np.array([[50,0,0.25],[50,0,0.25],[50,0,0.25],[50,0,0.25],[50,0,0.25]])   # vp, 0, wp
 
     # p_init=np.array([0,0,0]) # x, y, phi_p
     # v_init=np.array([0,0,0]) # vp, 0, wp
+
+
+    p_ref = np.array(p_ref)
+    v_ref = np.array(v_ref)
+
+    #p_init= np.array(p_init)
+    #v_init= np.array(v_init)
+
+    e_init= p_init-p_ref[0]
+    #e_init[2]=0
+
+    window = len(p_ref)-1
+    dt = 0.2
+
+
+    acc_max = 1000 #(mm^2/s)
 
 
 
@@ -66,6 +76,16 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     n_ref = ref.shape[0]
 
 
+
+    e_x = SX.sym('e_x')
+    e_y = SX.sym('e_y')
+    e_phi = SX.sym('e_phi')
+    e_state = vertcat(e_x, e_y, e_phi)
+    n_e_state = e_state.shape[0]
+
+    desire_e_phi = SX.sym('desire_e_phi')
+
+
     ### Demand State, output of mpc
     demand_x = SX.sym('demand_x')
     demand_y = SX.sym('demand_y')
@@ -79,85 +99,72 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     n_demand_state = demand_state.shape[0]
 
 
-    #e_state = vertcat(ex, ey, e_phi, ev, e_blanck, e_blanck2)
-    # e_state = demand_state[0:3]-ref[0:3]
-    # e_current_substract_f = Function('e_current_substract_f',[demand_state,ref],[e_state])
-    # n_e_state = e_state.shape[0]
-
-    e_x = SX.sym('e_x')
-    e_y = SX.sym('e_y')
-    e_phi = SX.sym('e_phi')
-    e_state = vertcat(e_x, e_y, e_phi)
-    n_e_state = e_state.shape[0]
 
     ### Error dyn function
     T = SX.zeros(3,3)   # check ws direction and sign!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     T[1,0] = -ws        # ws should be sent in as reference in parameter P
     T[0,1] = ws
 
-    e_phi_temp = demand_phi_p-phi_ps
-
-
-    Rz = SX.zeros(3,3)   # check direction of angle and radius or degree of angle!!!!!!!!!!!!!!!!!
-    Rz[0,0] = cos(demand_phi_p-phi_ps)
-    Rz[1,0] = sin(demand_phi_p-phi_ps)
-    Rz[0,1] = 0 #-sin(demand_phi_p-phi_ps)
-    Rz[1,1] = 0 #cos(demand_phi_p-phi_ps)
-    Rz[2,2] = 1
+    Rz = vertcat(
+        horzcat(cos(desire_e_phi), -sin(desire_e_phi), 0),
+        horzcat(sin(desire_e_phi),  cos(desire_e_phi), 0),
+        horzcat(         0,           0, 1)
+    )
 
     err_dyn = T @ e_state + (Rz @ demand_state[3:6]) - ref[3:6]
-    err_dyn_f = Function('err_dyn_f',[e_state, demand_state,ref],[err_dyn])
+    err_dyn_f = Function('err_dyn_f',[e_state, desire_e_phi, demand_state[3:6],ref[3:6]],[err_dyn])
 
-    # err_dyn = (Rz @ demand_state[3:6]) - ref[3:6]
-    # err_dyn_f = Function('err_dyn_f',[demand_state,ref],[err_dyn])
 
     #############################################################################
     # Casadi Parameters
 
-    D = SX.sym('D',n_demand_state,window) # future demanded states, solution of obj, solved by casadi
     P = SX.sym('P',n_demand_state + (window+1)*n_ref) # initial state and reference of the robot
     E = SX.sym('E',n_e_state,window+1) # error states, final value of obj, as low as possible.
+    D = SX.sym('D',n_demand_state,window) # future demanded states, solution of obj, solved by casadi
+
 
     ACC= SX.sym('ACC',1,window)
     E_Matrix= SX.sym('E_Matrix',3,window)
-    REF_Matrix= SX.sym('REF_Matrix',6,window+1)
-    
+    #REF_Matrix= SX.sym('REF_Matrix',6,window+1)
+
     #############################################################################
     # Obj Function
 
     obj = 0
     g=[]
-    g2=[]
+    g_e=[]
+    g_d=[]
     g3=[]
 
     # Q0 = np.zeros((3,3))
     # Q0[0,0]=1.5    # ex
     # Q0[1,1]=0.5   # ey
     # Q0[2,2]=2    # e_phi
-    
+
 
     Q = np.zeros((3,3))
-    Q[0,0]=3    # ex
-    Q[1,1]=3    # ey
-    Q[2,2]=100    # e_phi
+    Q[0,0]=50    # ex
+    Q[1,1]=50    # ey
+    Q[2,2]=5   # e_phi
 
     state_init = P[0:6]
     ref_init = P[6:12]
 
-    REF_Matrix[:,0] = ref_init
-    
-    err_init = (state_init[0:3]-ref_init[0:3])  # err_init = e_current_substract_f(state_init,ref_init)
+    #REF_Matrix[:,0] = ref_init
+
+    err_init = e_init #(state_init[0:3]-ref_init[0:3])
+
     #err_init[2]=0
     #state_init[2]=0
     #err_init = err_init + 0.2*err_dyn_f(err_init,state_init,ref_init)
     #obj = err_init.T @ Q0 @ err_init   # this is a problem code
-    g2 = vertcat(g2,E[:,0]-err_init)
+    g_e = vertcat(g_e,E[:,0]-err_init)
     #obj = (err_init.T @ Q @ err_init)
     # err_cur=err_init
 
     fspeed_init = state_init[3]      # for acc constraint
     fspeed_temp = fspeed_init           # for acc constraint
-    
+
 
     for i in range(0,window):
         
@@ -165,22 +172,23 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
         ref_current = P[n_demand_state + (i+1)*n_ref : n_demand_state + (i+2)*n_ref]
         demand_cur = D[:,i]
         err_cur = E[:,i]
-    
-        err_next =  err_cur + dt * err_dyn_f(err_cur,demand_cur,ref_pre)# get vp
 
-        obj=obj+(err_next.T @ Q @ err_next + 5*(demand_cur[3])**2)# + (demand_cur[3]-ref_current[3])**2     #5*demand_cur[3]**2#+ 10*(demand_cur[5]-ref_current[5])**2
-        g2 = vertcat(g2,E[:,i+1]-err_next)
-        g = vertcat(g,demand_cur[0:3]-ref_current[0:3]-err_next[0:3])  # derive x and y
+        err_next =  err_cur + dt * err_dyn_f(err_cur,E[:,i+1][2],demand_cur[3:6],ref_pre[3:6])# get vp
+
+        obj=obj+(err_next.T @ Q @ err_next) + 5*demand_cur[3]**2# + (demand_cur[3]-ref_current[3])**2     #5*demand_cur[3]**2#+ 10*(demand_cur[5]-ref_current[5])**2
         
-    
+        g_e = vertcat(g_e,E[:,i+1]-err_next)
+        g_d = vertcat(g_d,demand_cur[0:3]-ref_current[0:3]-err_next[0:3])  # derive x, y, phi
+        
+
         acc = (D[:,i][3]-fspeed_temp)/dt
         ACC[:,i] = acc
         fspeed_temp = D[:,i][3]
 
-       
+        
 
-    g = vertcat(g,g2)
-    #g = vertcat(g,g3)
+    g = vertcat(g,g_e)
+    g = vertcat(g,g_d)
     g = vertcat(g,reshape(ACC,window,1))
 
 
@@ -189,6 +197,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     D_STATE_variables = reshape(D,n_demand_state*window,1) #[x1, y1, phi1, v1, 0, w1, x2, y2, phi2, v2, 0, w2]
     ERROR_variables = reshape(E,n_e_state*(window+1),1) #[ex1, ey1, e_phi1, ex2, ey2, e_phi2...]
     OPT_variables = vertcat(D_STATE_variables,ERROR_variables)
+    #OPT_variables = vertcat(ERROR_variables,D_STATE_variables)
 
     nlp_prob = {'f':obj, 'x':OPT_variables, 'g':g, 'p':P}   #dict
 
@@ -198,7 +207,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     opts["print_time"] = False
 
     ipopt_options={}
-    ipopt_options["max_iter"] = 2000
+    ipopt_options["max_iter"] = 10000
     ipopt_options["print_level"] = 0
     ipopt_options["acceptable_tol"] = 1e-8
     ipopt_options["acceptable_obj_change_tol"] = 1e-6
@@ -206,34 +215,40 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
 
     args = {}
     #decision variables (demand state)
-    
+
     temp_ubx1=float('inf')*np.ones(6)
-    
+
     #temp_ubx1[2]=math.pi                # demand_phi
-    temp_ubx1[2]=4*math.pi              # demand_phi
+    #temp_ubx1[2]=4*math.pi              # demand_phi
     temp_ubx1[3]=150                      # fspeed <150
     temp_ubx1[4]=0                      # blank
     temp_ubx1=repmat(temp_ubx1,window)
+    
     temp_ubx2=float('inf')*np.ones(3) # err state
+    temp_ubx2[2]=math.pi/2              # constraint e_phi
     temp_ubx2=repmat(temp_ubx2,window+1)
     au=vertcat(temp_ubx1,temp_ubx2)
+    #au=vertcat(temp_ubx2,temp_ubx1)
 
     temp_lbx1=-float('inf')*np.ones(6)
-    temp_lbx1[2]=(-4)*math.pi           # demand_phi
+    #temp_lbx1[2]=(-4)*math.pi           # demand_phi
     #temp_lbx1[2]=0                     # demand_phi
-    temp_lbx1[3]=0                      # fspeed >0
+    temp_lbx1[3]=-150                      # fspeed >0
     temp_lbx1[4]=0                      # blank
     temp_lbx1=repmat(temp_lbx1,window)
+
     temp_lbx2=-float('inf')*np.ones(3)  # err state
+    temp_ubx2[2]=-math.pi/2              # constraint e_phi
     temp_lbx2=repmat(temp_lbx2,window+1)
     al=vertcat(temp_lbx1,temp_lbx2)
-    
+    #al=vertcat(temp_lbx2,temp_lbx1)
+
     args["lbx"] = al
     args["ubx"] = au
 
-    args["lbg"] = vertcat(np.zeros(3*(window)+g2.shape[0]),(-1)*repmat(acc_max,(window),1))
+    args["lbg"] = vertcat(np.zeros(g_e.shape[0]+g_d.shape[0]),(-1)*repmat(acc_max,(window),1))
     #np.zeros(n_e_state*(window+1))
-    args["ubg"] = vertcat(np.zeros(3*(window)+g2.shape[0]),repmat(acc_max,(window),1))
+    args["ubg"] = vertcat(np.zeros(g_e.shape[0]+g_d.shape[0]),repmat(acc_max,(window),1))
     #np.zeros(n_e_state*(window+1))
 
 
@@ -253,10 +268,10 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     ref_state_temp =np.concatenate((np.reshape(p_ref,(-1,3)),np.reshape(v_ref,(-1,3))),axis=1)
     ref_state = np.reshape(ref_state_temp, newshape=(window+1)*n_ref)
     #print(ref_state)
-    
 
-    d0 = repmat(init_state,window,1)
-    #d0 = ref_state[0:6*(window)]
+
+    #d0 = repmat(init_state,window,1)
+    d0 = ref_state[0:6*(window)]
     #d0 = (ref_state[0:6*(window)]+repmat(init_state,window,1))/2
     #u0 = ref_state[n_ref:]  #initial guess of [x1, y1, phi1, v1, 0, w1, ...]
 
@@ -264,6 +279,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
 
 
     args["p"] =vertcat(init_state, ref_state)
+    #args["x0"] = vertcat(repmat(np.zeros(3),(window+1),1), reshape(d0,6*(window),1))
     args["x0"] = vertcat(reshape(d0,6*(window),1),repmat(np.zeros(3),(window+1),1)) #initial guess of demand state
                                                                                 # plus initial guess of error
 
@@ -276,8 +292,13 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     x_sol = sol['x']
     #print("Solution: ", x_sol)
 
-    demand_state_sol =x_sol[0:6*(window)]
-    error_sol=x_sol[6*(window):6*window + n_e_state*(window+1)]
+    error_sol=x_sol[0:3*(window+1)]
+    demand_state_sol =x_sol[3*(window+1):3*(window+1) + 6*(window)]
+
+    # demand_state_sol =x_sol[0:6*(window)]
+    # error_sol=x_sol[6*(window):6*window + n_e_state*(window+1)]
+
+
 
     #print("Demand state: ",demand_state_sol)
     #print("Error value:",error_sol)
@@ -305,7 +326,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     print("")
     np.set_printoptions(precision=3,suppress=True)
     for i in range(1):
-        for j in range(window-4):
+        for j in range(6):
             print("----Window Update----")
             print("window: ", j)
             

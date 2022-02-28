@@ -205,6 +205,7 @@ void PLANNER::cir_traject_TNB(){
         // float fspeed = sqrt(pow(vt_x,2)+pow(vt_y,2));
         float fspeed = s_dot;
         //float fspeed = 40;
+        //float fsAngle = atan(vt_y/vt_x);
         float fsAngle = atan2(vt_y,vt_x);
 
 
@@ -239,11 +240,18 @@ void PLANNER::cir_traject_TNB(){
             
         }
 
+        if(t==0){
+            xt=0;
+            yt=0;
+
+            
+        }
+
 
         //std::vector<float> pos = {xt,yt,fsAngle};
-        //std::vector<float> pos = {xt,yt,fsAngle_unwrap};
         std::vector<float> pos = {xt,yt,fsAngle_unwrap};
-        //std::vector<float> pos = {xt,0,0};
+        //std::vector<float> pos = {xt,yt,fsAngle};
+        // std::vector<float> pos = {xt,yt,0};
         pos_ref[i] = pos;
 
 

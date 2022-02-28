@@ -111,8 +111,9 @@ void run::start()
     std::cout << "!!!!!!!!!!!!!!!!!!!  TimeTest  !!!!!!!!!!!!!!!!!!!!!    "<< timeDiff <<std::endl;
     timeTemp=time;
     
+    //usleep(150000);
     usleep(150000);
-
+    
     //planner.linear_traject_2();
     //planner.cir_traject_2();
     planner.cir_traject_TNB();
@@ -209,8 +210,8 @@ void run::start()
 
     float fspeed_temp = sqrt(pow(mRobot.vel_x,2) + pow(mRobot.vel_y,2));
 
-    
     std::vector<float> p_init = {mRobot.pos_x, mRobot.pos_y, mRobot.fsAngle*float(PI/180)};
+    //std::vector<float> p_init = {mRobot.pos_x, mRobot.pos_y, mRobot.fsAngle*float(PI/180)};
     //std::vector<float> p_init = {mRobot.pos_x, mRobot.pos_y, planner.fsAngle};
     std::vector<float> v_init = {fspeed_temp, 0, 0};
     //std::vector<float> v_init = {fspeed_temp, 0, 0};
@@ -271,8 +272,8 @@ void run::start()
     //mRobot.vd_z = mpc.z_vel_demand;
     //mRobot.pd_z = mpc.z_pos_demand;
     
-    // mRobot.pd_z = mpc.sinePosDemand(time)/10;
-    // mRobot.vd_z = mpc.cosVelDemand(time)/10;
+    mRobot.pd_z = 3*mpc.sinePosDemand(time)/10;
+    mRobot.vd_z = 3*mpc.cosVelDemand(time)/10;
     
     // mRobot.pd_z = -mpc.sineToTenPosDemand(time)/10;
     // mRobot.vd_z = -mpc.cosToTenVelDemand(time)/10;
@@ -295,8 +296,8 @@ void run::start()
     // mRobot.pd_x = (1)*mpc.sineToTenPosDemand(time);
     // mRobot.vd_x = (1)*mpc.cosToTenVelDemand(time);
     
-    mRobot.pd_z = 1*mpc.sineToTenPosDemand(time)/10;
-    mRobot.vd_z = 1*mpc.cosToTenVelDemand(time)/10;
+    // mRobot.pd_z = 1*mpc.sineToTenPosDemand(time)/10;
+    // mRobot.vd_z = 1*mpc.cosToTenVelDemand(time)/10;
 
     // mRobot.pd_z = (-1)*mpc.sineToTenPosDemand(time)/10;
     // mRobot.vd_z = (-1)*mpc.cosToTenVelDemand(time)/10;

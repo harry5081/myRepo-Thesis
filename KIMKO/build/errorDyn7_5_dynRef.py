@@ -7,14 +7,14 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     np.set_printoptions(precision=3,suppress=True)
     #ws = 1 # check ws direction and sign
     window =len(p_ref)-1
-    dt = 0.2
+    dt = 0.1
 
     p_ref = np.array(p_ref)
     v_ref = np.array(v_ref)
     p_init= np.array(p_init)
     v_init= np.array(v_init)
 
-    acc_max = 1000000 #(mm^2/s)
+    acc_max = 250 #(mm^2/s)
     # p_ref_temp =p_ref
     # v_ref_temp =v_ref
     #print("p_ref: ",p_ref[0])
@@ -96,14 +96,19 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     T[0,1] = ws
 
     e_phi_temp = demand_phi_p-phi_ps
+    
+    Rz = vertcat(
+    horzcat(cos(demand_phi_p-phi_ps), 0, 0),
+    horzcat(sin(demand_phi_p-phi_ps),  0, 0),
+    horzcat(         0,                 0,                       1)
+    )
 
-
-    Rz = SX.zeros(3,3)   # check direction of angle and radius or degree of angle!!!!!!!!!!!!!!!!!
-    Rz[0,0] = cos(demand_phi_p-phi_ps)
-    Rz[1,0] = sin(demand_phi_p-phi_ps)
-    Rz[0,1] = 0 #-sin(demand_phi_p-phi_ps)
-    Rz[1,1] = 0 #cos(demand_phi_p-phi_ps)
-    Rz[2,2] = 1
+    # Rz = SX.zeros(3,3)   # check direction of angle and radius or degree of angle!!!!!!!!!!!!!!!!!
+    # Rz[0,0] = cos(demand_phi_p-phi_ps)
+    # Rz[1,0] = sin(demand_phi_p-phi_ps)
+    # Rz[0,1] = 0 #-sin(demand_phi_p-phi_ps)
+    # Rz[1,1] = 0 #cos(demand_phi_p-phi_ps)
+    # Rz[2,2] = 1
 
     err_dyn = T @ e_state + (Rz @ demand_state[3:6]) - ref[3:6]
     err_dyn_f = Function('err_dyn_f',[e_state, demand_state,ref],[err_dyn])
@@ -137,9 +142,9 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     
 
     Q = np.zeros((3,3))
-    Q[0,0]=3    # ex
-    Q[1,1]=3    # ey
-    Q[2,2]=100    # e_phi
+    Q[0,0]=20    # ex
+    Q[1,1]=20    # ey
+    Q[2,2]=5    # e_phi
 
     state_init = P[0:6]
     ref_init = P[6:12]
@@ -168,9 +173,9 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     
         err_next =  err_cur + dt * err_dyn_f(err_cur,demand_cur,ref_pre)# get vp
 
-        obj=obj+(err_next.T @ Q @ err_next + 5*(demand_cur[3])**2)# + (demand_cur[3]-ref_current[3])**2     #5*demand_cur[3]**2#+ 10*(demand_cur[5]-ref_current[5])**2
+        obj=obj+(err_next.T @ Q @ err_next + 4*(demand_cur[3])**2) + 10*(demand_cur[5])**2# + (demand_cur[3]-ref_current[3])**2     #5*demand_cur[3]**2#+ 10*(demand_cur[5]-ref_current[5])**2
         g2 = vertcat(g2,E[:,i+1]-err_next)
-        g = vertcat(g,demand_cur[0:3]-ref_current[0:3]-err_next[0:3])  # derive x and y
+        g = vertcat(g,err_next[0:3]-demand_cur[0:3]+ref_current[0:3])  # derive x and y
         
     
         acc = (D[:,i][3]-fspeed_temp)/dt
@@ -198,10 +203,10 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     opts["print_time"] = False
 
     ipopt_options={}
-    ipopt_options["max_iter"] = 2000
+    ipopt_options["max_iter"] = 2000000
     ipopt_options["print_level"] = 0
-    ipopt_options["acceptable_tol"] = 1e-8
-    ipopt_options["acceptable_obj_change_tol"] = 1e-6
+    ipopt_options["acceptable_tol"] = 1e-100
+    ipopt_options["acceptable_obj_change_tol"] = 1e-100
     opts["ipopt"]=ipopt_options
 
     args = {}
@@ -210,7 +215,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     temp_ubx1=float('inf')*np.ones(6)
     
     #temp_ubx1[2]=math.pi                # demand_phi
-    temp_ubx1[2]=4*math.pi              # demand_phi
+    temp_ubx1[2]=4*math.pi   #math.pi              # demand_phi
     temp_ubx1[3]=150                      # fspeed <150
     temp_ubx1[4]=0                      # blank
     temp_ubx1=repmat(temp_ubx1,window)
