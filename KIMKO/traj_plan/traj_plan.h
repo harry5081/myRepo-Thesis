@@ -7,6 +7,9 @@
 #include <vector>
 #include <math.h>
 #include <time.h>
+#include <iostream>
+#include <string>
+#include <fstream>
 
 #define PI 3.14159265
 
@@ -28,6 +31,8 @@ public:
 
     std::vector<std::vector<float>> fspeed_ref;
 
+    
+
     void cir_traject();
     void cir_traject_2();
 
@@ -36,7 +41,7 @@ public:
     void linear_traject_2();
     bool circleFinished = false;
 
-
+    void traject_from_file();
 
 
 
@@ -54,7 +59,15 @@ private:
     float fsAngle_pre_window =0;
 
     
-
+    void readTrajFile();
+    std::vector<int>index_f;
+    std::vector<float>x_Pos_f;
+	std::vector<float>y_Pos_f;
+    std::vector<float>phi_ref_f;
+	std::vector<float>s_Dot_f;
+    std::vector<float>blank_ref_f;
+	std::vector<float>w_ref_f;
+    int lineCount=0;
     
 
 

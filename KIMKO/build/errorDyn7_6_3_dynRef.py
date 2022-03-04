@@ -143,9 +143,9 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
 
 
     Q = np.zeros((3,3))
-    Q[0,0]=50    # ex
-    Q[1,1]=50    # ey
-    Q[2,2]=5   # e_phi
+    Q[0,0]=5    # ex
+    Q[1,1]=5    # ey
+    Q[2,2]=0   # e_phi
 
     state_init = P[0:6]
     ref_init = P[6:12]
@@ -175,7 +175,9 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
 
         err_next =  err_cur + dt * err_dyn_f(err_cur,E[:,i+1][2],demand_cur[3:6],ref_pre[3:6])# get vp
 
-        obj=obj+(err_next.T @ Q @ err_next) + 5*demand_cur[3]**2# + (demand_cur[3]-ref_current[3])**2     #5*demand_cur[3]**2#+ 10*(demand_cur[5]-ref_current[5])**2
+        obj=obj+((err_next.T @ Q @ err_next) + 5*demand_cur[3]**2)# + 5000000*demand_cur[5]**2 # + (demand_cur[3]-ref_current[3])**2     #5*demand_cur[3]**2#+ 10*(demand_cur[5]-ref_current[5])**2
+        
+        #obj=obj+(err_next.T @ Q @ err_next) + 5*demand_cur[3]**2# + 50000*demand_cur[5]**2 # + (demand_cur[3]-ref_current[3])**2     #5*demand_cur[3]**2#+ 10*(demand_cur[5]-ref_current[5])**2
         
         g_e = vertcat(g_e,E[:,i+1]-err_next)
         g_d = vertcat(g_d,demand_cur[0:3]-ref_current[0:3]-err_next[0:3])  # derive x, y, phi
@@ -207,7 +209,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     opts["print_time"] = False
 
     ipopt_options={}
-    ipopt_options["max_iter"] = 10000
+    ipopt_options["max_iter"] = 2000
     ipopt_options["print_level"] = 0
     ipopt_options["acceptable_tol"] = 1e-8
     ipopt_options["acceptable_obj_change_tol"] = 1e-6
@@ -218,27 +220,27 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
 
     temp_ubx1=float('inf')*np.ones(6)
 
-    #temp_ubx1[2]=math.pi                # demand_phi
+    temp_ubx1[2]=2*math.pi                # demand_phi
     #temp_ubx1[2]=4*math.pi              # demand_phi
     temp_ubx1[3]=150                      # fspeed <150
     temp_ubx1[4]=0                      # blank
     temp_ubx1=repmat(temp_ubx1,window)
     
     temp_ubx2=float('inf')*np.ones(3) # err state
-    temp_ubx2[2]=math.pi/2              # constraint e_phi
+    #temp_ubx2[2]=math.pi              # constraint e_phi
     temp_ubx2=repmat(temp_ubx2,window+1)
     au=vertcat(temp_ubx1,temp_ubx2)
     #au=vertcat(temp_ubx2,temp_ubx1)
 
     temp_lbx1=-float('inf')*np.ones(6)
-    #temp_lbx1[2]=(-4)*math.pi           # demand_phi
+    temp_lbx1[2]=(-2)*math.pi           # demand_phi
     #temp_lbx1[2]=0                     # demand_phi
-    temp_lbx1[3]=-150                      # fspeed >0
+    temp_lbx1[3]=0                      # fspeed >0
     temp_lbx1[4]=0                      # blank
     temp_lbx1=repmat(temp_lbx1,window)
 
     temp_lbx2=-float('inf')*np.ones(3)  # err state
-    temp_ubx2[2]=-math.pi/2              # constraint e_phi
+    temp_ubx2[2]=-math.pi              # constraint e_phi
     temp_lbx2=repmat(temp_lbx2,window+1)
     al=vertcat(temp_lbx1,temp_lbx2)
     #al=vertcat(temp_lbx2,temp_lbx1)
@@ -270,8 +272,8 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     #print(ref_state)
 
 
-    #d0 = repmat(init_state,window,1)
-    d0 = ref_state[0:6*(window)]
+    d0 = repmat(init_state,window,1)
+    #d0 = ref_state[0:6*(window)]
     #d0 = (ref_state[0:6*(window)]+repmat(init_state,window,1))/2
     #u0 = ref_state[n_ref:]  #initial guess of [x1, y1, phi1, v1, 0, w1, ...]
 
@@ -292,11 +294,11 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     x_sol = sol['x']
     #print("Solution: ", x_sol)
 
-    error_sol=x_sol[0:3*(window+1)]
-    demand_state_sol =x_sol[3*(window+1):3*(window+1) + 6*(window)]
+    # error_sol=x_sol[0:3*(window+1)]
+    # demand_state_sol =x_sol[3*(window+1):3*(window+1) + 6*(window)]
 
-    # demand_state_sol =x_sol[0:6*(window)]
-    # error_sol=x_sol[6*(window):6*window + n_e_state*(window+1)]
+    demand_state_sol =x_sol[0:6*(window)]
+    error_sol=x_sol[6*(window):6*window + n_e_state*(window+1)]
 
 
 
@@ -326,7 +328,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     print("")
     np.set_printoptions(precision=3,suppress=True)
     for i in range(1):
-        for j in range(6):
+        for j in range(2):
             print("----Window Update----")
             print("window: ", j)
             
@@ -337,5 +339,6 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
             #print("v_input = ",v_predichorz_update[i,:,j])
             print("")
             
-
-    return list([demand_state_sol[0],demand_state_sol[1],demand_state_sol[2],demand_state_sol[3],demand_state_sol[4],demand_state_sol[5]])
+    temp_a = 0   #3*6 #(window+1)/2*6
+    return list([demand_state_sol[temp_a+0],demand_state_sol[temp_a+1],demand_state_sol[temp_a+2],demand_state_sol[temp_a+3],demand_state_sol[temp_a+4],demand_state_sol[temp_a+5]])
+    #return list([demand_state_sol[0],demand_state_sol[1],demand_state_sol[2],demand_state_sol[3],demand_state_sol[4],demand_state_sol[5]])

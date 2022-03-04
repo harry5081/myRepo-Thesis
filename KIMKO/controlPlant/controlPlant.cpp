@@ -17,8 +17,8 @@ void PLANT::calFspeed(){
     
     //fsAngle = temp;
 
-    fsAngle = unwrap(fsAngle_pre, fsAngle);
-    fsAngle_pre = fsAngle;
+    //fsAngle = unwrap(fsAngle_pre, fsAngle);
+    //fsAngle_pre = fsAngle;
     
 
     //fsAngle = unwrap(fsAngle_pre, fsAngle);

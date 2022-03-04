@@ -12,14 +12,196 @@ PLANNER::PLANNER(){
 
         pos_ref.push_back(temp);
         vel_ref.push_back(temp);
-
         fspeed_ref.push_back(temp);
 
      }
 
+    readTrajFile();
 
 }
 
+void PLANNER::readTrajFile(){
+    
+    // define variables
+	std::string t, xPos, yPos, phi, sDot, blank, w; //variables from file are here
+	
+	//input filename
+	std::string file = "traj.txt";
+	std::string str;
+	//number of lines
+	int i = 0;
+
+    // open file and read to know how many lines are there in advance
+
+    std::ifstream temp(file); //opening the file.
+    if (temp.is_open()){
+        std::string tp;
+
+        while(getline(temp, tp)){ //read data from file object and put it into string.
+            
+            lineCount++;
+            
+        }
+
+        //std::cout << lineCount << "\n"; //print the data of the string
+        temp.close(); //close the file object.
+    }
+
+    
+
+
+
+	std::ifstream traj(file); //opening the file.
+	
+    if (traj.is_open()) //if the file is open
+	{
+		//ignore first line
+		std::string line;
+		std::getline(traj, line);
+
+		while(i<lineCount-1) //while the end of file is NOT reached
+		{
+            i++;
+			
+            getline(traj, t, '\t');
+			index_f.push_back(std::stoi(t));
+
+			getline(traj, xPos, '\t');
+			x_Pos_f.push_back(stof(xPos));
+
+			getline(traj, yPos, '\t');
+			y_Pos_f.push_back(stof(yPos));
+
+			getline(traj, phi, '\t');
+            phi_ref_f.push_back(stof(phi));
+
+			getline(traj, sDot, '\t');
+			s_Dot_f.push_back(stof(sDot));
+
+            getline(traj, blank, '\t');
+			blank_ref_f.push_back(stof(blank));
+
+            getline(traj, w, '\n'); //new line 
+			w_ref_f.push_back(stof(w));
+          	
+		}
+		traj.close(); //closing the file
+		std::cout << "Number of entries: " << lineCount-1 << std::endl;
+	}
+	else {
+        std::cout << "Unable to open file in PLANNER"; //if the file is not open output
+    }
+	
+    
+	for (int j = 0; j < i; j++) {
+		std::cout << index_f[j] << "\t" << x_Pos_f[j] << "\t" << y_Pos_f[j] << "\t" << phi_ref_f[j] << "\t" << s_Dot_f[j] << "\t" << blank_ref_f[j]<< "\t" << w_ref_f[j] << std::endl;
+		
+	}
+	std::cout << std::endl;
+
+}
+void PLANNER::traject_from_file(){
+   
+    dt = 1;
+    t=t_current;
+    
+    //fsAngle_pre_window = fsAngle_pre; /********* angle unwrap *********/
+    
+    for(int i =0;i<window;i++){
+
+        
+        /////////////////////////////////////  pos  ////////////////////////////////////////
+        float xt = x_Pos_f[t];
+        float yt = y_Pos_f[t];
+        float zt =0;
+        //std::cout << t <<std::endl;
+
+        /////////////////////////////////////  vel  ////////////////////////////////////////
+        // float vt_x = cos(t/r);
+        // float vt_y = sin(t/r);
+        // //float vt = sqrt(pow(vt_x,2)+pow(vt_y,2));
+
+        // float vn_x = -(1/r)*sin(t/r);
+        // float vn_y = (1/r)*cos(t/r);
+        // float vn = sqrt(pow(vn_x,2)+pow(vn_y,2));
+
+        /////////////////////////////////////  forward speed  ////////////////////////////////////////
+        // float fspeed = sqrt(pow(vt_x,2)+pow(vt_y,2));
+        float fspeed = s_Dot_f[t];
+        float ws = w_ref_f[t];
+        //float fspeed = 40;
+        //float fsAngle = atan(vt_y/vt_x);
+        //float fsAngle = atan2(vt_y,vt_x);
+
+
+        
+        
+        /********* angle unwrap *********/
+        // float fsAngle_unwrap = unwrapRad(fsAngle_pre_window,fsAngle);
+        // fsAngle_pre_window=fsAngle_unwrap;
+
+        // if(i==0){
+
+        //     fsAngle_pre = fsAngle_pre_window;
+        // }
+        /********* angle unwrap *********/
+     
+        // float vx=vt_x;//vt_x;//vt_x;
+        // float vy=vt_y;//vt_y;
+
+        if((t+dt)<(lineCount-1)){
+            t=t+dt;
+  
+        }
+
+        if((t+dt)>=(lineCount-1)){  // reach the end of trajectory
+            // vx=0;
+            // vy=0;
+
+            fspeed=0;
+            // fsAngle=0;
+            // fsAngle_unwrap=0;
+            zt =0;
+            ws =0;
+        
+        }
+
+        // if(t==0){
+        //     xt=0;
+        //     yt=0;
+
+            
+        // }
+
+
+        //std::vector<float> pos = {xt,yt,fsAngle};
+        std::vector<float> pos = {xt,yt,0};
+        //std::vector<float> pos = {xt,yt,fsAngle};
+        // std::vector<float> pos = {xt,yt,0};
+        pos_ref[i] = pos;
+
+
+        //std::vector<float> vel = {fspeed,0,ws};
+        std::vector<float> vel = {fspeed,0,ws};
+        //std::vector<float> vel = {25,0,ws};
+        vel_ref[i] = vel;
+
+        
+
+               
+         
+        //usleep(100000);
+
+    }
+
+    if((t_current+dt)<(lineCount-1)){
+            t_current=t_current+dt;
+
+    }
+
+    
+
+}
 void PLANNER::cir_traject(){
     
     std::cout << s <<std::endl;
@@ -249,7 +431,7 @@ void PLANNER::cir_traject_TNB(){
 
 
         //std::vector<float> pos = {xt,yt,fsAngle};
-        std::vector<float> pos = {xt,yt,fsAngle_unwrap};
+        std::vector<float> pos = {xt,yt,0};
         //std::vector<float> pos = {xt,yt,fsAngle};
         // std::vector<float> pos = {xt,yt,0};
         pos_ref[i] = pos;

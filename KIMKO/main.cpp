@@ -1,6 +1,7 @@
 #include <iostream>
 #include "run.h"
 #include <thread>
+#include <string>
 
 //#include "pid.h"
 #include "controlPlant.h"
@@ -128,10 +129,13 @@ void writeDatatoFile();
 void plotLeaderTraject();
 
 
+
+
 //std::shared_ptr<std::thread> start_thread;
 int main(int argc, char **argv) {
 
-    
+    //read trajectory file
+    //readTrajFile();
         
     std::cout << "Hello, world!..." << std::endl;
     //initDemand();
@@ -165,12 +169,16 @@ int main(int argc, char **argv) {
     return 0;
 }
 
+
+
 void virtualLeader(){
 
     std::cout << "Hello leader" << std::endl;
     std::thread leader_plot(&plotLeaderTraject);
+    
     leader.cir_traject_init();
-    leader.linear_traject_init();
+    //leader.linear_traject_init();
+    
     
 }
 

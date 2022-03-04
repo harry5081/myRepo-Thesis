@@ -4,6 +4,10 @@
 #include <vector>
 #include <unistd.h>
 #include <iostream>
+#include <iostream>
+#include <string>
+#include <fstream>
+
 
 class LEADER{
 
@@ -24,7 +28,8 @@ public:
     float ny;
 
     void cir_traject_init();
-    void linear_traject_init();
+    void file_traject_init();
+    //void linear_traject_init();
 
     float time;
 
@@ -34,7 +39,7 @@ public:
 
     std::vector< std::vector<float>> curve;
     
-
+    void traject_from_file();
 
 
 private:
@@ -47,7 +52,7 @@ private:
     
     
     void cir_traject();
-    void linear_traject();
+    //void linear_traject();
    
     
     
@@ -56,6 +61,17 @@ private:
 
     
     std::vector< std::vector<float>> vel_TN;
+
+
+    void readTrajFile();
+    std::vector<int>index_f;
+    std::vector<float>x_Pos_f;
+	std::vector<float>y_Pos_f;
+    std::vector<float>phi_ref_f;
+	std::vector<float>s_Dot_f;
+    std::vector<float>blank_ref_f;
+	std::vector<float>w_ref_f;
+    int lineCount=0;
 
     
 

@@ -446,7 +446,7 @@ void plotX(){
           plt::figure(5);
           plt::subplot(2,1,2);
           plt::xlim(0, wSize);
-          plt::ylim(-720, 720);
+          plt::ylim(0, 720);
          
           plot21_0.update(velRef_Time_temp,fsAngleRef_temp);
           
@@ -691,8 +691,8 @@ void plotX(){
         ///////////////////////////     Global Map    ///////////////////////////
         if(canReadData_PosY_temp.size()==canReadData_PosX_temp.size()){ 
             plt::figure(3);
-            plt::xlim(-100, 900);
-            plt::ylim(-500, 500);
+            plt::xlim(-200, 1500);
+            plt::ylim(-200, 1500);
 
             plot_map.update(canReadData_PosY_temp,canReadData_PosX_temp);
 

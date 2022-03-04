@@ -13,6 +13,12 @@ unistd.h
 -
 iostream
 -
+iostream
+-
+string
+-
+fstream
+-
 
 /home/kimko/myRepo-Thesis/KIMKO/traj_plan/traj_plan.cpp
 traj_plan.h
@@ -30,6 +36,12 @@ vector
 math.h
 -
 time.h
+-
+iostream
+-
+string
+-
+fstream
 -
 
 /home/kimko/myRepo-Thesis/KIMKO/unwrap.h

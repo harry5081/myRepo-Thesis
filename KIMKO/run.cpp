@@ -116,7 +116,9 @@ void run::start()
     
     //planner.linear_traject_2();
     //planner.cir_traject_2();
-    planner.cir_traject_TNB();
+    
+    //planner.cir_traject_TNB();
+    planner.traject_from_file();
     
     // std::vector<std::vector<float>> v_ref_dyn = planner.vel_ref;
     // std::vector<std::vector<float>> p_ref_dyn = planner.pos_ref;
@@ -247,8 +249,8 @@ void run::start()
     mRobot.pd_x = mpc.x_pos_demand;
     
     
-    //mRobot.pd_x = mpc.sinePosDemand(time);
-    //mRobot.vd_x = mpc.cosVelDemand(time);
+    // mRobot.pd_x = mpc.sinePosDemand(time);
+    // mRobot.vd_x = mpc.cosVelDemand(time);
 
     
 
@@ -272,8 +274,8 @@ void run::start()
     //mRobot.vd_z = mpc.z_vel_demand;
     //mRobot.pd_z = mpc.z_pos_demand;
     
-    mRobot.pd_z = 3*mpc.sinePosDemand(time)/10;
-    mRobot.vd_z = 3*mpc.cosVelDemand(time)/10;
+    // mRobot.pd_z = mpc.sinePosDemand(time)/10;
+    // mRobot.vd_z = mpc.cosVelDemand(time)/10;
     
     // mRobot.pd_z = -mpc.sineToTenPosDemand(time)/10;
     // mRobot.vd_z = -mpc.cosToTenVelDemand(time)/10;
@@ -296,8 +298,8 @@ void run::start()
     // mRobot.pd_x = (1)*mpc.sineToTenPosDemand(time);
     // mRobot.vd_x = (1)*mpc.cosToTenVelDemand(time);
     
-    // mRobot.pd_z = 1*mpc.sineToTenPosDemand(time)/10;
-    // mRobot.vd_z = 1*mpc.cosToTenVelDemand(time)/10;
+    //mRobot.pd_z = 1*mpc.sineToTenPosDemand(time)/10;
+    //mRobot.vd_z = 1*mpc.cosToTenVelDemand(time)/10;
 
     // mRobot.pd_z = (-1)*mpc.sineToTenPosDemand(time)/10;
     // mRobot.vd_z = (-1)*mpc.cosToTenVelDemand(time)/10;

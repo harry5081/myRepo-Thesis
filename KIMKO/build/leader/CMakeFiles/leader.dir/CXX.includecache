@@ -19,4 +19,10 @@ unistd.h
 -
 iostream
 -
+iostream
+-
+string
+-
+fstream
+-
 

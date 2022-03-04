@@ -19,6 +19,12 @@ unistd.h
 -
 iostream
 -
+iostream
+-
+string
+-
+fstream
+-
 
 ../mpc/mpc.h
 vector
@@ -64,6 +70,12 @@ vector
 math.h
 -
 time.h
+-
+iostream
+-
+string
+-
+fstream
 -
 
 ../unwrap.h
@@ -240,6 +252,8 @@ iostream
 run.h
 /home/kimko/myRepo-Thesis/KIMKO/run.h
 thread
+-
+string
 -
 controlPlant.h
 /home/kimko/myRepo-Thesis/KIMKO/controlPlant.h
