@@ -4,12 +4,25 @@
 LEADER::LEADER(){
 
     std::cout <<  "LEADER init"<<std::endl;
-    
 
+    std::vector<float> temp={0,0};
+    
+    //  for(int i=0 ;i<= point_cnt; i++)
+    //  {
+
+        curve.push_back(temp);
+        
+
+     //}
+
+    
+    
+    
+    
 }
 
 void LEADER::file_traject_init(){
-
+    readTrajFile();
 
 }
 
@@ -23,14 +36,14 @@ void LEADER::cir_traject_init(){
         s=s+ds;
 
         curve.push_back(point);
-        
+        //curve[i]=point;
     }
 
     float pre_time=0;
 
     while(1){
 
-        usleep(100000);  
+        //usleep(100000);  
         float time = (float)clock()/CLOCKS_PER_SEC;
         
         if(time>=startTime){
@@ -41,7 +54,7 @@ void LEADER::cir_traject_init(){
                 pre_time = time;
 
                 if(index>=point_cnt){
-                    //break;
+                    return;
                 }
                 
 
@@ -86,7 +99,7 @@ void LEADER::readTrajFile(){
 	std::string t, xPos, yPos, phi, sDot, blank, w; //variables from file are here
 	
 	//input filename
-	std::string file = "traj.txt";
+	std::string file = "traj2.txt";
 	std::string str;
 	//number of lines
 	int i = 0;
@@ -107,10 +120,6 @@ void LEADER::readTrajFile(){
         temp.close(); //close the file object.
     }
 
-    
-
-
-
 	std::ifstream traj(file); //opening the file.
 	
     if (traj.is_open()) //if the file is open
@@ -121,19 +130,30 @@ void LEADER::readTrajFile(){
 
         std::string garbage;
 
+        float xs_temp;
+        float ys_temp;
+
+        s=s+ds;
+
+        
+
 		while(i<lineCount-1) //while the end of file is NOT reached
 		{
             i++;
 			
             getline(traj, garbage, '\t');
-			
-
+		
 			getline(traj, xPos, '\t');
-			curve[i].push_back(stof(xPos));
+            xs_temp = stof(xPos);
 
-			getline(traj, yPos, '\t');
-			curve[i].push_back(stof(yPos));
+            getline(traj, yPos, '\t');
+            ys_temp = stof(yPos);
 
+            std::vector<float> point = {xs_temp,ys_temp};
+            
+            //curve[i]=point;
+            curve.push_back(point);
+			
 			getline(traj, garbage, '\n');
             
           	
@@ -141,6 +161,7 @@ void LEADER::readTrajFile(){
 
 		traj.close(); //closing the file
 		std::cout << "Number of entries: " << lineCount-1 << std::endl;
+        point_cnt = lineCount-1;
 	}
 	else {
         std::cout << "Unable to open file in LEADER"; //if the file is not open output

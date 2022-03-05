@@ -15,6 +15,9 @@ public:
 
     LEADER();
 
+    // user input
+    int point_cnt=10; //64;//32;
+
     
     float r=200;
 
@@ -34,17 +37,21 @@ public:
     float time;
 
     float s_current;
-    int point_cnt=64;//32;
+    
+    
     float period =0;
 
     std::vector< std::vector<float>> curve;
     
     void traject_from_file();
+    void readTrajFile();
 
 
 private:
-    
+    // user input
+    float startTime = 5;
     float ds = 100;//50*1.414;//20;
+
 
     float s=0;
     int index =0;
@@ -56,21 +63,21 @@ private:
    
     
     
-    float startTime = 5;
+    
 
 
     
     std::vector< std::vector<float>> vel_TN;
 
 
-    void readTrajFile();
-    std::vector<int>index_f;
-    std::vector<float>x_Pos_f;
-	std::vector<float>y_Pos_f;
-    std::vector<float>phi_ref_f;
-	std::vector<float>s_Dot_f;
-    std::vector<float>blank_ref_f;
-	std::vector<float>w_ref_f;
+    
+    // std::vector<int>index_f;
+    // std::vector<float>x_Pos_f;
+	// std::vector<float>y_Pos_f;
+    // std::vector<float>phi_ref_f;
+	// std::vector<float>s_Dot_f;
+    // std::vector<float>blank_ref_f;
+	// std::vector<float>w_ref_f;
     int lineCount=0;
 
     

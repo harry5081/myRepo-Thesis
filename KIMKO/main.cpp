@@ -134,33 +134,27 @@ void plotLeaderTraject();
 //std::shared_ptr<std::thread> start_thread;
 int main(int argc, char **argv) {
 
-    //read trajectory file
-    //readTrajFile();
-        
+    
     std::cout << "Hello, world!..." << std::endl;
     //initDemand();
     
     
+    
+    
     std::thread leader_thread(&virtualLeader);
-    
-    
-   
     m_run = new run();
-    
-    
-
-    
+        
     std::thread listen_thread(&listen);
     std::thread start_thread(&start);
     std::thread plot_thread(&writeDatatoFile);
     
    
 
-    leader_thread.join();
+    
     plot_thread.join();
     start_thread.join();
     listen_thread.join();
-
+    leader_thread.join();
     //start_thread.reset(new std::thread(&start));
     //start_thread->join();
 
@@ -174,10 +168,16 @@ int main(int argc, char **argv) {
 void virtualLeader(){
 
     std::cout << "Hello leader" << std::endl;
+    
+
+   
+    //leader.cir_traject_init();
+    leader.file_traject_init();
+    
     std::thread leader_plot(&plotLeaderTraject);
     
-    leader.cir_traject_init();
-    //leader.linear_traject_init();
+    leader_plot.join();
+    
     
     
 }
@@ -187,7 +187,7 @@ void  start()
     pybind11::scoped_interpreter guard{};
     while(1)
     {
-        m_run->planner.s=leader.s_current;
+        m_run->planner.s=leader.s_current; // for dynamic traj from leader
         m_run->start();
        
         
@@ -218,6 +218,7 @@ void plotLeaderTraject(){
         static int i_static_traject=0;
         
         while(i_static_traject<leader.point_cnt){
+            
             leader_Plot_PosX->writeDatatoFile(leader.curve[i_static_traject][0], "plot/0_Leader_posx");
             leader_Plot_PosY->writeDatatoFile(leader.curve[i_static_traject][1], "plot/0_Leader_posy");
             i_static_traject++;

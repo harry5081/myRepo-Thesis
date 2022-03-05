@@ -14,7 +14,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     p_init= np.array(p_init)
     v_init= np.array(v_init)
 
-    acc_max = 1000000 #(mm^2/s)
+    acc_max = 1000 #(mm^2/s)
     # p_ref_temp =p_ref
     # v_ref_temp =v_ref
     #print("p_ref: ",p_ref[0])
@@ -137,9 +137,9 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     
 
     Q = np.zeros((3,3))
-    Q[0,0]=3    # ex
-    Q[1,1]=3    # ey
-    Q[2,2]=0    # e_phi
+    Q[0,0]=5    # ex
+    Q[1,1]=5    # ey
+    Q[2,2]=10    # e_phi
 
     state_init = P[0:6]
     ref_init = P[6:12]
@@ -150,7 +150,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     #err_init[2]=0
     #state_init[2]=0
     #err_init = err_init + 0.2*err_dyn_f(err_init,state_init,ref_init)
-    #obj = err_init.T @ Q0 @ err_init   # this is a problem code
+    #obj = err_init.T @ Q @ err_init   # this is a problem code
     g2 = vertcat(g2,E[:,0]-err_init)
     #obj = (err_init.T @ Q @ err_init)
     # err_cur=err_init
@@ -208,23 +208,27 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     #decision variables (demand state)
     
     temp_ubx1=float('inf')*np.ones(6)
-    
     #temp_ubx1[2]=math.pi                # demand_phi
-    temp_ubx1[2]=4*math.pi              # demand_phi
+    temp_ubx1[2]=math.pi              # demand_phi
     temp_ubx1[3]=150                      # fspeed <150
     temp_ubx1[4]=0                      # blank
     temp_ubx1=repmat(temp_ubx1,window)
+
     temp_ubx2=float('inf')*np.ones(3) # err state
+    #temp_ubx2[2]=2*math.pi
     temp_ubx2=repmat(temp_ubx2,window+1)
     au=vertcat(temp_ubx1,temp_ubx2)
 
+
     temp_lbx1=-float('inf')*np.ones(6)
-    temp_lbx1[2]=(-4)*math.pi           # demand_phi
+    temp_lbx1[2]=(-1)*math.pi           # demand_phi
     #temp_lbx1[2]=0                     # demand_phi
-    temp_lbx1[3]=0                      # fspeed >0
+    #temp_lbx1[3]=0                      # fspeed >0
     temp_lbx1[4]=0                      # blank
     temp_lbx1=repmat(temp_lbx1,window)
+
     temp_lbx2=-float('inf')*np.ones(3)  # err state
+    #temp_lbx2[2]=-2*math.pi
     temp_lbx2=repmat(temp_lbx2,window+1)
     al=vertcat(temp_lbx1,temp_lbx2)
     

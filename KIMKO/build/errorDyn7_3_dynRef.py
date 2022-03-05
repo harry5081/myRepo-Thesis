@@ -137,8 +137,8 @@ def errDynFunction(p_ref, v_ref, p_init, v_init):
     
 
     Q = np.zeros((3,3))
-    Q[0,0]=5    # ex
-    Q[1,1]=5    # ey
+    Q[0,0]=3    # ex
+    Q[1,1]=3    # ey
     Q[2,2]=0    # e_phi
 
     state_init = P[0:6]

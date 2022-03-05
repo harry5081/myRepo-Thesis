@@ -13,12 +13,13 @@ void PLANT::calFspeed(){
     fsAngle = constrainAngle(atan2(controlInput_y_vel,controlInput_x_vel)* 180/PI + pos_z);
 
     //fsAngle = constrainAngle(atan2(controlInput_y_vel,controlInput_x_vel)* 180/PI + pos_z);
-    //float temp = (atan(controlInput_y_vel/(controlInput_x_vel+1))* float(180/PI))  + pos_z;
+    
+    //float temp = (atan2(controlInput_y_vel,controlInput_x_vel)* float(180/PI))  + pos_z;
     
     //fsAngle = temp;
 
-    //fsAngle = unwrap(fsAngle_pre, fsAngle);
-    //fsAngle_pre = fsAngle;
+    // fsAngle = unwrap(fsAngle_pre, fsAngle);
+    // fsAngle_pre = fsAngle;
     
 
     //fsAngle = unwrap(fsAngle_pre, fsAngle);
@@ -27,7 +28,7 @@ void PLANT::calFspeed(){
     //fsAngle_world = fsAngle + pos_z;
 
     // fspeed = sqrt(pow(vel_x,2)+pow(vel_y,2));
-    // fsAngle = atan2(vel_x,vel_y) * 180 / PI;
+    //fsAngle = atan2(vel_y,vel_x) * 180 / PI;
 
     
 }

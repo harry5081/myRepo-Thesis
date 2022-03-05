@@ -274,8 +274,8 @@ void run::start()
     //mRobot.vd_z = mpc.z_vel_demand;
     //mRobot.pd_z = mpc.z_pos_demand;
     
-    // mRobot.pd_z = mpc.sinePosDemand(time)/10;
-    // mRobot.vd_z = mpc.cosVelDemand(time)/10;
+    mRobot.pd_z = mpc.sinePosDemand(time)/10;
+    mRobot.vd_z = mpc.cosVelDemand(time)/10;
     
     // mRobot.pd_z = -mpc.sineToTenPosDemand(time)/10;
     // mRobot.vd_z = -mpc.cosToTenVelDemand(time)/10;
@@ -298,8 +298,8 @@ void run::start()
     // mRobot.pd_x = (1)*mpc.sineToTenPosDemand(time);
     // mRobot.vd_x = (1)*mpc.cosToTenVelDemand(time);
     
-    //mRobot.pd_z = 1*mpc.sineToTenPosDemand(time)/10;
-    //mRobot.vd_z = 1*mpc.cosToTenVelDemand(time)/10;
+    // mRobot.pd_z = 1*mpc.sineToTenPosDemand(time)/10;
+    // mRobot.vd_z = 1*mpc.cosToTenVelDemand(time)/10;
 
     // mRobot.pd_z = (-1)*mpc.sineToTenPosDemand(time)/10;
     // mRobot.vd_z = (-1)*mpc.cosToTenVelDemand(time)/10;

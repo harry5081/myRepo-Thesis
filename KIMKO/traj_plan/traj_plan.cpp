@@ -22,11 +22,12 @@ PLANNER::PLANNER(){
 
 void PLANNER::readTrajFile(){
     
+    std::cout << "Planner read traj file " << std::endl;
     // define variables
 	std::string t, xPos, yPos, phi, sDot, blank, w; //variables from file are here
 	
 	//input filename
-	std::string file = "traj.txt";
+	std::string file = "traj2.txt";
 	std::string str;
 	//number of lines
 	int i = 0;
@@ -127,7 +128,7 @@ void PLANNER::traject_from_file(){
 
         /////////////////////////////////////  forward speed  ////////////////////////////////////////
         // float fspeed = sqrt(pow(vt_x,2)+pow(vt_y,2));
-        float fspeed = s_Dot_f[t];
+        float fspeed = s_Dot_f[t]/sampleTime;
         float ws = w_ref_f[t];
         //float fspeed = 40;
         //float fsAngle = atan(vt_y/vt_x);
