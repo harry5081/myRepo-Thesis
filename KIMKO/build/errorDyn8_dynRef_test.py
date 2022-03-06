@@ -145,9 +145,11 @@ REF_Matrix= SX.sym('REF_Matrix',6,window+1)
 
 obj = 0
 g=[]
-g2=[]
+g_e=[]
 g3=[]
-g_ori=[]
+
+g_ori_d=[]
+g_ori_e=[]
 
 
 
@@ -173,7 +175,7 @@ err_init = (state_init[0:3]-ref_init[0:3])  # err_init = e_current_substract_f(s
 
 err_init = err_init + dt*err_dyn_f(state_init,ref_init)
 obj = err_init.T @ Q @ err_init
-g2 = vertcat(g2,E[:,0]-err_init)
+g_e = vertcat(g_e,E[:,0]-err_init)
 # err_cur=err_init
 
 fspeed_init = state_init[3]      # for acc constraint
@@ -181,11 +183,11 @@ fspeed_temp = fspeed_init           # for acc constraint
 
 
 # Orientation
-endOfPre = 6*(window+2)
-ori_init = P[endOfPre:endOfPre + n_ori_ref]
-ori_ref_init = P[endOfPre + n_ori_ref : endOfPre + 2*(window+2)]
+startOfOri = 6*(window+2)
+ori_init = P[startOfOri:startOfOri + n_ori_ref]
+ori_ref_init = P[startOfOri + n_ori_ref : startOfOri + 2*n_ori_ref]
 ori_err_init = ori_init[0]-ori_ref_init[0]
-g_ori = vertcat(g_ori,T_E[:,0]-ori_err_init)
+g_ori_e = vertcat(g_ori_e,T_E[:,0]-ori_err_init)
 
 print(P)
 print(ori_init)
@@ -194,27 +196,46 @@ print(ori_ref_init)
 
 for i in range(window):
     
+    # pos vel
     ref_current = P[n_demand_state + (i+1)*n_ref : n_demand_state + (i+2)*n_ref]
     demand_cur = D[:,i]
     err_cur = E[:,i]
-    
+
     err_next =  err_cur + dt * err_dyn_f(demand_cur,ref_current)# get vp
     obj=obj+err_next.T @ Q @ err_next + 5*demand_cur[3]**2
-    
-    g2 = vertcat(g2,E[:,i+1]-err_next)
-    g = vertcat(g,demand_cur[0:3]-ref_current[0:3]-err_next)  # derive x and y
 
+    # ori
+    ori_ref_current = P[startOfOri + (i+1)*n_ori_ref : startOfOri + (i+2)*n_ori_ref]
+    ori_demand_cur = T_D[:,i]
+    ori_err_cur = T_E[:,i]
+
+    ori_err_next= ori_err_cur + dt * ori_dyn_f(ori_demand_cur[1])
+    obj=obj+ori_err_next**2 + ori_demand_cur[1]**2
+    
+
+    # pos vel
+    g = vertcat(g,demand_cur[0:3]-ref_current[0:3]-err_next)  # derive x and y
+    g_e = vertcat(g_e,E[:,i+1]-err_next)
+    
     acc = (D[:,i][3]-fspeed_temp)/dt
     ACC[:,i] = acc
     fspeed_temp = D[:,i][3]
 
+    # ori
+    g_ori_d = vertcat(g_ori_d,ori_demand_cur[0]-ori_ref_current[0]-ori_err_next)
+    g_ori_e = vertcat(g_ori_e,T_E[:,i+1]-ori_err_next)
     
 
     
 
-g = vertcat(g,g2)
+g = vertcat(g,g_e)
 #g = vertcat(g,g3)
+
 g = vertcat(g,reshape(ACC,window,1))
+
+
+g = vertcat(g,g_ori_d)
+g = vertcat(g,g_ori_e)
 
 
 ###############################################################################
@@ -282,10 +303,12 @@ al=vertcat(temp_lbx1,temp_lbx2,temp_lbx3,temp_lbx4)
 args["lbx"] = al
 args["ubx"] = au
 
-args["lbg"] = vertcat(np.zeros(3*(window)+g2.shape[0]),(-1)*repmat(acc_max,(window),1))
-#np.zeros(n_e_state*(window+1))
-args["ubg"] = vertcat(np.zeros(3*(window)+g2.shape[0]),repmat(acc_max,(window),1))
-#np.zeros(n_e_state*(window+1))
+args["lbg"] = vertcat(np.zeros(3*(window)+g_e.shape[0]),(-1)*repmat(acc_max,(window),1),np.zeros(g_ori_d.shape[0]),np.zeros(g_ori_e.shape[0]))
+args["ubg"] = vertcat(np.zeros(3*(window)+g_e.shape[0]),repmat(acc_max,(window),1),np.zeros(g_ori_d.shape[0]),np.zeros(g_ori_e.shape[0]))
+
+#args["lbg"] = vertcat(np.zeros(3*(window)+g_e.shape[0]),(-1)*repmat(acc_max,(window),1),np.zeros(g_ori_e.shape[0]))
+#args["ubg"] = vertcat(np.zeros(3*(window)+g_e.shape[0]),repmat(acc_max,(window),1),np.zeros(g_ori_e.shape[0]))
+
 
 
 #np.zeros(n_e_state*(window+1))
@@ -330,10 +353,6 @@ x_sol = sol['x']
 demand_state_sol =x_sol[0:6*(window)]
 error_sol=x_sol[6*(window):6*window + n_e_state*(window+1)]
 
-#print("Demand state: ",demand_state_sol)
-#print("Error value:",error_sol)
-
-
 demand_state = reshape(demand_state_sol,6,window) 
 error = reshape(error_sol,3,window+1) 
 
@@ -346,6 +365,26 @@ err_predichorz_update = np.zeros((1,3,window+1))
 err_predichorz_update[0,:,:] = error # get all err states within a predic horz
 
 
+# Orientation
+startOrisol = 6*window + n_e_state*(window+1)
+
+demand_ori_sol = x_sol[startOrisol:startOrisol+2*(window)]
+error_ori_sol=x_sol[startOrisol+2*(window):startOrisol+2*(window) + n_e_ori*(window+1)]
+print(x_sol)
+print(demand_ori_sol)
+print(error_ori_sol)
+
+demand_ori = reshape(demand_ori_sol,2,window) 
+error_ori = reshape(error_ori_sol,n_e_ori,window+1) 
+
+# record the solved state of ori
+demand_ori_predichorz_update = np.zeros((1,2,window))
+demand_ori_predichorz_update[0,:,:] = demand_ori
+
+# calculate all the error ori within a predic_horz
+err_ori_predichorz_update = np.zeros((1,1,window+1))
+err_ori_predichorz_update[0,:,:] = error_ori # get all ori err within a predic horz
+
 
 
 #print("")
@@ -353,6 +392,11 @@ print("ref init    [x, y, phi, v, 0, w] = ",ref_state[0:6])#print("p_init: ",p_i
 #print("v_init: ",v_init)
 print("state init  [x, y, phi, v, 0, w] = ",init_state)
 print("err init    [ex, ey, e_phi] =      ",err_predichorz_update[0,:,0])
+print("*")
+print("*oriRef init [z, w] =             *",Ori_ref[0:2])
+print("*ori init    [z, w] =             *",Ori_init)
+print("*oriErr init [ez] =               *",err_ori_predichorz_update[0,:,0])
+
 print("")
 np.set_printoptions(precision=3,suppress=True)
 for i in range(1):
@@ -363,7 +407,10 @@ for i in range(1):
         print("demand  [x, y, phi, v, 0, w] = ",demand_predichorz_update[i,:,j])
         print("err     [ex, ey, e_phi] =      ", err_predichorz_update[i,:,j+1])
         #print("v_input = ",v_predichorz_update[i,:,j])
-        print("")
-        
+        print("*")
+        print("*ori_ref [z, w] =             *",Ori_ref[j*n_ori_ref : (j+1)*n_ori_ref])
+        print("*ori_de  [z, w] =             *",demand_ori_predichorz_update[i,:,j])
+        print("*ori_err [ez] =               *",err_ori_predichorz_update[i,:,j+1])
+        print(" ")
 
-#    return list([demand_state_sol[0],demand_state_sol[1],demand_state_sol[2],demand_state_sol[3],demand_state_sol[4],demand_state_sol[5]])
+#    return list([demand_state_sol[0],demand_state_sol[1],demand_state_sol[2],demand_state_sol[3],demand_state_sol[4],demand_state_sol[5],demand_ori_sol[0],demand_ori_sol[1]])

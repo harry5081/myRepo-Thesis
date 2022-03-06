@@ -73,7 +73,8 @@ public:
     void mpcErrDyn(std::vector<float> p_ref, std::vector<float> v_ref, std::vector<float> p_init, std::vector<float> v_init);
     void mpcErrDyn(std::vector<std::vector<float>> p_ref, std::vector<std::vector<float>> v_ref, std::vector<float> p_init, std::vector<float> v_init);
     void mpcErrDyn_xy(std::vector<std::vector<float>> p_ref, std::vector<std::vector<float>> v_ref, std::vector<float> p_init, std::vector<float> v_init);
-    
+    void mpcErrDyn_xy_ori(std::vector<std::vector<float>> p_ref, std::vector<std::vector<float>> v_ref, std::vector<float> p_init, std::vector<float> v_init, std::vector<std::vector<float>> Ori_ref, std::vector<float> Ori_init);
+
 
     float sinePosDemand(float time);
     float cosVelDemand(float time);

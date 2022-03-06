@@ -8,6 +8,41 @@ initDemand();
 
 //MPC
 
+void MPC::mpcErrDyn_xy_ori(std::vector<std::vector<float>> p_ref, std::vector<std::vector<float>> v_ref, std::vector<float> p_init, std::vector<float> v_init, std::vector<std::vector<float>> Ori_ref, std::vector<float> Ori_init){
+    // for dyn ref x direction
+    float time1 = (float)clock()/CLOCKS_PER_SEC;
+    
+    pybind11::module_ mpc = pybind11::module_::import("errorDyn8_dynRef");
+    //pybind11::module_ mpc = pybind11::module_::import("errorDyn6_dynRef_xy");
+    //pybind11::object result = mpc.attr("errDynFunction")(p_ref, v_ref, p_init, v_init, pre_sol);
+    pybind11::object result = mpc.attr("errDynFunction")(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init);
+    std::vector<float> result_value = result.cast<std::vector<float>>();
+
+    float time2 = (float)clock()/CLOCKS_PER_SEC;
+    std::cout << " MPC_DYN_errorDynOri operation time: "<< time2-time1 << std::endl;
+
+    x_pos_demand = result_value[0];
+    y_pos_demand = result_value[1];
+    
+    float fsAngle_temp = result_value[2];
+    fspeedVel_demand = result_value[3];
+
+    //x_vel_demand=fspeedVel_demand*cos(fsAngle_temp);
+    //y_vel_demand=fspeedVel_demand*sin(fsAngle_temp);
+
+    fsAngle_demand = fsAngle_temp*180/PI;
+
+
+    float blank = result_value[4];
+    float w_demand = result_value[5];
+
+    z_pos_demand = result_value[6];
+    z_vel_demand = result_value[7];
+    
+    pre_sol = result_value;
+
+}
+
 void MPC::mpcErrDyn_xy(std::vector<std::vector<float>> p_ref, std::vector<std::vector<float>> v_ref, std::vector<float> p_init, std::vector<float> v_init){
     // for dyn ref x direction
     float time1 = (float)clock()/CLOCKS_PER_SEC;
@@ -389,6 +424,8 @@ float MPC::sineToTenPosDemand(float time){
         posDemand = (50) * (sin(time+2*PI*3/4+3)+1);
 
     }
+
+    
 
     return posDemand;
 }

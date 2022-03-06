@@ -6,6 +6,8 @@ PLANNER::PLANNER(){
     r = leaderData.r;
 
     std::vector<float> temp={0,0,0};
+
+    std::vector<float> temp_ori={0,0};
     
      for(int w =0;w<window;w++)
      {
@@ -14,6 +16,7 @@ PLANNER::PLANNER(){
         vel_ref.push_back(temp);
         fspeed_ref.push_back(temp);
 
+        ori_ref.push_back(temp_ori);
      }
 
     readTrajFile();
@@ -188,7 +191,8 @@ void PLANNER::traject_from_file(){
         vel_ref[i] = vel;
 
         
-
+        std::vector<float> ori = {10,0};
+        ori_ref[i] = ori;
                
          
         //usleep(100000);
@@ -443,7 +447,8 @@ void PLANNER::cir_traject_TNB(){
         //std::vector<float> vel = {25,0,ws};
         vel_ref[i] = vel;
 
-        
+        std::vector<float> ori = {10,0};
+        ori_ref[i] = ori;
 
                
          

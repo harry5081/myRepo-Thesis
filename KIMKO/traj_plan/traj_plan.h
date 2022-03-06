@@ -31,7 +31,7 @@ public:
 
     std::vector<std::vector<float>> fspeed_ref;
 
-    
+    std::vector<std::vector<float>> ori_ref;
 
     void cir_traject();
     void cir_traject_2();

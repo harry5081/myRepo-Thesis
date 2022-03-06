@@ -605,7 +605,7 @@ void plotX(){
             plt::figure(2);
             plt::subplot(3,1,1);
             plt::xlim(0, wSize);
-            plt::ylim(-200, 500);
+            plt::ylim(-200, 1300);
             
             //plt::ylim(-100, 200);
 
@@ -640,7 +640,7 @@ void plotX(){
             plt::figure(2);
             plt::subplot(3,1,2);
             plt::xlim(0, wSize);
-            plt::ylim(-100, 650);
+            plt::ylim(-200, 800);
             //plt::ylim(-100, 200);
 
             plot7.update(posDemand_Time_temp,posDemand_Y_temp);
