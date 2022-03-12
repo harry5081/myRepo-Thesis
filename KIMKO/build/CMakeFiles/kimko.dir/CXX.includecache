@@ -35,6 +35,8 @@ cmath
 -
 time.h
 -
+chrono
+-
 pybind11/pybind11.h
 -
 pybind11/embed.h
@@ -315,6 +317,8 @@ pybind11/stl.h
 -
 
 /home/kimko/myRepo-Thesis/KIMKO/run.h
+chrono
+-
 pid.h
 /home/kimko/myRepo-Thesis/KIMKO/pid.h
 mpc.h

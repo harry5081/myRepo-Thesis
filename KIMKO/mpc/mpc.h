@@ -6,7 +6,7 @@
 #include <iostream>
 #include <cmath>
 #include <time.h>
-
+#include <chrono>
 #include <pybind11/pybind11.h>
 #include <pybind11/embed.h>
 #include <pybind11/stl.h>
@@ -36,10 +36,13 @@ private:
 
     std::vector<float> pre_vd_pd ={0,0,0,0,0,0}; // pre_vdx, pre_pdx, pre_vdy, pre_pdy, pre_vdz, pre_pdz, 
     std::vector<float> pre_sol ={0,0,0,0,0,0};
+    std::vector<float> pre_sol_ori ={0,0,0,0,0,0,0,0};
     
     
 
 public:
+
+    float mpcExTime;
 
     float fspeedVel_ref=0;
     float fsAngle_ref=0;
@@ -55,6 +58,7 @@ public:
     
     float fspeedVel_demand=0;
     float fsAngle_demand=0;
+    float fsAngle_demand_rad=0;
 
     float x_vel_demand;
     float x_pos_demand;
@@ -73,7 +77,7 @@ public:
     void mpcErrDyn(std::vector<float> p_ref, std::vector<float> v_ref, std::vector<float> p_init, std::vector<float> v_init);
     void mpcErrDyn(std::vector<std::vector<float>> p_ref, std::vector<std::vector<float>> v_ref, std::vector<float> p_init, std::vector<float> v_init);
     void mpcErrDyn_xy(std::vector<std::vector<float>> p_ref, std::vector<std::vector<float>> v_ref, std::vector<float> p_init, std::vector<float> v_init);
-    void mpcErrDyn_xy_ori(std::vector<std::vector<float>> p_ref, std::vector<std::vector<float>> v_ref, std::vector<float> p_init, std::vector<float> v_init, std::vector<std::vector<float>> Ori_ref, std::vector<float> Ori_init);
+    void mpcErrDyn_xy_ori(std::vector<std::vector<float>> p_ref, std::vector<std::vector<float>> v_ref, std::vector<float> p_init, std::vector<float> v_init, std::vector<std::vector<float>> Ori_ref, std::vector<float> Ori_init, std::vector<std::vector<float>> guess);
 
 
     float sinePosDemand(float time);

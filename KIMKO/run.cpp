@@ -4,6 +4,7 @@
 #include <bitset>
 
 
+
 #include <fstream>
 #include <vector>
 #include "matplotlib-cpp-master/matplotlibcpp.h"
@@ -21,9 +22,12 @@
 
  float timeDiff;
  float timeTemp;
+ 
+
+ auto pre_chrono_time = std::chrono::high_resolution_clock::now();
 
 
-DOF dof =X_DIRECTION;
+DOF dof =ALL_DIRECTION;
 DRAW draw = PLOT;
 
 //PID pid_x(3,0,0,0);
@@ -94,8 +98,10 @@ m_int16_velocity_level2(0)
 }
 void run::start()
 {
-    
-   
+   //mRobot.pos_correct_to_world();
+   //mRobot.pos_sensor_correct();   // put in run start
+   mRobot.calFspeed();
+   mRobot.pos_correct_to_world();
     
 
     //CAN_READ to get the initial state
@@ -105,20 +111,30 @@ void run::start()
 
     m_int16_operatingmode = 2;
 
-
+    
     float time = (float)clock()/CLOCKS_PER_SEC;
-    timeDiff=time - timeTemp;
+    
+    timeDiff=time-timeTemp;
+    //time_ms = time - time_ms;
     std::cout << "!!!!!!!!!!!!!!!!!!!  TimeTest  !!!!!!!!!!!!!!!!!!!!!    "<< timeDiff <<std::endl;
     timeTemp=time;
+
+    auto chronoTime = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> chronoDiff_ms = chronoTime - pre_chrono_time;
+    std::cout << "!!!!!!!!!!!!!!!!!!!  ChronoTime  !!!!!!!!!!!!!!!!!!!!!  "<< chronoDiff_ms.count() << " ms " <<std::endl;
+    pre_chrono_time=chronoTime;
+
     
     //usleep(150000);
-    usleep(150000);
-    
+    //usleep(100000);
+    //std::this_thread::sleep_for(std::chrono::milliseconds (100));
+    std::this_thread::sleep_for(std::chrono::milliseconds (150-int(mpc.mpcExTime)));
     //planner.linear_traject_2();
     //planner.cir_traject_2();
     
-    //planner.cir_traject_TNB();
-    planner.traject_from_file();
+    planner.cir_traject_TNB();
+    //planner.cir_traject_TNB_preAngle();
+    //planner.traject_from_file();
     
     // std::vector<std::vector<float>> v_ref_dyn = planner.vel_ref;
     // std::vector<std::vector<float>> p_ref_dyn = planner.pos_ref;
@@ -213,18 +229,24 @@ void run::start()
     float fspeed_temp = sqrt(pow(mRobot.vel_x,2) + pow(mRobot.vel_y,2));
 
     std::vector<std::vector<float>> ori_ref_dyn = planner.ori_ref;
+
+    std::vector<std::vector<float>> guess = planner.guess;
    
    
    
-    std::vector<float> p_init = {mRobot.pos_x, mRobot.pos_y, mRobot.fsAngle*float(PI/180)};
+    
     //std::vector<float> p_init = {mRobot.pos_x, mRobot.pos_y, mRobot.fsAngle*float(PI/180)};
     //std::vector<float> p_init = {mRobot.pos_x, mRobot.pos_y, planner.fsAngle};
-    std::vector<float> v_init = {fspeed_temp, 0, 0};
+    
     //std::vector<float> v_init = {fspeed_temp, 0, 0};
     //std::vector<float> v_init = {mRobot.fspeedVel, 0, 0};
     //std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, mRobot.fsAngle*float(PI/180)};
 
-    //std::vector<float> ori_init = {0, 0}; 
+    // 
+    //std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, mRobot.fsAngle_rad};
+    std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, float(mRobot.fsAngle_360*PI/180.0)};
+    std::vector<float> v_init = {fspeed_temp, 0, 0};
+    //std::vector<float> ori_init = {0, 0};
     std::vector<float> ori_init = {mRobot.pos_z, mRobot.vel_z}; 
 
 
@@ -233,7 +255,7 @@ void run::start()
 
     mpc.x_pos_ref = planner.pos_ref[0][0]; //plot
     mpc.y_pos_ref = planner.pos_ref[0][1]; //plot
-    mpc.fsAngle_ref = planner.pos_ref[0][2]*180/PI; //plot
+    mpc.fsAngle_ref = planner.pos_ref[0][2]*180.0/PI; //plot
     mpc.fspeedVel_ref = planner.vel_ref[0][0]; //plot
     
     mpc.z_pos_ref = planner.ori_ref[0][0]; //plot
@@ -241,13 +263,18 @@ void run::start()
 
 
     //mpc.mpcErrDyn_xy(p_ref_dyn, v_ref_dyn, p_init, v_init);
-    mpc.mpcErrDyn_xy_ori(p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init);
+    mpc.mpcErrDyn_xy_ori(p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
+    
+
+    mpc.x_vel_ref = mpc.fspeedVel_demand*cos(mpc.fsAngle_demand_rad); //plot
+    mpc.y_vel_ref = mpc.fspeedVel_demand*sin(mpc.fsAngle_demand_rad); //plot
 
     // mpc.x_vel_demand=mpc.fspeedVel_demand*cos((mpc.fsAngle_demand)*PI/180);
     // mpc.y_vel_demand=mpc.fspeedVel_demand*sin((mpc.fsAngle_demand)*PI/180);
 
-    mpc.x_vel_demand=mpc.fspeedVel_demand*cos((mpc.fsAngle_demand-mRobot.pos_z)*PI/180);
-    mpc.y_vel_demand=mpc.fspeedVel_demand*sin((mpc.fsAngle_demand-mRobot.pos_z)*PI/180);
+    mpc.x_vel_demand=mpc.fspeedVel_demand*cos(mpc.fsAngle_demand_rad-mRobot.pos_z_rad);
+    mpc.y_vel_demand=mpc.fspeedVel_demand*sin(mpc.fsAngle_demand_rad-mRobot.pos_z_rad);
+    
     
     
 
@@ -306,8 +333,8 @@ void run::start()
     //mRobot.pd_y = mpc.sineToTenPosDemand(time);
     //mRobot.vd_y = mpc.cosToTenVelDemand(time);
 
-    // mRobot.pd_x = (1)*mpc.sineToTenPosDemand(time);
-    // mRobot.vd_x = (1)*mpc.cosToTenVelDemand(time);
+    //mRobot.pd_x = (1)*mpc.sineToTenPosDemand(time);
+    //mRobot.vd_x = (1)*mpc.cosToTenVelDemand(time);
     
     //mRobot.pd_z = 1*mpc.sineToTenPosDemand(time)/10;
     //mRobot.vd_z = 1*mpc.cosToTenVelDemand(time)/10;
@@ -318,13 +345,14 @@ void run::start()
     
 
     //int PID::pidExe(float posError, int velDemand, float velError)
-    // m_int16_desired_velocity_X = pid_x.pidExe(mRobot.pd_x-mRobot.pos_x_correct, mRobot.vd_x, mRobot.vd_x-mRobot.vel_x);
-    // m_int16_desired_velocity_Y = pid_y.pidExe(mRobot.pd_y-mRobot.pos_y_correct, mRobot.vd_y, mRobot.vd_y-mRobot.vel_y);
-    // m_f_desired_velocity_Z = pid_z.pidExeAngle(mRobot.pd_z-mRobot.pos_z,mRobot.vd_z,mRobot.vd_z-mRobot.vel_z);
-
-    m_int16_desired_velocity_X = pid_x.pidExe(mRobot.pd_x-mRobot.pos_x, mRobot.vd_x, mRobot.vd_x-mRobot.vel_x);
-    m_int16_desired_velocity_Y = pid_y.pidExe(mRobot.pd_y-mRobot.pos_y, mRobot.vd_y, mRobot.vd_y-mRobot.vel_y);
+    m_int16_desired_velocity_X = pid_x.pidExe(mRobot.pd_x-mRobot.pos_x_correct, mRobot.vd_x, mRobot.vd_x-mRobot.vel_x);
+    m_int16_desired_velocity_Y = pid_y.pidExe(mRobot.pd_y-mRobot.pos_y_correct, mRobot.vd_y, mRobot.vd_y-mRobot.vel_y);
     m_f_desired_velocity_Z = pid_z.pidExeAngle(mRobot.pd_z-mRobot.pos_z,mRobot.vd_z,mRobot.vd_z-mRobot.vel_z);
+
+    // m_int16_desired_velocity_X = pid_x.pidExe(mRobot.pd_x-mRobot.pos_x, mRobot.vd_x, mRobot.vd_x-mRobot.vel_x);
+    // m_int16_desired_velocity_Y = pid_y.pidExe(mRobot.pd_y-mRobot.pos_y, mRobot.vd_y, mRobot.vd_y-mRobot.vel_y);
+    // m_f_desired_velocity_Z = pid_z.pidExeAngle(mRobot.pd_z-mRobot.pos_z,mRobot.vd_z,mRobot.vd_z-mRobot.vel_z);
+    
     
 
     // switch(dof){
@@ -360,32 +388,32 @@ void run::start()
     
 
     //ensure controller input security
-    if(m_int16_desired_velocity_X > 320){
-        m_int16_desired_velocity_X=100;
-        std::cout <<  "X Direction Controller Input too Fast!!!" << std::endl;
-    }
-    else if (m_int16_desired_velocity_X < -320){
-        m_int16_desired_velocity_X=-100;
-        std::cout <<  "X Direction Controller Input too Fast!!!" << std::endl;
-    }
+    // if(m_int16_desired_velocity_X > 320){
+    //     m_int16_desired_velocity_X=100;
+    //     std::cout <<  "X Direction Controller Input too Fast!!!" << std::endl;
+    // }
+    // else if (m_int16_desired_velocity_X < -320){
+    //     m_int16_desired_velocity_X=-100;
+    //     std::cout <<  "X Direction Controller Input too Fast!!!" << std::endl;
+    // }
     
-    if(m_int16_desired_velocity_Y > 280){
-        m_int16_desired_velocity_Y=100;
-        std::cout <<  "Y Direction Controller Input too Fast!!!" << std::endl;
-    }
-    else if (m_int16_desired_velocity_Y < -280){
-        m_int16_desired_velocity_Y=-100;
-        std::cout <<  "Y Direction Controller Input too Fast!!!" << std::endl;
-    }
+    // if(m_int16_desired_velocity_Y > 500){
+    //     m_int16_desired_velocity_Y=100;
+    //     std::cout <<  "Y Direction Controller Input too Fast!!!" << std::endl;
+    // }
+    // else if (m_int16_desired_velocity_Y < -500){
+    //     m_int16_desired_velocity_Y=-100;
+    //     std::cout <<  "Y Direction Controller Input too Fast!!!" << std::endl;
+    // }
     
-    if(m_f_desired_velocity_Z >= 15){
-        m_f_desired_velocity_Z=5;
-        std::cout <<  "Z Direction Controller Input too Fast!!!" << std::endl;
-    }
-    else if (m_f_desired_velocity_Z <= -15){
-        m_f_desired_velocity_Z=-5;
-        std::cout <<  "Z Direction Controller Input too Fast!!!" << std::endl;
-    }
+    // if(m_f_desired_velocity_Z >= 15){
+    //     m_f_desired_velocity_Z=5;
+    //     std::cout <<  "Z Direction Controller Input too Fast!!!" << std::endl;
+    // }
+    // else if (m_f_desired_velocity_Z <= -15){
+    //     m_f_desired_velocity_Z=-5;
+    //     std::cout <<  "Z Direction Controller Input too Fast!!!" << std::endl;
+    // }
 
     //m_int16_desired_velocity_X = 10;
     //m_int16_desired_velocity_Y = 0;
@@ -570,9 +598,8 @@ void run::canReadData(){
 
             getVelocityValue();
             getPositionValue();
-
-            mRobot.pos_sensor_correct();
-            mRobot.calFspeed();
+            
+            
 
             // // data processing
             // std::cout << "Robot Frame Value"<<std::endl;
@@ -592,7 +619,7 @@ void run::canReadData(){
             // std::cout <<  "     Correct_y: " << mRobot.pos_y_correct <<std::endl<<std::endl;
             // std::cout <<  "     Correct_theta: " << mRobot.pos_z_correct <<std::endl<<std::endl;
             
-            usleep(1000); //1 ms
+            //usleep(1000); //1 ms
          }
 
         //usleep(20000);
@@ -629,14 +656,14 @@ void run::getVelocityValue(){
         mRobot.vel_z = z_vel;
 
         
-        if(draw == PLOT){
-            // canReadTimePlot_X->writeDatatoFile((float)clock()/CLOCKS_PER_SEC, "plot/CAN_Read_Time");
+        // if(draw == PLOT){
+        //     // canReadTimePlot_X->writeDatatoFile((float)clock()/CLOCKS_PER_SEC, "plot/CAN_Read_Time");
             
-            // canReadDataPlot_X->writeDatatoFile(mRobot.vel_x, "plot/CAN_Read_Data_X");
-            // canReadDataPlot_Y->writeDatatoFile(mRobot.vel_y, "plot/CAN_Read_Data_Y");
-            // canReadDataPlot_Z->writeDatatoFile(mRobot.vel_z, "plot/CAN_Read_Data_Z");
+        //     // canReadDataPlot_X->writeDatatoFile(mRobot.vel_x, "plot/CAN_Read_Data_X");
+        //     // canReadDataPlot_Y->writeDatatoFile(mRobot.vel_y, "plot/CAN_Read_Data_Y");
+        //     // canReadDataPlot_Z->writeDatatoFile(mRobot.vel_z, "plot/CAN_Read_Data_Z");
             
-        }
+        // }
     }
 
 }
@@ -667,10 +694,10 @@ void run::getPositionValue(){
 
     } //if(m_pcanMsg_listen.ID == 0x1A1)
 
-    if(m_pcanMsg_listen.ID == 0x1A2){
-        std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl; 
+    // if(m_pcanMsg_listen.ID == 0x1A2){
+    //     std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl; 
 
-    }
+    // }
 
 
     //Z Position
@@ -693,7 +720,7 @@ void run::getPositionValue(){
                 
         mRobot.pos_z = z_pos-mRobot.originPos_z;
         mRobot.pos_z_pre_unwrap = mRobot.pos_z; // unwrap
-
+        mRobot.pos_z_rad = mRobot.pos_z * PI/180.0;
         
         //mRobot.pos_z = z_pos;
 

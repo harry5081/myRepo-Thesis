@@ -120,7 +120,7 @@ ReadWritePlot *canReadDataPlot_PosY_cor = new ReadWritePlot;
 
 run *m_run;
 LEADER leader;
-void virtualLeader();
+//void virtualLeader();
 
 void start();
 void listen();
@@ -138,10 +138,12 @@ int main(int argc, char **argv) {
     std::cout << "Hello, world!..." << std::endl;
     //initDemand();
     
+    leader.cir_traject_init();
+    plotLeaderTraject();
     
     
     
-    std::thread leader_thread(&virtualLeader);
+    //std::thread leader_thread(&virtualLeader);
     m_run = new run();
         
     std::thread listen_thread(&listen);
@@ -154,7 +156,7 @@ int main(int argc, char **argv) {
     plot_thread.join();
     start_thread.join();
     listen_thread.join();
-    leader_thread.join();
+    //leader_thread.join();
     //start_thread.reset(new std::thread(&start));
     //start_thread->join();
 
@@ -165,22 +167,22 @@ int main(int argc, char **argv) {
 
 
 
-void virtualLeader(){
+// void virtualLeader(){
 
-    std::cout << "Hello leader" << std::endl;
+//     std::cout << "Hello leader" << std::endl;
     
 
    
-    //leader.cir_traject_init();
-    leader.file_traject_init();
+//     leader.cir_traject_init();
+//     //leader.file_traject_init();
     
-    std::thread leader_plot(&plotLeaderTraject);
+//     std::thread leader_plot(&plotLeaderTraject);
     
-    leader_plot.join();
+//     leader_plot.join();
     
     
     
-}
+// }
 
 void  start()
 {   
@@ -222,7 +224,7 @@ void plotLeaderTraject(){
             leader_Plot_PosX->writeDatatoFile(leader.curve[i_static_traject][0], "plot/0_Leader_posx");
             leader_Plot_PosY->writeDatatoFile(leader.curve[i_static_traject][1], "plot/0_Leader_posy");
             i_static_traject++;
-            usleep(20000);
+            usleep(10000);
             
          }
 
@@ -233,18 +235,18 @@ void plotLeaderTraject(){
 
     
     // online dynamic trajectory
-    else{
-        while(1)
-        {
+    // else{
+    //     while(1)
+    //     {
         
-        //leader_Plot_time->writeDatatoFile(time, "plot/       ");
-        leader_Plot_PosX->writeDatatoFile(leader.xs, "plot/0_Leader_posx");
-        leader_Plot_PosY->writeDatatoFile(leader.ys, "plot/0_Leader_posy");
-        usleep(20000);
+    //     //leader_Plot_time->writeDatatoFile(time, "plot/       ");
+    //     leader_Plot_PosX->writeDatatoFile(leader.xs, "plot/0_Leader_posx");
+    //     leader_Plot_PosY->writeDatatoFile(leader.ys, "plot/0_Leader_posy");
+    //     usleep(20000);
 
-        }
+    //     }
 
-    }
+    // }
 
     
     
@@ -339,7 +341,7 @@ void writeDatatoFile()
         // vel forward speed
         robot_Plot_fspeed->writeDatatoFile(m_run->mRobot.fspeedVel, "plot/9_Fspeed_robot");
         //robot_Plot_fsAngle->writeDatatoFile(m_run->mRobot.fsAngle_world, "plot/9_FsAngle_robot");
-        robot_Plot_fsAngle->writeDatatoFile(m_run->mRobot.fsAngle, "plot/9_FsAngle_robot");
+        robot_Plot_fsAngle->writeDatatoFile(m_run->mRobot.fsAngle_360, "plot/9_FsAngle_robot");
         
 
 
@@ -363,9 +365,10 @@ void writeDatatoFile()
         
 
         
-        
-            usleep(20000);
-        
+            std::this_thread::sleep_for(std::chrono::milliseconds (20));
+            //usleep(20000);
+            
+            
         
     }
     

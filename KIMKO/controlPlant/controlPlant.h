@@ -42,7 +42,7 @@ public:
     float pos_x;
     float pos_y;
     float pos_z; // unwrap for pid
-    
+    float pos_z_rad;
 
     float pos_z_pre_unwrap; // for purpose of angle unwrap
 
@@ -51,8 +51,9 @@ public:
     float fspeedVel;
     float fsAngle;
     float fsAngle_pre = 0; // for purpose of angle unwrap
-
-    float fsAngle_world;
+    float fsAngle_rad;
+    float fsAngle_360;
+    //float fsAngle_world;
 
 
     // deadReckon
@@ -82,7 +83,7 @@ public:
     void deadReckon();
     void pos_sensor_correct();
     //void pos_sensor_correct2();
-
+    void pos_correct_to_world();
     
 
     

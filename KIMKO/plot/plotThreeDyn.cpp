@@ -446,7 +446,7 @@ void plotX(){
           plt::figure(5);
           plt::subplot(2,1,2);
           plt::xlim(0, wSize);
-          plt::ylim(-180, 720);
+          plt::ylim(-380, 380);
          
           plot21_0.update(velRef_Time_temp,fsAngleRef_temp);
           
@@ -474,7 +474,7 @@ void plotX(){
             plt::figure(1);
             plt::subplot(3,1,1);
             plt::xlim(0, wSize);
-            plt::ylim(-100, 300);
+            plt::ylim(-280, 280);
             
             plot1.update(canWriteTime_temp,canWriteData_temp);
 
@@ -605,7 +605,8 @@ void plotX(){
             plt::figure(2);
             plt::subplot(3,1,1);
             plt::xlim(0, wSize);
-            plt::ylim(-200, 1300);
+            plt::ylim(-280, 280);
+            //plt::ylim(-4000, 1500);
             
             //plt::ylim(-100, 200);
 
@@ -640,7 +641,8 @@ void plotX(){
             plt::figure(2);
             plt::subplot(3,1,2);
             plt::xlim(0, wSize);
-            plt::ylim(-200, 800);
+            plt::ylim(-280, 280);
+            //plt::ylim(-2300, 2200);
             //plt::ylim(-100, 200);
 
             plot7.update(posDemand_Time_temp,posDemand_Y_temp);
@@ -691,8 +693,13 @@ void plotX(){
         ///////////////////////////     Global Map    ///////////////////////////
         if(canReadData_PosY_temp.size()==canReadData_PosX_temp.size()){ 
             plt::figure(3);
-            plt::xlim(-200, 1500);
-            plt::ylim(-200, 1500);
+            // plt::xlim(-200, 1500);
+            // plt::ylim(-200, 1500);
+            plt::xlim(-200, 600);
+            plt::ylim(-400, 400);
+            //plt::xlim(-100, 4000);
+            //plt::ylim(-4000, 100);
+            
 
             plot_map.update(canReadData_PosY_temp,canReadData_PosX_temp);
 

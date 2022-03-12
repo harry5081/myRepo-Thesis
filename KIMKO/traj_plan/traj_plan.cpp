@@ -8,6 +8,7 @@ PLANNER::PLANNER(){
     std::vector<float> temp={0,0,0};
 
     std::vector<float> temp_ori={0,0};
+    std::vector<float> temp_guess={0,0,0,0,0,0};
     
      for(int w =0;w<window;w++)
      {
@@ -17,9 +18,10 @@ PLANNER::PLANNER(){
         fspeed_ref.push_back(temp);
 
         ori_ref.push_back(temp_ori);
+        guess.push_back(temp_guess);
      }
 
-    readTrajFile();
+    //readTrajFile();
 
 }
 
@@ -132,12 +134,12 @@ void PLANNER::traject_from_file(){
         /////////////////////////////////////  forward speed  ////////////////////////////////////////
         // float fspeed = sqrt(pow(vt_x,2)+pow(vt_y,2));
         float fspeed = s_Dot_f[t]/sampleTime;
-        float ws = w_ref_f[t];
+        float ws = w_ref_f[t]/sampleTime;
         //float fspeed = 40;
         //float fsAngle = atan(vt_y/vt_x);
         //float fsAngle = atan2(vt_y,vt_x);
 
-
+        
         
         
         /********* angle unwrap *********/
@@ -191,7 +193,7 @@ void PLANNER::traject_from_file(){
         vel_ref[i] = vel;
 
         
-        std::vector<float> ori = {10,0};
+        std::vector<float> ori = {0,0};
         ori_ref[i] = ori;
                
          
@@ -352,6 +354,8 @@ void PLANNER::cir_traject_TNB(){
     float k = 1/r;
     float ws =0;
 
+    float ori_temp=0;
+
     t=t_current;
     fsAngle_pre_window = fsAngle_pre; /********* angle unwrap *********/
     //std::cout << t <<std::endl;
@@ -368,15 +372,10 @@ void PLANNER::cir_traject_TNB(){
         float yt = r*-cos(t/r)+r;
         float zt =0;
 
-        
 
         // if((t+dt)<=s){
         // xt = 200;
         // }
-
-
-        
-
 
         /////////////////////////////////////  vel  ////////////////////////////////////////
         float vt_x = cos(t/r);
@@ -395,8 +394,11 @@ void PLANNER::cir_traject_TNB(){
         //float fsAngle = atan(vt_y/vt_x);
         float fsAngle = atan2(vt_y,vt_x);
 
-
-        
+        /////////////////////////////////////  ori  ////////////////////////////////////////
+        ori_temp = t/dt * desireOri/50;
+        if(ori_temp>desireOri){
+            ori_temp = desireOri;
+        }
         
         /********* angle unwrap *********/
         float fsAngle_unwrap = unwrapRad(fsAngle_pre_window,fsAngle);
@@ -408,7 +410,6 @@ void PLANNER::cir_traject_TNB(){
         }
         /********* angle unwrap *********/
 
-        
         
         float vx=vt_x;//vt_x;//vt_x;
         float vy=vt_y;//vt_y;
@@ -423,36 +424,37 @@ void PLANNER::cir_traject_TNB(){
 
             zt =0;
             ws =0;
+            ori_temp = desireOri;
 
-            
         }
 
         if(t==0){
             xt=0;
             yt=0;
-
-            
+            ori_temp =0;
+            fspeed=0;
+            ws =0;
+  
         }
-
-
-        //std::vector<float> pos = {xt,yt,fsAngle};
-        std::vector<float> pos = {xt,yt,0};
-        //std::vector<float> pos = {xt,yt,fsAngle};
+        fsAngle_360 = fmod(fsAngle_unwrap,M_2PI);
+        //std::vector<float> pos = {100,0,0};
+        std::vector<float> pos = {xt,yt,fsAngle_360};
+        //std::vector<float> pos = {xt,yt,0};
         // std::vector<float> pos = {xt,yt,0};
         pos_ref[i] = pos;
 
-
         //std::vector<float> vel = {fspeed,0,ws};
-        std::vector<float> vel = {fspeed,0,ws};
+        std::vector<float> vel = {0,0,ws};
         //std::vector<float> vel = {25,0,ws};
         vel_ref[i] = vel;
 
-        std::vector<float> ori = {10,0};
+        std::vector<float> ori = {0,0};
         ori_ref[i] = ori;
 
-               
+        std::vector<float> guess_temp = {xt,yt,fsAngle_360,fspeed,0,0};
+        //std::vector<float> guess_temp = {0,0,0,0,0,0};
+        guess[i] = guess_temp;
          
-        //usleep(100000);
 
     }
 
@@ -461,6 +463,140 @@ void PLANNER::cir_traject_TNB(){
 
     }
 
+    
+
+
+
+}
+
+void PLANNER::cir_traject_TNB_preAngle(){
+    // std::cout << "TNB" <<std::endl;
+    // std::cout << s <<std::endl;
+    dt = 10;
+    float s_dot = dt/sampleTime;
+    float k = 1/r;
+    float ws =0;
+
+    //float desireOri = 0;
+
+    if(pre_s<s_pre_route){ // turn the ori before running the route
+        pre_s=pre_s+dt;
+        for(int i =0;i<window;i++){
+            //std::vector<float> pos = {xt,yt,fsAngle};
+            std::vector<float> pos = {0,0,0};
+            //std::vector<float> pos = {xt,yt,fsAngle};
+            // std::vector<float> pos = {xt,yt,0};
+            pos_ref[i] = pos;
+
+            std::vector<float> vel = {0,0,0};
+            //std::vector<float> vel = {0,0,0};
+            //std::vector<float> vel = {25,0,ws};
+            vel_ref[i] = vel;
+
+            std::vector<float> ori = {desireOri,0};
+            ori_ref[i] = ori;
+        }
+
+    }
+
+    else{
+  
+        t=t_current;
+        fsAngle_pre_window = fsAngle_pre; /********* angle unwrap *********/
+        //std::cout << t <<std::endl;
+        for(int i =0;i<window;i++){
+
+            if((t+dt)<=s){
+                t=t+dt;
+    
+            }
+
+            ws =k*s_dot;
+            /////////////////////////////////////  pos  ////////////////////////////////////////
+            float xt = r*sin(t/r);
+            float yt = r*-cos(t/r)+r;
+            float zt =0;
+
+
+            // if((t+dt)<=s){
+            // xt = 200;
+            // }
+
+            /////////////////////////////////////  vel  ////////////////////////////////////////
+            float vt_x = cos(t/r);
+            float vt_y = sin(t/r);
+            //float vt = sqrt(pow(vt_x,2)+pow(vt_y,2));
+
+            float vn_x = -(1/r)*sin(t/r);
+            float vn_y = (1/r)*cos(t/r);
+            float vn = sqrt(pow(vn_x,2)+pow(vn_y,2));
+
+
+            /////////////////////////////////////  forward speed  ////////////////////////////////////////
+            // float fspeed = sqrt(pow(vt_x,2)+pow(vt_y,2));
+            float fspeed = s_dot;
+            //float fspeed = 40;
+            //float fsAngle = atan(vt_y/vt_x);
+            float fsAngle = atan2(vt_y,vt_x);
+            
+            /********* angle unwrap *********/
+            float fsAngle_unwrap = unwrapRad(fsAngle_pre_window,fsAngle);
+            fsAngle_pre_window=fsAngle_unwrap;
+
+            if(i==0){
+
+                fsAngle_pre = fsAngle_pre_window;
+            }
+            /********* angle unwrap *********/
+
+            
+            float vx=vt_x;//vt_x;//vt_x;
+            float vy=vt_y;//vt_y;
+
+            if((t+dt)>s){
+                vx=0;
+                vy=0;
+
+                fspeed=0;
+                fsAngle=0;
+                fsAngle_unwrap=0;
+
+                zt =0;
+                ws =0;
+
+            }
+
+            if(t==0){
+                xt=0;
+                yt=0;
+    
+            }
+            fsAngle_360 = fmod(fsAngle_unwrap,M_2PI);
+            //std::vector<float> pos = {xt,yt,fsAngle};
+            std::vector<float> pos = {xt,yt,fsAngle_360};
+            //std::vector<float> pos = {xt,yt,fsAngle};
+            // std::vector<float> pos = {xt,yt,0};
+            pos_ref[i] = pos;
+
+            std::vector<float> vel = {fspeed,0,ws};
+            //std::vector<float> vel = {0,0,0};
+            //std::vector<float> vel = {25,0,ws};
+            vel_ref[i] = vel;
+
+            std::vector<float> ori = { desireOri,0};
+            ori_ref[i] = ori;
+
+            std::vector<float> guess_temp = {xt,yt,fsAngle_360,fspeed,0,0};
+            guess[i] = guess_temp;
+            
+        }
+
+        if((t_current+dt)<=s){
+                t_current=t_current+dt;
+
+        }
+    
+    }// if(pre_s<s_pre_route) else
     
 
 

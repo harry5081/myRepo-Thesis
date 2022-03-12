@@ -8,19 +8,25 @@
 void PLANT::calFspeed(){
 
     fspeedVel = sqrt(pow(controlInput_x_vel,2)+pow(controlInput_y_vel,2));
-    //fsAngle = atan2(controlInput_y_vel,controlInput_x_vel)* 180/PI;
-    //fsAngle = constrainAngle(atan2(controlInput_y_vel,controlInput_x_vel)* 180/PI);
-    fsAngle = constrainAngle(atan2(controlInput_y_vel,controlInput_x_vel)* 180/PI + pos_z);
+    fsAngle = atan2(controlInput_y_vel,controlInput_x_vel)* 180/PI+ pos_z;
+    //fsAngle = constrainAngle(atan2(controlInput_y_vel,controlInput_x_vel)* 180/PI+ pos_z);
+    //fsAngle_rad = fsAngle* PI/180.0;
+    
+    //fsAngle_rad = constrainAngleRad(atan2(controlInput_y_vel,controlInput_x_vel) + pos_z_rad);
+    //fsAngle = fsAngle_rad * 180.0/PI;
+
+    // fsAngle = angleConv(atan2(controlInput_y_vel,controlInput_x_vel)* 180/PI + pos_z);
+    // fsAngle_rad = fsAngle* PI/180.0;
 
     //fsAngle = constrainAngle(atan2(controlInput_y_vel,controlInput_x_vel)* 180/PI + pos_z);
-    
+    //fsAngle = constrainAngle(atan2(controlInput_y_vel,controlInput_x_vel)* 180/PI + pos_z);
     //float temp = (atan2(controlInput_y_vel,controlInput_x_vel)* float(180/PI))  + pos_z;
-    
     //fsAngle = temp;
 
+    // fsAngle = atan2(controlInput_y_vel,controlInput_x_vel)* 180/PI + pos_z;
     // fsAngle = unwrap(fsAngle_pre, fsAngle);
     // fsAngle_pre = fsAngle;
-    
+    // fsAngle_rad = fsAngle* PI/180.0;
 
     //fsAngle = unwrap(fsAngle_pre, fsAngle);
     //fsAngle_pre = fsAngle;
@@ -29,6 +35,16 @@ void PLANT::calFspeed(){
 
     // fspeed = sqrt(pow(vel_x,2)+pow(vel_y,2));
     //fsAngle = atan2(vel_y,vel_x) * 180 / PI;
+
+    // fsAngle = atan2(controlInput_y_vel,controlInput_x_vel)* 180/PI + pos_z;
+    fsAngle = unwrap(fsAngle_pre, fsAngle);
+    fsAngle_360 = fmod(fsAngle,ANGLE_360);
+    fsAngle_pre = fsAngle;
+    
+    
+    fsAngle_rad = fsAngle* PI/180.0;
+    // //fsAngle = angleConv(fsAngle);
+   
 
     
 }
@@ -68,6 +84,11 @@ void PLANT::deadReckon(){
 
     theta_global= theta_global + vel_z * sample_time;
 
+}
+
+void PLANT::pos_correct_to_world(){
+    pos_x_correct = cos(2.0*pos_z_rad)*pos_x + (-1.0)*sin(2.0*pos_z_rad)*pos_y;
+    pos_y_correct = sin(2.0*pos_z_rad)*pos_x + cos(2.0*pos_z_rad)*pos_y;
 }
 
 void PLANT::pos_sensor_correct(){
