@@ -311,8 +311,8 @@ void plotX(){
     plt::title("Pos");
     plt::Plot plot5_1("p_ref",posRef_Time_temp,posRef_X_temp,"g");   
     plt::Plot plot5("p_d",posDemand_Time_temp,posDemand_X_temp,"b");
-    plt::Plot plot6("p_sensor",canReadTime_Pos_temp,canReadData_PosX_temp,"r");
-    plt::Plot plot6_1("p_correct",canReadTime_Pos_temp,PosX_cor,"y--");
+    plt::Plot plot6("p_sensor",canReadTime_Pos_temp,canReadData_PosX_temp,"y--");
+    plt::Plot plot6_1("p_correct",canReadTime_Pos_temp,PosX_cor,"r");
 
     plt::grid(); 
     plt::legend();
@@ -320,8 +320,8 @@ void plotX(){
     plt::subplot(3,1,2);
     plt::Plot plot7_1("p_ref_y",posRef_Time_temp,posRef_Y_temp,"g"); 
     plt::Plot plot7("PosDemandY",posDemand_Time_temp,posDemand_Y_temp,"b");
-    plt::Plot plot8("WritereadPosY",canReadTime_Pos_temp,canReadData_PosY_temp,"r");
-    plt::Plot plot8_1("p_Y_correct",canReadTime_Pos_temp,PosY_cor,"y--");
+    plt::Plot plot8("WritereadPosY",canReadTime_Pos_temp,canReadData_PosY_temp,"y--");
+    plt::Plot plot8_1("p_Y_correct",canReadTime_Pos_temp,PosY_cor,"r");
     plt::grid(); 
 
     plt::subplot(3,1,3);
@@ -336,8 +336,8 @@ void plotX(){
     plt::figure(3);
     // plt::plot(PosY_cor,PosX_cor,{{"label", "f(x)"}});
     // sleep(5);
-    plt::Plot plot_map("Global Map",canReadData_PosY_temp,canReadData_PosX_temp,"k"); 
-    plt::Plot plot_map_cor("Global Map",PosY_cor, PosX_cor,"y--"); 
+    plt::Plot plot_map("Global Map",canReadData_PosY_temp,canReadData_PosX_temp,"y--"); 
+    plt::Plot plot_map_cor("Global Map",PosY_cor, PosX_cor,"k"); 
     plt::Plot plot_map_leader("Leader",leader_posy_temp,leader_posx_temp,"xm"); 
     plt::Plot plot_map_planner("Planner",planner_posy_temp,planner_posx_temp,"g*");
     plt::title("Global Map");
@@ -605,7 +605,7 @@ void plotX(){
             plt::figure(2);
             plt::subplot(3,1,1);
             plt::xlim(0, wSize);
-            plt::ylim(-280, 280);
+            plt::ylim(-300, 300);
             //plt::ylim(-4000, 1500);
             
             //plt::ylim(-100, 200);
@@ -641,7 +641,7 @@ void plotX(){
             plt::figure(2);
             plt::subplot(3,1,2);
             plt::xlim(0, wSize);
-            plt::ylim(-280, 280);
+            plt::ylim(-300, 300);
             //plt::ylim(-2300, 2200);
             //plt::ylim(-100, 200);
 
@@ -695,8 +695,8 @@ void plotX(){
             plt::figure(3);
             // plt::xlim(-200, 1500);
             // plt::ylim(-200, 1500);
-            plt::xlim(-200, 600);
-            plt::ylim(-400, 400);
+            plt::xlim(-100, 900);
+            plt::ylim(-500, 500);
             //plt::xlim(-100, 4000);
             //plt::ylim(-4000, 100);
             

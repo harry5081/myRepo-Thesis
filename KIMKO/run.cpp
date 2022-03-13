@@ -241,7 +241,7 @@ void run::start()
     //std::vector<float> v_init = {fspeed_temp, 0, 0};
     //std::vector<float> v_init = {mRobot.fspeedVel, 0, 0};
     //std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, mRobot.fsAngle*float(PI/180)};
-
+    
     // 
     //std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, mRobot.fsAngle_rad};
     std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, float(mRobot.fsAngle_360*PI/180.0)};

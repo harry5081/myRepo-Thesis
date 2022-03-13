@@ -28,8 +28,8 @@ public:
     
     
 
-    float controlInput_x_vel;
-    float controlInput_y_vel;
+    float controlInput_x_vel=0;
+    float controlInput_y_vel=0;
     float controlInput_z_vel;
 
 
@@ -41,18 +41,18 @@ public:
 
     float pos_x;
     float pos_y;
-    float pos_z; // unwrap for pid
-    float pos_z_rad;
+    float pos_z=0; // unwrap for pid
+    float pos_z_rad=0;
 
     float pos_z_pre_unwrap; // for purpose of angle unwrap
 
     void calFspeed();
 
     float fspeedVel;
-    float fsAngle;
+    float fsAngle=0;
     float fsAngle_pre = 0; // for purpose of angle unwrap
-    float fsAngle_rad;
-    float fsAngle_360;
+    float fsAngle_rad=0;
+    float fsAngle_360=0;
     //float fsAngle_world;
 
 

@@ -349,7 +349,7 @@ void PLANNER::cir_traject_2(){
 void PLANNER::cir_traject_TNB(){
     // std::cout << "TNB" <<std::endl;
     // std::cout << s <<std::endl;
-    dt = 10;
+    dt = 15;
     float s_dot = dt/sampleTime;
     float k = 1/r;
     float ws =0;
@@ -436,22 +436,23 @@ void PLANNER::cir_traject_TNB(){
             ws =0;
   
         }
-        fsAngle_360 = fmod(fsAngle_unwrap,M_2PI);
-        //std::vector<float> pos = {100,0,0};
-        std::vector<float> pos = {xt,yt,fsAngle_360};
-        //std::vector<float> pos = {xt,yt,0};
-        // std::vector<float> pos = {xt,yt,0};
+        fsAngle_2PI = fmod(fsAngle_unwrap,M_2PI);
+        //std::vector<float> pos = {0,0,0};
+        //std::vector<float> pos = {-100,0,PI};
+        //std::vector<float> pos = {-300,300,3*PI/4};
+        //std::vector<float> pos = {xt,yt,fsAngle_2PI};
+         std::vector<float> pos = {xt,yt,fsAngle_2PI};
         pos_ref[i] = pos;
 
-        //std::vector<float> vel = {fspeed,0,ws};
-        std::vector<float> vel = {0,0,ws};
+        std::vector<float> vel = {fspeed,0,ws};
+        //std::vector<float> vel = {0,0,0};
         //std::vector<float> vel = {25,0,ws};
         vel_ref[i] = vel;
 
-        std::vector<float> ori = {0,0};
+        std::vector<float> ori = {45,0};
         ori_ref[i] = ori;
 
-        std::vector<float> guess_temp = {xt,yt,fsAngle_360,fspeed,0,0};
+        std::vector<float> guess_temp = {xt,yt,fsAngle_2PI,fspeed,0,0};
         //std::vector<float> guess_temp = {0,0,0,0,0,0};
         guess[i] = guess_temp;
          
@@ -571,9 +572,9 @@ void PLANNER::cir_traject_TNB_preAngle(){
                 yt=0;
     
             }
-            fsAngle_360 = fmod(fsAngle_unwrap,M_2PI);
+            fsAngle_2PI = fmod(fsAngle_unwrap,M_2PI);
             //std::vector<float> pos = {xt,yt,fsAngle};
-            std::vector<float> pos = {xt,yt,fsAngle_360};
+            std::vector<float> pos = {xt,yt,fsAngle_2PI};
             //std::vector<float> pos = {xt,yt,fsAngle};
             // std::vector<float> pos = {xt,yt,0};
             pos_ref[i] = pos;
@@ -586,7 +587,7 @@ void PLANNER::cir_traject_TNB_preAngle(){
             std::vector<float> ori = { desireOri,0};
             ori_ref[i] = ori;
 
-            std::vector<float> guess_temp = {xt,yt,fsAngle_360,fspeed,0,0};
+            std::vector<float> guess_temp = {xt,yt,fsAngle_2PI,fspeed,0,0};
             guess[i] = guess_temp;
             
         }

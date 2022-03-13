@@ -60,7 +60,7 @@ private:
 
     float fsAngle_pre =0;
     float fsAngle_pre_window =0;
-    float fsAngle_360 =0;
+    float fsAngle_2PI =0;
 
     float desireOri = 0;
     
