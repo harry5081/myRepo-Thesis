@@ -41,6 +41,7 @@ public:
 
     float pos_x;
     float pos_y;
+    float pos_z_raw=0;
     float pos_z=0; // unwrap for pid
     float pos_z_rad=0;
 
@@ -63,8 +64,11 @@ public:
 
 
     // position value correction
-    float pos_x_pre;
-    float pos_y_pre;
+    float pos_x_correct_pre=0;
+    float pos_y_correct_pre=0;
+
+    float pos_x_raw_pre=0;
+    float pos_y_raw_pre=0;
     //float pos_z_pre;
 
     float pos_x_cur;

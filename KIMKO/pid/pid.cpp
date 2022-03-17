@@ -43,7 +43,7 @@ kd(Kd_set)
 
 int PID::pidExe(float posError, int velDemand, float velError){
    
-
+    int vInput;
     //std::cout<< "pidExe_KpKiKfKd_Pos+Vel" <<std::endl;
 
     float time = (float)clock()/CLOCKS_PER_SEC;
@@ -78,7 +78,8 @@ int PID::pidExe(float posError, int velDemand, float velError){
     //vRef = error * Kp + errorAccumulate * Ki;
     //vRef = error * Kp + errorAccumulate * Ki + (velDemand-velSenValue)*Kd;
     vInput = posError * kp + errorAccumulate * ki + velDemand*kf + velError*kd;
-
+    // std::cout<< posError * kp <<std::endl;
+    // std::cout<< errorAccumulate * ki <<std::endl;
 
 
 
@@ -112,7 +113,7 @@ int PID::pidExe(float posError, int velDemand, float velError){
 
 int PID::pidExeAngle(float posError, int velDemand, float velError){
    
-
+    int vInput;
     //std::cout<< "pidExe_KpKiKfKd_Angle" <<std::endl;
 
     float time = (float)clock()/CLOCKS_PER_SEC;

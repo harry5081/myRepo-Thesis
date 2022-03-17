@@ -259,8 +259,9 @@ void plotTheta(){
     
     plt::figure(4);
     plt::grid();
-    plt::xlim(-200, 200);
-    plt::ylim(-200, 200);
+    plt::xlim(-100, 900);
+    plt::ylim(-500, 500);
+    
     plt::plot(PosY_cor, PosX_cor);
     plt::quiver(yPoint, xPoint, yDir, xDir);
     plt::show();
@@ -605,10 +606,11 @@ void plotX(){
             plt::figure(2);
             plt::subplot(3,1,1);
             plt::xlim(0, wSize);
-            plt::ylim(-300, 300);
+            //plt::ylim(-300, 300);
             //plt::ylim(-4000, 1500);
             
             //plt::ylim(-100, 200);
+            plt::ylim(-300, 300);
 
             plot5.update(posDemand_Time_temp,posDemand_X_temp);
 
@@ -641,9 +643,10 @@ void plotX(){
             plt::figure(2);
             plt::subplot(3,1,2);
             plt::xlim(0, wSize);
-            plt::ylim(-300, 300);
+            // plt::ylim(-300, 300);
             //plt::ylim(-2300, 2200);
-            //plt::ylim(-100, 200);
+            // plt::ylim(-100, 200);
+            plt::ylim(-300, 300);
 
             plot7.update(posDemand_Time_temp,posDemand_Y_temp);
 
@@ -699,6 +702,8 @@ void plotX(){
             plt::ylim(-500, 500);
             //plt::xlim(-100, 4000);
             //plt::ylim(-4000, 100);
+            //plt::xlim(-300, 300);
+            //plt::ylim(-300, 300);
             
 
             plot_map.update(canReadData_PosY_temp,canReadData_PosX_temp);

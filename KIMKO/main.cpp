@@ -139,6 +139,7 @@ int main(int argc, char **argv) {
     //initDemand();
     
     leader.cir_traject_init();
+    //leader.file_traject_init();
     plotLeaderTraject();
     
     
@@ -223,8 +224,9 @@ void plotLeaderTraject(){
             
             leader_Plot_PosX->writeDatatoFile(leader.curve[i_static_traject][0], "plot/0_Leader_posx");
             leader_Plot_PosY->writeDatatoFile(leader.curve[i_static_traject][1], "plot/0_Leader_posy");
-            i_static_traject++;
-            usleep(10000);
+            //i_static_traject++;
+            i_static_traject=i_static_traject+1;
+            //usleep(10000);
             
          }
 

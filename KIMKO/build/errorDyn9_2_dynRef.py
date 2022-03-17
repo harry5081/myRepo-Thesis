@@ -154,10 +154,20 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
                     horzcat( 0,             0,            1)
     )
     # FrenetToworld = vertcat(
-    #                 horzcat(cos(phi_ps),   sin(phi_ps)),
-    #                 horzcat(-sin(phi_ps),  cos(phi_ps))
+    #                 horzcat(cos(phi_ps),   -sin(phi_ps)),
+    #                 horzcat(sin(phi_ps),  cos(phi_ps))
     # )
     FrenetToworld_f = Function('FrenetToworld_f',[phi_ps],[FrenetToworld])
+
+    # Rz = SX.zeros(3,3)   # check direction of angle and radius or degree of angle!!!!!!!!!!!!!!!!!
+    # Rz[0,0] = cos(demand_phi_p-phi_ps)
+    # Rz[1,0] = sin(demand_phi_p-phi_ps)
+    # Rz[0,1] = 0 #-sin(demand_phi_p-phi_ps)
+    # Rz[1,1] = 0 #cos(demand_phi_p-phi_ps)
+    # Rz[2,2] = 1
+
+    # err_dyn = T @ e_state + (Rz @ demand_state[3:6]) - ref[3:6]
+    # err_dyn_f = Function('err_dyn_f',[e_state, demand_state,ref],[err_dyn])
 
 
     Rz = vertcat(
@@ -244,9 +254,9 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
     #     horzcat(0, 0, 0)
     # )
     Q = np.zeros((3,3))
-    Q[0,0]=13   # ex
-    Q[1,1]=13    # ey
-    Q[2,2]=5000 #35000   # e_phi
+    Q[0,0]=5   # ex
+    Q[1,1]=5    # ey
+    Q[2,2]=1 #35000   # e_phi
 
     # err_init = err_init + dt * err_dyn_f(err_init,err_init[2],v_init,v_ref[0])
     g_e = vertcat(g_e,E[:,0][0:3]-e_init_Frenet[0:3])
@@ -260,20 +270,26 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
         ref_current = P[n_demand_state + (i+1)*n_ref : n_demand_state + (i+2)*n_ref]
         demand_cur = D[:,i]
         err_cur = E[:,i]
-        #err_next =  err_cur + dt * err_dyn_f(err_cur,E[:,i+1][2],demand_cur[3:6],ref_pre[3:6])# get vp
+        
         err_next =  err_cur + dt * err_dyn_f(err_cur,E[:,i+1][2],demand_cur[3:6],ref_pre[3:6])# get vp
-
+        #err_next =  err_cur + dt * err_dyn_f(err_cur,demand_cur,ref_pre)
         # ori
         ori_ref_current = P[startOfOri + (i+1)*n_ori_ref : startOfOri + (i+2)*n_ori_ref]
         ori_demand_cur = T_D[:,i]
         ori_err_cur = T_E[:,i]
         ori_err_next= ori_err_cur + dt * ori_dyn_f(ori_demand_cur[1])
 
-        acc = (D[:,i][3]-fspeed_temp)/dt
+        # acc = (D[:,i][3]-fspeed_temp)/dt
+        # ACC[:,i] = acc
+        # fspeed_temp = D[:,i][3]
+
+        acc = (D[3,i]-fspeed_temp)/dt
         ACC[:,i] = acc
-        fspeed_temp = D[:,i][3]
+        fspeed_temp = D[3,i]
         
-        obj=obj+(err_next.T @ Q @ err_next) + 2*demand_cur[3]**2+ 0.1*(ori_err_next**2 + 1*ori_demand_cur[1]**2)# + 0.3*ACC[:,i]**2 + 0.1*(ori_err_next**2 + 5*ori_demand_cur[1]**2)
+        #obj=obj+(err_next.T @ Q @ err_next) + 8*demand_cur[3]**2 + 0.05*acc**2 + 0.1*(ori_err_next**2 + 3*ori_demand_cur[1]**2)# + 0.3*ACC[:,i]**2 + 0.1*(ori_err_next**2 + 5*ori_demand_cur[1]**2)
+        obj=obj+(err_next.T @ Q @ err_next) + 1*demand_cur[3]**2 + (ori_err_next**2 + 3*ori_demand_cur[1]**2)# + 0.3*ACC[:,i]**2 + 0.1*(ori_err_next**2 + 5*ori_demand_cur[1]**2)
+        
         # + demand_cur[5]**2+ 0.05*(ori_err_next**2 + 20*ori_demand_cur[1]**2)
         #obj=obj+(err_next.T @ Q @ err_next) + 7*demand_cur[3]**2+ 0.1*(ori_err_next**2 + 5*ori_demand_cur[1]**2)
         #obj=obj+0.1*(ori_err_next**2 + 5*ori_demand_cur[1]**2)
@@ -333,12 +349,12 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
     temp_ubx1=float('inf')*np.ones(6)
     #temp_ubx1[2]=math.pi                # demand_phi
     temp_ubx1[2]=2*math.pi              # demand_phi
-    temp_ubx1[3]=100                      # fspeed <150
+    temp_ubx1[3]=200                      # fspeed <150
     temp_ubx1[4]=0                      # blank
     temp_ubx1=repmat(temp_ubx1,window)
 
     temp_ubx2=float('inf')*np.ones(3) # err state
-    temp_ubx2[2]=2*math.pi
+    temp_ubx2[2]=1*math.pi
     temp_ubx2=repmat(temp_ubx2,window+1)
 
     temp_ubx3=float('inf')*np.ones(2) # demand ori
@@ -359,7 +375,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
     temp_lbx1=repmat(temp_lbx1,window)
 
     temp_lbx2=-float('inf')*np.ones(3)  # err state
-    temp_lbx2[2]=(-2)*math.pi
+    temp_lbx2[2]=(-1)*math.pi
     temp_lbx2=repmat(temp_lbx2,window+1)
 
     temp_lbx3=-float('inf')*np.ones(2) # demand ori

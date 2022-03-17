@@ -13,7 +13,7 @@ void MPC::mpcErrDyn_xy_ori(std::vector<std::vector<float>> p_ref, std::vector<st
     float time1 = (float)clock()/CLOCKS_PER_SEC;
     auto start = std::chrono::high_resolution_clock::now();
     
-    pybind11::module_ mpc = pybind11::module_::import("errorDyn9_dynRef");
+    pybind11::module_ mpc = pybind11::module_::import("errorDyn9_2_dynRef");
     //pybind11::module_ mpc = pybind11::module_::import("errorDyn6_dynRef_xy");
     //pybind11::object result = mpc.attr("errDynFunction")(p_ref, v_ref, p_init, v_init, pre_sol);
     pybind11::object result = mpc.attr("errDynFunction")(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess);
@@ -38,7 +38,7 @@ void MPC::mpcErrDyn_xy_ori(std::vector<std::vector<float>> p_ref, std::vector<st
 
     fsAngle_demand_rad = fsAngle_temp;
     fsAngle_demand = fsAngle_temp*180/PI;
-    std::cout << fsAngle_demand_rad << std::endl;
+    //std::cout << fsAngle_demand_rad << std::endl;
 
 
     float blank = result_value[4];

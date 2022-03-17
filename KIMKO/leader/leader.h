@@ -19,7 +19,7 @@ public:
     int point_cnt=64; //64;//32;
 
     
-    float r=200;
+    float r=400;
 
     float xs;
     float ys;

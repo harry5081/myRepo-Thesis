@@ -22,13 +22,13 @@ float cosToTenVelDemand(float time);
 class PID{
 
 private:
-    float kp=3;
-    float ki=0.005;
+    float kp=0;
+    float ki=0;
     //float Ki=0.0;
     
 
-    float kf=1;
-    float kd=0.3;
+    float kf=0;
+    float kd=0;
 
     float timeBuffer=0;
     float errorAccumulate=0;
@@ -36,7 +36,7 @@ private:
 
 public:
     float posDemand;
-    int vInput;
+    //int vInput;
     float posSenValue;
 
     PID(float Kp_set, float Ki_set, float Kf_set, float Kd_set);

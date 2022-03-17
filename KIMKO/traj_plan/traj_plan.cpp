@@ -21,7 +21,7 @@ PLANNER::PLANNER(){
         guess.push_back(temp_guess);
      }
 
-    //readTrajFile();
+    readTrajFile();
 
 }
 
@@ -29,7 +29,7 @@ void PLANNER::readTrajFile(){
     
     std::cout << "Planner read traj file " << std::endl;
     // define variables
-	std::string t, xPos, yPos, phi, sDot, blank, w; //variables from file are here
+	std::string t, xPos, yPos, phi, sDot, blank, w, ori; //variables from file are here
 	
 	//input filename
 	std::string file = "traj2.txt";
@@ -87,8 +87,11 @@ void PLANNER::readTrajFile(){
             getline(traj, blank, '\t');
 			blank_ref_f.push_back(stof(blank));
 
-            getline(traj, w, '\n'); //new line 
+            getline(traj, w, '\t'); //new line 
 			w_ref_f.push_back(stof(w));
+
+            getline(traj, ori, '\n'); //new line 
+			ori_ref_f.push_back(stof(ori));
           	
 		}
 		traj.close(); //closing the file
@@ -100,7 +103,7 @@ void PLANNER::readTrajFile(){
 	
     
 	for (int j = 0; j < i; j++) {
-		std::cout << index_f[j] << "\t" << x_Pos_f[j] << "\t" << y_Pos_f[j] << "\t" << phi_ref_f[j] << "\t" << s_Dot_f[j] << "\t" << blank_ref_f[j]<< "\t" << w_ref_f[j] << std::endl;
+		std::cout << index_f[j] << "\t" << x_Pos_f[j] << "\t" << y_Pos_f[j] << "\t" << phi_ref_f[j] << "\t" << s_Dot_f[j] << "\t" << blank_ref_f[j]<< "\t" << w_ref_f[j]<< "\t"<< ori_ref_f[j] << std::endl;
 		
 	}
 	std::cout << std::endl;
@@ -119,7 +122,7 @@ void PLANNER::traject_from_file(){
         /////////////////////////////////////  pos  ////////////////////////////////////////
         float xt = x_Pos_f[t];
         float yt = y_Pos_f[t];
-        float zt =0;
+        float zt = ori_ref_f[t];
         //std::cout << t <<std::endl;
 
         /////////////////////////////////////  vel  ////////////////////////////////////////
@@ -134,7 +137,9 @@ void PLANNER::traject_from_file(){
         /////////////////////////////////////  forward speed  ////////////////////////////////////////
         // float fspeed = sqrt(pow(vt_x,2)+pow(vt_y,2));
         float fspeed = s_Dot_f[t]/sampleTime;
+        float fsAngle = phi_ref_f[t];
         float ws = w_ref_f[t]/sampleTime;
+        //std::cout << fsAngle <<std::endl;
         //float fspeed = 40;
         //float fsAngle = atan(vt_y/vt_x);
         //float fsAngle = atan2(vt_y,vt_x);
@@ -167,7 +172,7 @@ void PLANNER::traject_from_file(){
             fspeed=0;
             // fsAngle=0;
             // fsAngle_unwrap=0;
-            zt =0;
+            //zt =0;
             ws =0;
         
         }
@@ -180,21 +185,25 @@ void PLANNER::traject_from_file(){
         // }
 
 
-        //std::vector<float> pos = {xt,yt,fsAngle};
-        std::vector<float> pos = {xt,yt,0};
-        //std::vector<float> pos = {xt,yt,fsAngle};
-        // std::vector<float> pos = {xt,yt,0};
+        //fsAngle_2PI = fmod(fsAngle,M_2PI);
+        //std::vector<float> pos = {0,0,0};
+        //std::vector<float> pos = {200,0,0};
+        //std::vector<float> pos = {-300,300,3*PI/4};
+        std::vector<float> pos = {xt,yt,fsAngle};
+        //std::vector<float> pos = {xt,yt,fsAngle_2PI};
         pos_ref[i] = pos;
 
-
-        //std::vector<float> vel = {fspeed,0,ws};
         std::vector<float> vel = {fspeed,0,ws};
+        //std::vector<float> vel = {0,0,0};
         //std::vector<float> vel = {25,0,ws};
         vel_ref[i] = vel;
 
-        
-        std::vector<float> ori = {0,0};
+        std::vector<float> ori = {zt,0};
         ori_ref[i] = ori;
+
+        std::vector<float> guess_temp = {xt,yt,fsAngle,fspeed,0,0};
+        //std::vector<float> guess_temp = {200,0,0,0,0,0};
+        guess[i] = guess_temp;
                
          
         //usleep(100000);
@@ -395,10 +404,11 @@ void PLANNER::cir_traject_TNB(){
         float fsAngle = atan2(vt_y,vt_x);
 
         /////////////////////////////////////  ori  ////////////////////////////////////////
-        ori_temp = t/dt * desireOri/50;
+        ori_temp=t/dt;
         if(ori_temp>desireOri){
-            ori_temp = desireOri;
+            ori_temp=desireOri;
         }
+        
         
         /********* angle unwrap *********/
         float fsAngle_unwrap = unwrapRad(fsAngle_pre_window,fsAngle);
@@ -424,7 +434,7 @@ void PLANNER::cir_traject_TNB(){
 
             zt =0;
             ws =0;
-            ori_temp = desireOri;
+            desireOri=90;
 
         }
 
@@ -438,10 +448,10 @@ void PLANNER::cir_traject_TNB(){
         }
         fsAngle_2PI = fmod(fsAngle_unwrap,M_2PI);
         //std::vector<float> pos = {0,0,0};
-        //std::vector<float> pos = {-100,0,PI};
+        //std::vector<float> pos = {200,0,0};
         //std::vector<float> pos = {-300,300,3*PI/4};
+        std::vector<float> pos = {xt,yt,fsAngle_2PI};
         //std::vector<float> pos = {xt,yt,fsAngle_2PI};
-         std::vector<float> pos = {xt,yt,fsAngle_2PI};
         pos_ref[i] = pos;
 
         std::vector<float> vel = {fspeed,0,ws};
@@ -449,11 +459,11 @@ void PLANNER::cir_traject_TNB(){
         //std::vector<float> vel = {25,0,ws};
         vel_ref[i] = vel;
 
-        std::vector<float> ori = {45,0};
+        std::vector<float> ori = {ori_temp,0};
         ori_ref[i] = ori;
 
         std::vector<float> guess_temp = {xt,yt,fsAngle_2PI,fspeed,0,0};
-        //std::vector<float> guess_temp = {0,0,0,0,0,0};
+        //std::vector<float> guess_temp = {200,0,0,0,0,0};
         guess[i] = guess_temp;
          
 
@@ -573,21 +583,22 @@ void PLANNER::cir_traject_TNB_preAngle(){
     
             }
             fsAngle_2PI = fmod(fsAngle_unwrap,M_2PI);
-            //std::vector<float> pos = {xt,yt,fsAngle};
-            std::vector<float> pos = {xt,yt,fsAngle_2PI};
+            std::vector<float> pos = {200,0,0};
+            //std::vector<float> pos = {xt,yt,fsAngle_2PI};
             //std::vector<float> pos = {xt,yt,fsAngle};
             // std::vector<float> pos = {xt,yt,0};
             pos_ref[i] = pos;
 
-            std::vector<float> vel = {fspeed,0,ws};
-            //std::vector<float> vel = {0,0,0};
+            //std::vector<float> vel = {fspeed,0,ws};
+            std::vector<float> vel = {0,0,0};
             //std::vector<float> vel = {25,0,ws};
             vel_ref[i] = vel;
 
-            std::vector<float> ori = { desireOri,0};
+            std::vector<float> ori = {desireOri,0};
             ori_ref[i] = ori;
 
-            std::vector<float> guess_temp = {xt,yt,fsAngle_2PI,fspeed,0,0};
+            //std::vector<float> guess_temp = {xt,yt,fsAngle_2PI,fspeed,0,0};
+            std::vector<float> guess_temp = {200,0,0,0,0,0};
             guess[i] = guess_temp;
             
         }

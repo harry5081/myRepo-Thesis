@@ -19,12 +19,12 @@ public:
     PLANNER();
 
     float s=0;
-    float s_pre_route=500;
+    float s_pre_route=700;
     float pre_s=0; // counter
 
     LEADER leaderData;
 
-    int window = 5;
+    int window = 10;
 
     
     std::vector<std::vector<float>> pos_ref;
@@ -49,6 +49,8 @@ public:
 
 
 private:
+    float desireOri = 360;
+
     float t=0;
     float dt=0;
 
@@ -62,7 +64,7 @@ private:
     float fsAngle_pre_window =0;
     float fsAngle_2PI =0;
 
-    float desireOri = 0;
+    
     
     void readTrajFile();
     std::vector<int>index_f;
@@ -72,6 +74,7 @@ private:
 	std::vector<float>s_Dot_f;
     std::vector<float>blank_ref_f;
 	std::vector<float>w_ref_f;
+    std::vector<float>ori_ref_f;
     int lineCount=0;
     
 

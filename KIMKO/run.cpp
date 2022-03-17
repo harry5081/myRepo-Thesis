@@ -30,8 +30,8 @@
 DOF dof =ALL_DIRECTION;
 DRAW draw = PLOT;
 
-//PID pid_x(3,0,0,0);
 PID pid_x(3,0,1,0.3);
+//PID pid_x(3,0,1,0.3);
 PID pid_y(3,0,1,0.3);
 
 //PID pid_z(3,0.01,1,1);
@@ -101,7 +101,7 @@ void run::start()
    //mRobot.pos_correct_to_world();
    //mRobot.pos_sensor_correct();   // put in run start
    mRobot.calFspeed();
-   mRobot.pos_correct_to_world();
+   //mRobot.pos_correct_to_world();
     
 
     //CAN_READ to get the initial state
@@ -125,7 +125,7 @@ void run::start()
     pre_chrono_time=chronoTime;
 
     
-    //usleep(150000);
+    //usleep(200000);
     //usleep(100000);
     //std::this_thread::sleep_for(std::chrono::milliseconds (100));
     std::this_thread::sleep_for(std::chrono::milliseconds (150-int(mpc.mpcExTime)));
@@ -296,6 +296,12 @@ void run::start()
     //mRobot.pd_x = mpc.stepPosDemand(time);
     //mRobot.vd_x = mpc.stepVelDemand(time);
 
+    // mRobot.pd_x = (1)*mpc.sineToTenPosDemand(time);
+    // mRobot.vd_x = (1)*mpc.cosToTenVelDemand(time);
+
+    // mRobot.pd_x = mpc.powThreePosDemand(time);
+    // mRobot.vd_x = mpc.powTwoVelDemand(time);
+
     /////////////////////////////////////////////     Y      /////////////////////////////////////
     //std::cout<<std::endl;
     //std::cout << "Robot Value"<<std::endl;
@@ -306,6 +312,9 @@ void run::start()
     
     //mRobot.pd_y = mpc.sinePosDemand(time);
     //mRobot.vd_y = mpc.cosVelDemand(time);
+
+    // mRobot.pd_y = mpc.powThreePosDemand(time);
+    // mRobot.vd_y = mpc.powTwoVelDemand(time);
 
     /////////////////////////////////////////////     Z      /////////////////////////////////////
     //std::cout <<  "vel_z: " << mRobot.vel_z <<  "     pos_z: " << mRobot.pos_z <<std::endl<<std::endl;   
@@ -336,13 +345,15 @@ void run::start()
     //mRobot.pd_x = (1)*mpc.sineToTenPosDemand(time);
     //mRobot.vd_x = (1)*mpc.cosToTenVelDemand(time);
     
-    //mRobot.pd_z = 1*mpc.sineToTenPosDemand(time)/10;
-    //mRobot.vd_z = 1*mpc.cosToTenVelDemand(time)/10;
+    // mRobot.pd_z = 1*mpc.sineToTenPosDemand(time)/10;
+    // mRobot.vd_z = 1*mpc.cosToTenVelDemand(time)/10;
 
     // mRobot.pd_z = (-1)*mpc.sineToTenPosDemand(time)/10;
     // mRobot.vd_z = (-1)*mpc.cosToTenVelDemand(time)/10;
     
-    
+    // m_int16_desired_velocity_X = mpc.x_vel_demand;
+    // m_int16_desired_velocity_Y = mpc.y_vel_demand;
+    // m_f_desired_velocity_Z = mpc.z_vel_demand;
 
     //int PID::pidExe(float posError, int velDemand, float velError)
     m_int16_desired_velocity_X = pid_x.pidExe(mRobot.pd_x-mRobot.pos_x_correct, mRobot.vd_x, mRobot.vd_x-mRobot.vel_x);
@@ -686,11 +697,30 @@ void run::getPositionValue(){
         //std::cout << "-----POS-----POS-----POS-----POS-----POS-----POS-----" << std::endl;   
         //std::cout << std::dec << y_pos << std::endl;
 
-        // mRobot.pos_x = x_pos;
-        // mRobot.pos_y = y_pos;   
+        mRobot.pos_x = x_pos; //plot
+        mRobot.pos_y = y_pos;   
+       
+        mRobot.pos_x_correct = mRobot.pos_x_correct_pre+(cos(2.0*mRobot.pos_z_rad)*(x_pos-mRobot.pos_x_raw_pre) + (-1.0)*sin(2.0*mRobot.pos_z_rad)*(y_pos-mRobot.pos_y_raw_pre));
+        mRobot.pos_y_correct = mRobot.pos_y_correct_pre+(sin(2.0*mRobot.pos_z_rad)*(x_pos-mRobot.pos_x_raw_pre) + cos(2.0*mRobot.pos_z_rad)*(y_pos-mRobot.pos_y_raw_pre));
 
-        mRobot.pos_x = x_pos-mRobot.originPos_x;
-        mRobot.pos_y = y_pos-mRobot.originPos_y; 
+        mRobot.pos_x_raw_pre = x_pos;
+        mRobot.pos_y_raw_pre = y_pos;
+
+        mRobot.pos_x_correct_pre=mRobot.pos_x_correct;
+        mRobot.pos_y_correct_pre=mRobot.pos_y_correct;
+
+
+        // mRobot.pos_x = x_pos-mRobot.originPos_x;
+        // mRobot.pos_y = y_pos-mRobot.originPos_y; 
+
+        // mRobot.pos_x_correct = mRobot.pos_x_correct_pre+(cos(2.0*mRobot.pos_z_rad)*(x_pos-mRobot.pos_x_raw_pre) + (-1.0)*sin(2.0*mRobot.pos_z_rad)*(y_pos-mRobot.pos_y_raw_pre));
+        // mRobot.pos_y_correct = mRobot.pos_y_correct_pre+(sin(2.0*mRobot.pos_z_rad)*(x_pos-mRobot.pos_x_raw_pre) + cos(2.0*mRobot.pos_z_rad)*(y_pos-mRobot.pos_y_raw_pre));
+
+        // mRobot.pos_x_raw_pre = mRobot.pos_x;
+        // mRobot.pos_y_raw_pre = mRobot.pos_y;
+
+        // mRobot.pos_x_correct_pre=mRobot.pos_x_correct;
+        // mRobot.pos_y_correct_pre=mRobot.pos_y_correct;
 
     } //if(m_pcanMsg_listen.ID == 0x1A1)
 
@@ -716,6 +746,7 @@ void run::getPositionValue(){
         uint32_t z_pos_temp=static_cast<uint32_t>(m_pcanMsg_listen.DATA[0])|static_cast<uint32_t>(m_pcanMsg_listen.DATA[1]<<8)\
                         |static_cast<uint32_t>(m_pcanMsg_listen.DATA[2]<<16)|static_cast<uint32_t>(m_pcanMsg_listen.DATA[3]<<24);
         float z_pos = *((float *) &z_pos_temp);
+        mRobot.pos_z_raw = z_pos;
         z_pos = unwrap(mRobot.pos_z_pre_unwrap,z_pos);
                 
         mRobot.pos_z = z_pos-mRobot.originPos_z;
@@ -760,10 +791,12 @@ void run::initOriginPos(){
             int32_t x_pos = static_cast<uint32_t>(m_pcanMsg_listen.DATA[0]) | static_cast<uint32_t>(m_pcanMsg_listen.DATA[1]<<8)\
                        |static_cast<uint32_t>(m_pcanMsg_listen.DATA[2])<<16 | static_cast<uint32_t>(m_pcanMsg_listen.DATA[3]<<24);
             mRobot.originPos_x = x_pos;
+            
 
             int32_t y_pos = static_cast<uint32_t>(m_pcanMsg_listen.DATA[4]) | static_cast<uint32_t>(m_pcanMsg_listen.DATA[5]<<8)\
                        |static_cast<uint32_t>(m_pcanMsg_listen.DATA[6])<<16 | static_cast<uint32_t>(m_pcanMsg_listen.DATA[7]<<24);
             mRobot.originPos_y = y_pos;
+            
             
             mRobot.initXYPosButton=true;
 
