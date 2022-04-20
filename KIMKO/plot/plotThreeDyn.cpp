@@ -606,11 +606,11 @@ void plotX(){
             plt::figure(2);
             plt::subplot(3,1,1);
             plt::xlim(0, wSize);
-            //plt::ylim(-300, 300);
+            plt::ylim(-450, 450);
             //plt::ylim(-4000, 1500);
             
             //plt::ylim(-100, 200);
-            plt::ylim(-300, 300);
+            //plt::ylim(-300, 300);
 
             plot5.update(posDemand_Time_temp,posDemand_X_temp);
 
@@ -646,7 +646,7 @@ void plotX(){
             // plt::ylim(-300, 300);
             //plt::ylim(-2300, 2200);
             // plt::ylim(-100, 200);
-            plt::ylim(-300, 300);
+            plt::ylim(-100, 900);
 
             plot7.update(posDemand_Time_temp,posDemand_Y_temp);
 
@@ -675,7 +675,8 @@ void plotX(){
             plt::subplot(3,1,3);
             plt::xlim(0, wSize);
             //plt::ylim(-150, 150);
-            plt::ylim(-60, 60);
+            //plt::ylim(-60, 60);
+            plt::ylim(0, 370);
 
             plot9.update(posDemand_Time_temp,posDemand_Z_temp);
 
@@ -698,10 +699,12 @@ void plotX(){
             plt::figure(3);
             // plt::xlim(-200, 1500);
             // plt::ylim(-200, 1500);
+
             plt::xlim(-100, 900);
             plt::ylim(-500, 500);
-            //plt::xlim(-100, 4000);
-            //plt::ylim(-4000, 100);
+            // plt::xlim(-100, 4000);
+            // plt::ylim(-4000, 100);
+
             //plt::xlim(-300, 300);
             //plt::ylim(-300, 300);
             

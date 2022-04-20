@@ -24,7 +24,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
 
     guess= np.array(guess)
 
-    acc_max = 500 #(mm^2/s)
+    acc_max = 10000000 #(mm^2/s)
 
     # ori_ref= np.array(ori_ref)
     # ori_init= np.array(ori_init)
@@ -289,7 +289,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
         
         #obj=obj+(err_next.T @ Q @ err_next) + 8*demand_cur[3]**2 + 0.05*acc**2 + 0.1*(ori_err_next**2 + 3*ori_demand_cur[1]**2)# + 0.3*ACC[:,i]**2 + 0.1*(ori_err_next**2 + 5*ori_demand_cur[1]**2)
         obj=obj+(err_next.T @ Q @ err_next) + 1*demand_cur[3]**2 + (ori_err_next**2 + 3*ori_demand_cur[1]**2)# + 0.3*ACC[:,i]**2 + 0.1*(ori_err_next**2 + 5*ori_demand_cur[1]**2)
-        
+        #obj=obj+(err_next.T @ Q @ err_next)
         # + demand_cur[5]**2+ 0.05*(ori_err_next**2 + 20*ori_demand_cur[1]**2)
         #obj=obj+(err_next.T @ Q @ err_next) + 7*demand_cur[3]**2+ 0.1*(ori_err_next**2 + 5*ori_demand_cur[1]**2)
         #obj=obj+0.1*(ori_err_next**2 + 5*ori_demand_cur[1]**2)
@@ -510,9 +510,9 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
         for j in range(window):
             print("----Window Update----")
             print("window: ", j)
-            print("err F   [ex, ey, e_phi] =      ", err_predichorz_update[i,:,j+1])
-            print("ref     [x, y, phi, v, 0, w] = ",ref_state[(j+1)*n_ref : (j+2)*n_ref])
-            print("demand  [x, y, phi, v, 0, w] = ",demand_predichorz_update[i,:,j])
+            #print("err F   [ex, ey, e_phi] =      ", err_predichorz_update[i,:,j+1])
+            #print("ref     [x, y, phi, v, 0, w] = ",ref_state[(j+1)*n_ref : (j+2)*n_ref])
+            #print("demand  [x, y, phi, v, 0, w] = ",demand_predichorz_update[i,:,j])
             
             #print("v_input = ",v_predichorz_update[i,:,j])
             # print("*")

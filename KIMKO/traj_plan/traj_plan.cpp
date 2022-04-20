@@ -404,7 +404,7 @@ void PLANNER::cir_traject_TNB(){
         float fsAngle = atan2(vt_y,vt_x);
 
         /////////////////////////////////////  ori  ////////////////////////////////////////
-        ori_temp=t/dt;
+        ori_temp=t/dt*2;
         if(ori_temp>desireOri){
             ori_temp=desireOri;
         }
@@ -434,7 +434,7 @@ void PLANNER::cir_traject_TNB(){
 
             zt =0;
             ws =0;
-            desireOri=90;
+            ori_temp=desireOri;
 
         }
 
@@ -448,7 +448,7 @@ void PLANNER::cir_traject_TNB(){
         }
         fsAngle_2PI = fmod(fsAngle_unwrap,M_2PI);
         //std::vector<float> pos = {0,0,0};
-        //std::vector<float> pos = {200,0,0};
+        //std::vector<float> pos = {0,300,0};
         //std::vector<float> pos = {-300,300,3*PI/4};
         std::vector<float> pos = {xt,yt,fsAngle_2PI};
         //std::vector<float> pos = {xt,yt,fsAngle_2PI};
@@ -463,7 +463,7 @@ void PLANNER::cir_traject_TNB(){
         ori_ref[i] = ori;
 
         std::vector<float> guess_temp = {xt,yt,fsAngle_2PI,fspeed,0,0};
-        //std::vector<float> guess_temp = {200,0,0,0,0,0};
+        //std::vector<float> guess_temp = {0,300,0,0,0,0};
         guess[i] = guess_temp;
          
 

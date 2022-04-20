@@ -16,7 +16,7 @@ public:
     LEADER();
 
     // user input
-    int point_cnt=64; //64;//32;
+    int point_cnt=26; //64;//32; // 26 for r=400
 
     
     float r=400;
