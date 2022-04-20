@@ -288,7 +288,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
         fspeed_temp = D[3,i]
         
         #obj=obj+(err_next.T @ Q @ err_next) + 8*demand_cur[3]**2 + 0.05*acc**2 + 0.1*(ori_err_next**2 + 3*ori_demand_cur[1]**2)# + 0.3*ACC[:,i]**2 + 0.1*(ori_err_next**2 + 5*ori_demand_cur[1]**2)
-        obj=obj+(err_next.T @ Q @ err_next) + 1*demand_cur[3]**2 + (ori_err_next**2 + 3*ori_demand_cur[1]**2)# + 0.3*ACC[:,i]**2 + 0.1*(ori_err_next**2 + 5*ori_demand_cur[1]**2)
+        obj=obj+(err_next.T @ Q @ err_next) + 1*demand_cur[3]**2 + (ori_err_next**2 + 0.5*ori_demand_cur[1]**2)# + 0.3*ACC[:,i]**2 + 0.1*(ori_err_next**2 + 5*ori_demand_cur[1]**2)
         #obj=obj+(err_next.T @ Q @ err_next)
         # + demand_cur[5]**2+ 0.05*(ori_err_next**2 + 20*ori_demand_cur[1]**2)
         #obj=obj+(err_next.T @ Q @ err_next) + 7*demand_cur[3]**2+ 0.1*(ori_err_next**2 + 5*ori_demand_cur[1]**2)
@@ -336,7 +336,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
     opts["print_time"] = False
 
     ipopt_options={}
-    ipopt_options["max_iter"] = 2000
+    ipopt_options["max_iter"] = 100#2000
     ipopt_options["print_level"] = 0
     ipopt_options["acceptable_tol"] = 1e-8
     ipopt_options["acceptable_obj_change_tol"] = 1e-6
@@ -507,12 +507,12 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
     print("")
     np.set_printoptions(precision=6,suppress=True)
     for i in range(1):
-        for j in range(window):
+        for j in range(1):#(window):
             print("----Window Update----")
             print("window: ", j)
             #print("err F   [ex, ey, e_phi] =      ", err_predichorz_update[i,:,j+1])
-            #print("ref     [x, y, phi, v, 0, w] = ",ref_state[(j+1)*n_ref : (j+2)*n_ref])
-            #print("demand  [x, y, phi, v, 0, w] = ",demand_predichorz_update[i,:,j])
+            print("ref     [x, y, phi, v, 0, w] = ",ref_state[(j+1)*n_ref : (j+2)*n_ref])
+            print("demand  [x, y, phi, v, 0, w] = ",demand_predichorz_update[i,:,j])
             
             #print("v_input = ",v_predichorz_update[i,:,j])
             # print("*")

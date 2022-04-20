@@ -36,7 +36,9 @@ PID pid_y(3,0,1,0.3);
 
 //PID pid_z(3,0.01,1,1);
 //PID pid_z(3,0,1,1);
-PID pid_z(2,0,1,0.1);
+//PID pid_z(2,0,1,0.1);
+PID pid_z(3,0,1,0.1);
+
 
 
 
@@ -132,9 +134,9 @@ void run::start()
     //planner.linear_traject_2();
     //planner.cir_traject_2();
     
-    planner.cir_traject_TNB();
+    //planner.cir_traject_TNB();
     //planner.cir_traject_TNB_preAngle();
-    //planner.traject_from_file();
+    planner.traject_from_file();
     
     // std::vector<std::vector<float>> v_ref_dyn = planner.vel_ref;
     // std::vector<std::vector<float>> p_ref_dyn = planner.pos_ref;
@@ -253,21 +255,24 @@ void run::start()
     //mpc.x_vel_ref = planner.vel_ref[0][0]; //plot
     //mpc.y_vel_ref = planner.vel_ref[0][1]; //plot
 
-    mpc.x_pos_ref = planner.pos_ref[0][0]; //plot
-    mpc.y_pos_ref = planner.pos_ref[0][1]; //plot
-    mpc.fsAngle_ref = planner.pos_ref[0][2]*180.0/PI; //plot
-    mpc.fspeedVel_ref = planner.vel_ref[0][0]; //plot
+    mpc.x_pos_ref = planner.pos_ref[0][0]; //plot ref green
+    mpc.y_pos_ref = planner.pos_ref[0][1]; //plot ref green
+    mpc.fsAngle_ref = planner.pos_ref[0][2]*180.0/PI; //plot ref green
+    mpc.fspeedVel_ref = planner.vel_ref[0][0]; //plot ref green
     
-    mpc.z_pos_ref = planner.ori_ref[0][0]; //plot
-    mpc.z_vel_ref = planner.ori_ref[0][1]; //plot
+    mpc.z_pos_ref = planner.ori_ref[0][0]; //plot ref green
+    mpc.z_vel_ref = planner.ori_ref[0][1]; //plot ref green
 
 
     //mpc.mpcErrDyn_xy(p_ref_dyn, v_ref_dyn, p_init, v_init);
     mpc.mpcErrDyn_xy_ori(p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
     
 
-    mpc.x_vel_ref = mpc.fspeedVel_demand*cos(mpc.fsAngle_demand_rad); //plot
-    mpc.y_vel_ref = mpc.fspeedVel_demand*sin(mpc.fsAngle_demand_rad); //plot
+    //mpc.x_vel_ref = mpc.fspeedVel_demand*cos(mpc.fsAngle_demand_rad); //plot ref green
+    //mpc.y_vel_ref = mpc.fspeedVel_demand*sin(mpc.fsAngle_demand_rad); //plot ref green
+
+    mpc.x_vel_ref = mpc.fspeedVel_ref*cos(planner.pos_ref[0][2]-planner.ori_ref[0][0]*PI/180.0); //plot ref green
+    mpc.y_vel_ref = mpc.fspeedVel_ref*sin(planner.pos_ref[0][2]-planner.ori_ref[0][0]*PI/180.0); //plot ref green
 
     // mpc.x_vel_demand=mpc.fspeedVel_demand*cos((mpc.fsAngle_demand)*PI/180);
     // mpc.y_vel_demand=mpc.fspeedVel_demand*sin((mpc.fsAngle_demand)*PI/180);
@@ -364,7 +369,11 @@ void run::start()
     // m_int16_desired_velocity_Y = pid_y.pidExe(mRobot.pd_y-mRobot.pos_y, mRobot.vd_y, mRobot.vd_y-mRobot.vel_y);
     // m_f_desired_velocity_Z = pid_z.pidExeAngle(mRobot.pd_z-mRobot.pos_z,mRobot.vd_z,mRobot.vd_z-mRobot.vel_z);
     
-    
+    // open loop response
+    // m_int16_desired_velocity_X = mpc.stepVelDemand(time);
+    // m_int16_desired_velocity_Y = 0;
+    // m_f_desired_velocity_Z = 0;
+
 
     // switch(dof){
 

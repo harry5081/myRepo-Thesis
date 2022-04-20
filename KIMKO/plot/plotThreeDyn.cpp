@@ -475,7 +475,7 @@ void plotX(){
             plt::figure(1);
             plt::subplot(3,1,1);
             plt::xlim(0, wSize);
-            plt::ylim(-280, 280);
+            plt::ylim(-400, 400);
             
             plot1.update(canWriteTime_temp,canWriteData_temp);
 
@@ -506,7 +506,7 @@ void plotX(){
           plt::figure(1);
           plt::subplot(3,1,2);
           plt::xlim(0, wSize);
-          plt::ylim(-280, 280);
+          plt::ylim(-400, 400);
          
           plot3.update(canWriteTime_temp,canWriteData_Y_temp);
           std::cout<<"OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO"<<std::endl;

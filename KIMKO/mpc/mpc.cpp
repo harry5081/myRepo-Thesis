@@ -417,7 +417,13 @@ float MPC::stepVelDemand(float time){
         velDemand=0;
     }
 
-    else {
+    
+
+    else if(time>=6){
+        velDemand=0;
+    }
+
+    else{
        velDemand=100;
         
     }

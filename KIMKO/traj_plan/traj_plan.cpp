@@ -403,11 +403,6 @@ void PLANNER::cir_traject_TNB(){
         //float fsAngle = atan(vt_y/vt_x);
         float fsAngle = atan2(vt_y,vt_x);
 
-        /////////////////////////////////////  ori  ////////////////////////////////////////
-        ori_temp=t/dt*2;
-        if(ori_temp>desireOri){
-            ori_temp=desireOri;
-        }
         
         
         /********* angle unwrap *********/
@@ -420,6 +415,14 @@ void PLANNER::cir_traject_TNB(){
         }
         /********* angle unwrap *********/
 
+
+        /////////////////////////////////////  ori  ////////////////////////////////////////
+        ori_temp=t/dt*3;
+        if(ori_temp>desireOri){
+            ori_temp=desireOri;
+        }
+        ori_temp=fsAngle_2PI*180.0/PI;
+
         
         float vx=vt_x;//vt_x;//vt_x;
         float vy=vt_y;//vt_y;
@@ -429,8 +432,8 @@ void PLANNER::cir_traject_TNB(){
             vy=0;
 
             fspeed=0;
-            fsAngle=0;
-            fsAngle_unwrap=0;
+            //fsAngle=0;
+            //fsAngle_unwrap=0;
 
             zt =0;
             ws =0;
@@ -446,6 +449,7 @@ void PLANNER::cir_traject_TNB(){
             ws =0;
   
         }
+
         fsAngle_2PI = fmod(fsAngle_unwrap,M_2PI);
         //std::vector<float> pos = {0,0,0};
         //std::vector<float> pos = {0,300,0};
