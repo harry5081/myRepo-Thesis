@@ -523,6 +523,10 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
     
     temp_a = 0   #3*6 #(window+1)/2*6
     temp_b = 0   #3*2
-    return list([demand_state_sol[temp_a+0],demand_state_sol[temp_a+1],demand_state_sol[temp_a+2],demand_state_sol[temp_a+3],demand_state_sol[temp_a+4],demand_state_sol[temp_a+5],demand_ori_sol[temp_b+0],demand_ori_sol[temp_b+1]])
+    #return list([demand_state_sol[temp_a+0],demand_state_sol[temp_a+1],demand_state_sol[temp_a+2],demand_state_sol[temp_a+3],demand_state_sol[temp_a+4],demand_state_sol[temp_a+5],demand_ori_sol[temp_b+0],demand_ori_sol[temp_b+1]])
     
     #return list([demand_state_sol[0],demand_state_sol[1],demand_state_sol[2],demand_state_sol[3],demand_state_sol[4],demand_state_sol[5],demand_ori_sol[0],demand_ori_sol[1]])
+
+    #plot predict horz
+    print(demand_predichorz_update[0,:,:].T)
+    return list(demand_predichorz_update[0,:,:].T)

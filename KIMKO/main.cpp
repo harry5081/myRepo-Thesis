@@ -25,8 +25,9 @@ ReadWritePlot *planner_Plot_PosX = new ReadWritePlot;
 ReadWritePlot *planner_Plot_PosY = new ReadWritePlot;
 
 
-
-
+// predic horz
+ReadWritePlot *predicHorz_PosX = new ReadWritePlot;
+ReadWritePlot *predicHorz_PosY = new ReadWritePlot;
 
 // ref
 ReadWritePlot *ref_Plot_Vel_time = new ReadWritePlot;
@@ -224,9 +225,12 @@ void plotLeaderTraject(){
             
             leader_Plot_PosX->writeDatatoFile(leader.curve[i_static_traject][0], "plot/0_Leader_posx");
             leader_Plot_PosY->writeDatatoFile(leader.curve[i_static_traject][1], "plot/0_Leader_posy");
+
             //i_static_traject++;
             i_static_traject=i_static_traject+1;
             //usleep(10000);
+
+            
             
          }
 
@@ -269,13 +273,22 @@ void writeDatatoFile()
             
             planner_Plot_PosX->writeDatatoFile(m_run->planner.pos_ref[i][0], "plot/1_Planner_posx");
             planner_Plot_PosY->writeDatatoFile(m_run->planner.pos_ref[i][1], "plot/1_Planner_posy");
-
-        }
-
         
-
+        }
         planner_Plot_PosX->writeFromEnd=false;
         planner_Plot_PosY->writeFromEnd=false;
+
+
+        for(int i=0;i<m_run->mpc.predictHorz.size();i++){
+            
+            predicHorz_PosX->writeDatatoFile(m_run->mpc.predictHorz[i][0], "plot/5_predicHorz_posx");
+            predicHorz_PosY->writeDatatoFile(m_run->mpc.predictHorz[i][1], "plot/5_predicHorz_posy");
+        }
+        predicHorz_PosX->writeFromEnd=false;
+        predicHorz_PosY->writeFromEnd=false;
+        
+
+        
 
 
         

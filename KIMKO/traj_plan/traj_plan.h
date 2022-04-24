@@ -49,7 +49,7 @@ public:
 
 
 private:
-    float desireOri = 360;
+    float desireOri = 0;
 
     float t=0;
     float dt=0;
@@ -58,7 +58,7 @@ private:
 
     float r;
     float w=0.8;//0.1;
-    float sampleTime=0.15;//0.2;//0.2  //0.4
+    float sampleTime=0.2;//0.2;//0.2  //0.4
 
     float fsAngle_pre =0;
     float fsAngle_pre_window =0;

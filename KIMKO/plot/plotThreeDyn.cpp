@@ -21,6 +21,9 @@ void plotTheta();
 
 int wSize = 20;
 
+std::vector<float> predictHorz_posx_temp;
+std::vector<float> predictHorz_posy_temp;
+
 std::vector<float> leader_posx_temp;
 std::vector<float> leader_posy_temp;
 
@@ -341,6 +344,7 @@ void plotX(){
     plt::Plot plot_map_cor("Global Map",PosY_cor, PosX_cor,"k"); 
     plt::Plot plot_map_leader("Leader",leader_posy_temp,leader_posx_temp,"xm"); 
     plt::Plot plot_map_planner("Planner",planner_posy_temp,planner_posx_temp,"g*");
+    plt::Plot plot_map_predictHorz("PredictHorz",predictHorz_posy_temp,predictHorz_posx_temp,"b.");
     plt::title("Global Map");
     plt::grid();
 
@@ -577,6 +581,10 @@ void plotX(){
         readFileToVector("../build/plot/1_Planner_posx", planner_posx_temp);
         readFileToVector("../build/plot/1_Planner_posy", planner_posy_temp);
 
+        readFileToVector("../build/plot/5_predicHorz_posx", predictHorz_posx_temp);
+        readFileToVector("../build/plot/5_predicHorz_posy", predictHorz_posy_temp);
+        
+
 
         readFileToVector("../build/plot/PosDemand_Time", posDemand_Time_temp);
         readFileToVector("../build/plot/PosDemand_Data_X", posDemand_X_temp);
@@ -643,10 +651,11 @@ void plotX(){
             plt::figure(2);
             plt::subplot(3,1,2);
             plt::xlim(0, wSize);
-            // plt::ylim(-300, 300);
+
+             plt::ylim(-300, 300);
             //plt::ylim(-2300, 2200);
             // plt::ylim(-100, 200);
-            plt::ylim(-100, 900);
+            //plt::ylim(-100, 900);
 
             plot7.update(posDemand_Time_temp,posDemand_Y_temp);
 
@@ -726,6 +735,9 @@ void plotX(){
                 plot_map_cor.update(PosY_cor,PosX_cor);
             }
 
+            if(predictHorz_posx_temp.size()==predictHorz_posy_temp.size()){
+                plot_map_predictHorz.update(predictHorz_posy_temp,predictHorz_posx_temp);
+            }
             
 
             
@@ -740,6 +752,9 @@ void plotX(){
 
         planner_posx_temp.clear();
         planner_posy_temp.clear();
+
+        predictHorz_posx_temp.clear();
+        predictHorz_posy_temp.clear();
 
 
 

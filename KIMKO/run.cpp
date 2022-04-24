@@ -134,9 +134,9 @@ void run::start()
     //planner.linear_traject_2();
     //planner.cir_traject_2();
     
-    //planner.cir_traject_TNB();
+    planner.cir_traject_TNB();
     //planner.cir_traject_TNB_preAngle();
-    planner.traject_from_file();
+    //planner.traject_from_file();
     
     // std::vector<std::vector<float>> v_ref_dyn = planner.vel_ref;
     // std::vector<std::vector<float>> p_ref_dyn = planner.pos_ref;
@@ -265,8 +265,8 @@ void run::start()
 
 
     //mpc.mpcErrDyn_xy(p_ref_dyn, v_ref_dyn, p_init, v_init);
-    mpc.mpcErrDyn_xy_ori(p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
-    
+    //mpc.mpcErrDyn_xy_ori(p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
+    mpc.mpcErrDyn_xy_plotPredicHorz(p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
 
     //mpc.x_vel_ref = mpc.fspeedVel_demand*cos(mpc.fsAngle_demand_rad); //plot ref green
     //mpc.y_vel_ref = mpc.fspeedVel_demand*sin(mpc.fsAngle_demand_rad); //plot ref green
