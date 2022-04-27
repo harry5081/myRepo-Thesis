@@ -24,7 +24,7 @@ public:
 
     LEADER leaderData;
 
-    int window = 10;
+    int window = 2;
 
     
     std::vector<std::vector<float>> pos_ref;
@@ -49,6 +49,12 @@ public:
 
 
 private:
+
+    float ds=20;
+
+    float offset_x=0;
+    float offset_y=0;
+
     float desireOri = 0;
 
     float t=0;

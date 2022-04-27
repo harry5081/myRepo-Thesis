@@ -29,8 +29,8 @@ void LEADER::file_traject_init(){
 void LEADER::cir_traject_init(){
     for(int i=0;i<point_cnt;i++){
 
-        float xs_temp = r*sin(s/r);
-        float ys_temp = r*-cos(s/r)+r;
+        float xs_temp = r*sin(s/r)+offset_xs;
+        float ys_temp = r*-cos(s/r)+r+offset_ys;
 
         std::vector<float> point = {xs_temp,ys_temp};
         s=s+ds;

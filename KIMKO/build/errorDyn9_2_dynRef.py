@@ -124,8 +124,8 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
 
     ### Error dyn function
     T = SX.zeros(3,3)   # check ws direction and sign!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    T[1,0] = -ws        # ws should be sent in as reference in parameter P
-    T[0,1] = ws
+    T[1,0] = ws        # ws should be sent in as reference in parameter P
+    T[0,1] = -ws
 
     # Rz = SX.zeros(3,3)   # check direction of angle and radius or degree of angle!!!!!!!!!!!!!!!!!
     # Rz[0,0] = cos(demand_phi_p-phi_ps)
@@ -256,7 +256,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
     Q = np.zeros((3,3))
     Q[0,0]=5   # ex
     Q[1,1]=5    # ey
-    Q[2,2]=1 #35000   # e_phi
+    Q[2,2]=0#100000#100000#100000#35000   # e_phi
 
     # err_init = err_init + dt * err_dyn_f(err_init,err_init[2],v_init,v_ref[0])
     g_e = vertcat(g_e,E[:,0][0:3]-e_init_Frenet[0:3])
@@ -349,7 +349,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
     temp_ubx1=float('inf')*np.ones(6)
     #temp_ubx1[2]=math.pi                # demand_phi
     temp_ubx1[2]=2*math.pi              # demand_phi
-    temp_ubx1[3]=200                      # fspeed <150
+    temp_ubx1[3]=400                      # fspeed <150
     temp_ubx1[4]=0                      # blank
     temp_ubx1=repmat(temp_ubx1,window)
 

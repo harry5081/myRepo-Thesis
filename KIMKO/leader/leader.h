@@ -19,7 +19,7 @@ public:
     int point_cnt=26; //64;//32; // 26 for r=400
 
     
-    float r=200;
+    float r=200;//500000;//200;
 
     float xs;
     float ys;
@@ -48,6 +48,11 @@ public:
 
 
 private:
+
+    float offset_xs=0;
+    float offset_ys=0;
+
+
     // user input
     float startTime = 0;
     float ds = 100;//50*1.414;//20;

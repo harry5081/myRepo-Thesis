@@ -358,7 +358,7 @@ void PLANNER::cir_traject_2(){
 void PLANNER::cir_traject_TNB(){
     // std::cout << "TNB" <<std::endl;
     // std::cout << s <<std::endl;
-    dt = 15;
+    dt = ds;
     float s_dot = dt/sampleTime;
     float k = 1/r;
     float ws =0;
@@ -377,8 +377,8 @@ void PLANNER::cir_traject_TNB(){
 
         ws =k*s_dot;
         /////////////////////////////////////  pos  ////////////////////////////////////////
-        float xt = r*sin(t/r);
-        float yt = r*-cos(t/r)+r;
+        float xt = r*sin(t/r)+offset_x;
+        float yt = r*-cos(t/r)+r+offset_y;
         float zt =0;
 
 
@@ -458,8 +458,8 @@ void PLANNER::cir_traject_TNB(){
         //std::vector<float> pos = {200,200,0};
         pos_ref[i] = pos;
 
+        //std::vector<float> vel = {fspeed,0,ws};
         std::vector<float> vel = {fspeed,0,ws};
-        //std::vector<float> vel = {10,0,-ws*3};
         //std::vector<float> vel = {25,0,ws};
         vel_ref[i] = vel;
 
@@ -467,7 +467,7 @@ void PLANNER::cir_traject_TNB(){
         ori_ref[i] = ori;
 
         std::vector<float> guess_temp = {xt,yt,fsAngle_2PI,fspeed,0,0};
-        //std::vector<float> guess_temp = {0,300,0,0,0,0};
+        //std::vector<float> guess_temp = {0,0,PI/2,0,0,0};
         guess[i] = guess_temp;
          
 
