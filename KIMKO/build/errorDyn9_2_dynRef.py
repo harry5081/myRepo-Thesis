@@ -256,7 +256,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
     Q = np.zeros((3,3))
     Q[0,0]=5   # ex
     Q[1,1]=5    # ey
-    Q[2,2]=0#100000#100000#100000#35000   # e_phi
+    Q[2,2]=1#100000#100000#100000#35000   # e_phi
 
     # err_init = err_init + dt * err_dyn_f(err_init,err_init[2],v_init,v_ref[0])
     g_e = vertcat(g_e,E[:,0][0:3]-e_init_Frenet[0:3])
@@ -349,7 +349,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
     temp_ubx1=float('inf')*np.ones(6)
     #temp_ubx1[2]=math.pi                # demand_phi
     temp_ubx1[2]=2*math.pi              # demand_phi
-    temp_ubx1[3]=400                      # fspeed <150
+    temp_ubx1[3]=200                      # fspeed <150
     temp_ubx1[4]=0                      # blank
     temp_ubx1=repmat(temp_ubx1,window)
 
@@ -358,7 +358,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
     temp_ubx2=repmat(temp_ubx2,window+1)
 
     temp_ubx3=float('inf')*np.ones(2) # demand ori
-    temp_ubx3[1]=15
+    temp_ubx3[1]=30
     temp_ubx3=repmat(temp_ubx3,window)
     
     temp_ubx4=float('inf')*np.ones(1) # err ori
@@ -379,7 +379,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
     temp_lbx2=repmat(temp_lbx2,window+1)
 
     temp_lbx3=-float('inf')*np.ones(2) # demand ori
-    temp_lbx3[1]=-15
+    temp_lbx3[1]=-30
     temp_lbx3=repmat(temp_lbx3,window)
     
     temp_lbx4=-float('inf')*np.ones(1) # err ori
@@ -528,5 +528,14 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
     #return list([demand_state_sol[0],demand_state_sol[1],demand_state_sol[2],demand_state_sol[3],demand_state_sol[4],demand_state_sol[5],demand_ori_sol[0],demand_ori_sol[1]])
 
     #plot predict horz
-    print(demand_predichorz_update[0,:,:].T)
-    return list(demand_predichorz_update[0,:,:].T)
+    #print(demand_predichorz_update[0,:,:].T)
+
+    
+    #return list(demand_predichorz_update[0,:,:].T)
+
+    
+    out_temp = np.zeros((1,8,window))
+    out_temp[0,:,:] = vertcat(demand_predichorz_update[0,:,:], demand_ori_predichorz_update[0,:,:])
+    
+    return list(out_temp[0,:,:].T)
+    

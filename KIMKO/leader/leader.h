@@ -19,7 +19,7 @@ public:
     int point_cnt=26; //64;//32; // 26 for r=400
 
     
-    float r=200;//500000;//200;
+    float r=400;//500000;//200;
 
     float xs;
     float ys;

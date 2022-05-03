@@ -709,10 +709,13 @@ void plotX(){
             // plt::xlim(-200, 1500);
             // plt::ylim(-200, 1500);
 
-            plt::xlim(-100, 900);
-            plt::ylim(-500, 500);
-            // plt::xlim(-100, 4000);
-            // plt::ylim(-4000, 100);
+            // plt::xlim(-100, 900);
+            // plt::ylim(-500, 500);
+            //plt::xlim(-100, 4000);
+            //plt::ylim(-4000, 100);
+
+            plt::xlim(-100, 500);
+            plt::ylim(-500, 100);
 
             //plt::xlim(-300, 300);
             //plt::ylim(-300, 300);

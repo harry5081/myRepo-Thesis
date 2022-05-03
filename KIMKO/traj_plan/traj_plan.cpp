@@ -455,11 +455,11 @@ void PLANNER::cir_traject_TNB(){
         //std::vector<float> pos = {0,300,0};
         //std::vector<float> pos = {-300,300,3*PI/4};
         std::vector<float> pos = {xt,yt,fsAngle_2PI};
-        //std::vector<float> pos = {200,200,0};
+        //std::vector<float> pos = {100,100,3*PI/4};
         pos_ref[i] = pos;
 
-        //std::vector<float> vel = {fspeed,0,ws};
         std::vector<float> vel = {fspeed,0,ws};
+        //std::vector<float> vel = {0,0,1*ws};
         //std::vector<float> vel = {25,0,ws};
         vel_ref[i] = vel;
 
@@ -467,7 +467,7 @@ void PLANNER::cir_traject_TNB(){
         ori_ref[i] = ori;
 
         std::vector<float> guess_temp = {xt,yt,fsAngle_2PI,fspeed,0,0};
-        //std::vector<float> guess_temp = {0,0,PI/2,0,0,0};
+        //std::vector<float> guess_temp = {0,0,0,0,0,0};
         guess[i] = guess_temp;
          
 

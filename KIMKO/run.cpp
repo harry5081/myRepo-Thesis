@@ -37,7 +37,7 @@ PID pid_y(3,0,1,0.3);
 //PID pid_z(3,0.01,1,1);
 //PID pid_z(3,0,1,1);
 //PID pid_z(2,0,1,0.1);
-PID pid_z(3,0,1,0.1);
+PID pid_z(2,0,1,0.1);
 
 
 
@@ -134,9 +134,9 @@ void run::start()
     //planner.linear_traject_2();
     //planner.cir_traject_2();
     
-    planner.cir_traject_TNB();
+    //planner.cir_traject_TNB();
     //planner.cir_traject_TNB_preAngle();
-    //planner.traject_from_file();
+    planner.traject_from_file();
     
     // std::vector<std::vector<float>> v_ref_dyn = planner.vel_ref;
     // std::vector<std::vector<float>> p_ref_dyn = planner.pos_ref;

@@ -63,6 +63,7 @@ void MPC::mpcErrDyn_xy_plotPredicHorz(std::vector<std::vector<float>> p_ref, std
     //pybind11::module_ mpc = pybind11::module_::import("errorDyn6_dynRef_xy");
     //pybind11::object result = mpc.attr("errDynFunction")(p_ref, v_ref, p_init, v_init, pre_sol);
     pybind11::object result = mpc.attr("errDynFunction")(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess);
+    std::cout << " !!!!!!!!!!!!!!!!!!!!!!!!!!! "<< std::endl;
     std::vector<std::vector<float>> result_value = result.cast<std::vector<std::vector<float>>>();
 
     float time2 = (float)clock()/CLOCKS_PER_SEC;
@@ -90,8 +91,8 @@ void MPC::mpcErrDyn_xy_plotPredicHorz(std::vector<std::vector<float>> p_ref, std
     float blank = result_value[0][4];
     float w_demand = result_value[0][5];
 
-    //z_pos_demand = result_value[0][6];
-    //z_vel_demand = result_value[0][7];
+    z_pos_demand = result_value[0][6];
+    z_vel_demand = result_value[0][7];
 
     predictHorz = result_value;
     
