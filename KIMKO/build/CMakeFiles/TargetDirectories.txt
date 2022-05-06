@@ -47,3 +47,10 @@
 /home/kimko/myRepo-Thesis/KIMKO/build/traj_plan/CMakeFiles/list_install_components.dir
 /home/kimko/myRepo-Thesis/KIMKO/build/traj_plan/CMakeFiles/install/local.dir
 /home/kimko/myRepo-Thesis/KIMKO/build/traj_plan/CMakeFiles/install.dir
+/home/kimko/myRepo-Thesis/KIMKO/build/obs/CMakeFiles/install/strip.dir
+/home/kimko/myRepo-Thesis/KIMKO/build/obs/CMakeFiles/edit_cache.dir
+/home/kimko/myRepo-Thesis/KIMKO/build/obs/CMakeFiles/obs.dir
+/home/kimko/myRepo-Thesis/KIMKO/build/obs/CMakeFiles/install.dir
+/home/kimko/myRepo-Thesis/KIMKO/build/obs/CMakeFiles/rebuild_cache.dir
+/home/kimko/myRepo-Thesis/KIMKO/build/obs/CMakeFiles/list_install_components.dir
+/home/kimko/myRepo-Thesis/KIMKO/build/obs/CMakeFiles/install/local.dir

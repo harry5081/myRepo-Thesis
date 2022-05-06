@@ -358,8 +358,13 @@ void PLANNER::cir_traject_2(){
 void PLANNER::cir_traject_TNB(){
     // std::cout << "TNB" <<std::endl;
     // std::cout << s <<std::endl;
-    dt = ds;
-    float s_dot = dt/sampleTime;
+    
+    //dt = ds;
+    //float s_dot = dt/sampleTime;
+
+    float s_dot;
+    dt = ds_dis;
+
     float k = 1/r;
     float ws =0;
 
@@ -369,6 +374,14 @@ void PLANNER::cir_traject_TNB(){
     fsAngle_pre_window = fsAngle_pre; /********* angle unwrap *********/
     //std::cout << t <<std::endl;
     for(int i =0;i<window;i++){
+
+        if(i==0){
+            s_dot = ds_itr/sampleTime;
+        }
+        else{
+            s_dot = ds_dis/sampleTime;
+        }
+        
 
         if((t+dt)<=s){
             t=t+dt;
@@ -421,7 +434,7 @@ void PLANNER::cir_traject_TNB(){
         if(ori_temp>desireOri){
             ori_temp=desireOri;
         }
-        ori_temp=fsAngle_2PI*180.0/PI;
+        //ori_temp=fsAngle_2PI*180.0/PI;
 
         
         float vx=vt_x;//vt_x;//vt_x;
@@ -455,7 +468,7 @@ void PLANNER::cir_traject_TNB(){
         //std::vector<float> pos = {0,300,0};
         //std::vector<float> pos = {-300,300,3*PI/4};
         std::vector<float> pos = {xt,yt,fsAngle_2PI};
-        //std::vector<float> pos = {100,100,3*PI/4};
+        //std::vector<float> pos = {250,250,PI/2};
         pos_ref[i] = pos;
 
         std::vector<float> vel = {fspeed,0,ws};
@@ -474,7 +487,8 @@ void PLANNER::cir_traject_TNB(){
     }
 
     if((t_current+dt)<=s){
-            t_current=t_current+dt;
+            //t_current=t_current+dt;
+            t_current=t_current+ds_itr;
 
     }
 

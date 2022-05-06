@@ -55,6 +55,7 @@ public:
     float fsAngle_rad=0;
     float fsAngle_360=0;
     //float fsAngle_world;
+    float fsAngle_fromRef_360=0;
 
 
     // deadReckon

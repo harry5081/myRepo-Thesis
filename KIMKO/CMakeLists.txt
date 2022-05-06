@@ -32,6 +32,9 @@ target_link_libraries(kimko PRIVATE leader)
 add_subdirectory(traj_plan)
 target_link_libraries(kimko PRIVATE traj_plan)
 
+add_subdirectory(obs)
+target_link_libraries(kimko PRIVATE obs)
+
 
 
 

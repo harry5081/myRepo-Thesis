@@ -209,6 +209,9 @@ leader_LIB_DEPENDS:STATIC=
 mpc_LIB_DEPENDS:STATIC=
 
 //Dependencies for target
+obs_LIB_DEPENDS:STATIC=
+
+//Dependencies for target
 pid_LIB_DEPENDS:STATIC=
 
 //Dependencies for target
@@ -322,7 +325,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=7
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=8
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP
@@ -375,7 +378,7 @@ HAS_FLTO:INTERNAL=1
 PYTHON_EXECUTABLE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: PYTHON_INCLUDE_DIR
 PYTHON_INCLUDE_DIR-ADVANCED:INTERNAL=1
-PYTHON_INCLUDE_DIRS:INTERNAL=/home/kimko/miniconda3/include/python3.7m
+PYTHON_INCLUDE_DIRS:INTERNAL=/usr/include/python3.6m
 PYTHON_IS_DEBUG:INTERNAL=0
 PYTHON_LIBRARIES:INTERNAL=/usr/lib/x86_64-linux-gnu/libpython3.6m.so
 //ADVANCED property for variable: PYTHON_LIBRARY
@@ -390,5 +393,5 @@ PYTHON_VERSION_MINOR:INTERNAL=7
 Python_ADDITIONAL_VERSIONS:INTERNAL=3.9;3.8;3.7;3.6;3.5;3.4
 _Python:INTERNAL=PYTHON
 //Directories where pybind11 and possibly Python headers are located
-pybind11_INCLUDE_DIRS:INTERNAL=/home/kimko/miniconda3/include;/home/kimko/miniconda3/include/python3.7m
+pybind11_INCLUDE_DIRS:INTERNAL=/home/kimko/miniconda3/include;/usr/include/python3.6m
 

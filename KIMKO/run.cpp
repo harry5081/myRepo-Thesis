@@ -31,8 +31,10 @@ DOF dof =ALL_DIRECTION;
 DRAW draw = PLOT;
 
 PID pid_x(3,0,1,0.3);
-//PID pid_x(3,0,1,0.3);
 PID pid_y(3,0,1,0.3);
+
+// PID pid_x(0,0,1,0);
+// PID pid_y(0,0,1,0);
 
 //PID pid_z(3,0.01,1,1);
 //PID pid_z(3,0,1,1);
@@ -72,7 +74,8 @@ m_uint16_contolword(0),
 m_int16_operatingmode(0),
 m_int16_velocity_level0(0),
 m_int16_velocity_level1(0),
-m_int16_velocity_level2(0)
+m_int16_velocity_level2(0),
+obs_run_A(850,800,900)
 {
     
     while(CAN_Initialize(m_Channel, m_Btr0Btr1) != PCAN_ERROR_OK)
@@ -82,14 +85,14 @@ m_int16_velocity_level2(0)
         
         
         
-
+        
         //mpc.mpcOperation(0,100,0,0,0);
         
     
     }
 
     
-   
+    
     printf("pcan init success.. \n");
     
     init();
@@ -134,9 +137,9 @@ void run::start()
     //planner.linear_traject_2();
     //planner.cir_traject_2();
     
-    //planner.cir_traject_TNB();
+    planner.cir_traject_TNB();
     //planner.cir_traject_TNB_preAngle();
-    planner.traject_from_file();
+    //planner.traject_from_file();
     
     // std::vector<std::vector<float>> v_ref_dyn = planner.vel_ref;
     // std::vector<std::vector<float>> p_ref_dyn = planner.pos_ref;
@@ -228,14 +231,14 @@ void run::start()
     std::vector<std::vector<float>> p_ref_dyn = planner.pos_ref;
     //std::vector<std::vector<float>> fspeed_ref = planner.fspeed_ref;
 
-    float fspeed_temp = sqrt(pow(mRobot.vel_x,2) + pow(mRobot.vel_y,2));
+    
 
     std::vector<std::vector<float>> ori_ref_dyn = planner.ori_ref;
-
     std::vector<std::vector<float>> guess = planner.guess;
    
    
-   
+    float fspeed_temp = sqrt(pow(mRobot.vel_x,2) + pow(mRobot.vel_y,2));
+    mRobot.fsAngle_fromRef_360 = planner.pos_ref[0][2]*180.0/PI; //correct robot fsAngle with respect to reference
     
     //std::vector<float> p_init = {mRobot.pos_x, mRobot.pos_y, mRobot.fsAngle*float(PI/180)};
     //std::vector<float> p_init = {mRobot.pos_x, mRobot.pos_y, planner.fsAngle};
@@ -252,6 +255,10 @@ void run::start()
     std::vector<float> ori_init = {mRobot.pos_z, mRobot.vel_z}; 
 
 
+    std::vector<std::vector<int>> obs_data;
+    obs_data.push_back(obs_run_A.data);
+
+
     //mpc.x_vel_ref = planner.vel_ref[0][0]; //plot
     //mpc.y_vel_ref = planner.vel_ref[0][1]; //plot
 
@@ -266,7 +273,9 @@ void run::start()
 
     //mpc.mpcErrDyn_xy(p_ref_dyn, v_ref_dyn, p_init, v_init);
     //mpc.mpcErrDyn_xy_ori(p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
-    mpc.mpcErrDyn_xy_plotPredicHorz(p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
+    //mpc.mpcErrDyn_xy_plotPredicHorz(p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
+    //mpc.mpcObsAvoid(p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
+    mpc.mpcObsAvoid_obsData(obs_data, p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
 
     //mpc.x_vel_ref = mpc.fspeedVel_demand*cos(mpc.fsAngle_demand_rad); //plot ref green
     //mpc.y_vel_ref = mpc.fspeedVel_demand*sin(mpc.fsAngle_demand_rad); //plot ref green

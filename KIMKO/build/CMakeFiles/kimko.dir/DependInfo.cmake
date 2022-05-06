@@ -13,13 +13,13 @@ set(CMAKE_CXX_COMPILER_ID "GNU")
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "/usr/include/python3.6m"
   "/home/kimko/miniconda3/include"
-  "/home/kimko/miniconda3/include/python3.7m"
   "../plot"
   "../pid"
   "../controlPlant"
   "../mpc"
   "../leader"
   "../traj_plan"
+  "../obs"
   )
 
 # Targets to which this target links.
@@ -30,6 +30,7 @@ set(CMAKE_TARGET_LINKED_INFO_FILES
   "/home/kimko/myRepo-Thesis/KIMKO/build/mpc/CMakeFiles/mpc.dir/DependInfo.cmake"
   "/home/kimko/myRepo-Thesis/KIMKO/build/leader/CMakeFiles/leader.dir/DependInfo.cmake"
   "/home/kimko/myRepo-Thesis/KIMKO/build/traj_plan/CMakeFiles/traj_plan.dir/DependInfo.cmake"
+  "/home/kimko/myRepo-Thesis/KIMKO/build/obs/CMakeFiles/obs.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

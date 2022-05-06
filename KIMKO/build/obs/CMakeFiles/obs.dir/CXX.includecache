@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/kimko/myRepo-Thesis/KIMKO/obs/obs.cpp
+obs.h
+/home/kimko/myRepo-Thesis/KIMKO/obs/obs.h
+math.h
+-
+
+/home/kimko/myRepo-Thesis/KIMKO/obs/obs.h
+vector
+-
+

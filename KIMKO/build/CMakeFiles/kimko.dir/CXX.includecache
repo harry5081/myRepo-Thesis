@@ -44,6 +44,10 @@ pybind11/embed.h
 pybind11/stl.h
 -
 
+../obs/obs.h
+vector
+-
+
 ../pid/pid.h
 vector
 -
@@ -263,6 +267,8 @@ readWritePlot.h
 /home/kimko/myRepo-Thesis/KIMKO/readWritePlot.h
 leader.h
 /home/kimko/myRepo-Thesis/KIMKO/leader.h
+obs.h
+/home/kimko/myRepo-Thesis/KIMKO/obs.h
 
 /home/kimko/myRepo-Thesis/KIMKO/matplotlib-cpp-master/matplotlibcpp.h
 algorithm
@@ -337,6 +343,8 @@ controlPlant.h
 /home/kimko/myRepo-Thesis/KIMKO/controlPlant.h
 unwrap.h
 /home/kimko/myRepo-Thesis/KIMKO/unwrap.h
+obs.h
+/home/kimko/myRepo-Thesis/KIMKO/obs.h
 
 /home/kimko/myRepo-Thesis/KIMKO/unwrap.h
 cmath

@@ -8,12 +8,19 @@
 #include "readWritePlot.h"
 #include "leader.h"
 
+#include "obs.h"
+
 
 
 
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
+// obs
+ReadWritePlot *obs_Plot_PosX = new ReadWritePlot;
+ReadWritePlot *obs_Plot_PosY = new ReadWritePlot;
+
+
 // leader
 //ReadWritePlot *leader_Plot_time = new ReadWritePlot;
 ReadWritePlot *leader_Plot_PosX = new ReadWritePlot;
@@ -128,6 +135,8 @@ void listen();
 
 void writeDatatoFile();
 void plotLeaderTraject();
+void plotObs();
+
 
 
 
@@ -139,14 +148,18 @@ int main(int argc, char **argv) {
     std::cout << "Hello, world!..." << std::endl;
     //initDemand();
     
+    
+
     leader.cir_traject_init();
-    leader.file_traject_init();
-    //plotLeaderTraject();
+    //leader.file_traject_init();
+    plotLeaderTraject();
     
     
     
     //std::thread leader_thread(&virtualLeader);
     m_run = new run();
+
+    plotObs();
         
     std::thread listen_thread(&listen);
     std::thread start_thread(&start);
@@ -256,6 +269,23 @@ void plotLeaderTraject(){
 
     
     
+
+}
+
+void plotObs(){
+    
+
+    obs_Plot_PosX->writeDatatoFile(m_run->obs_run_A.obs_x, "plot/o_1_obstacle_posx");
+    obs_Plot_PosY->writeDatatoFile(m_run->obs_run_A.obs_y, "plot/o_1_obstacle_posy");
+
+    for(int i=0;i<m_run->obs_run_A.obs_bound_x.size();i++){
+            
+            obs_Plot_PosX->writeDatatoFile(m_run->obs_run_A.obs_bound_x[i], "plot/o_1_obstacle_posx");
+            obs_Plot_PosY->writeDatatoFile(m_run->obs_run_A.obs_bound_y[i], "plot/o_1_obstacle_posy");
+            
+        
+        }
+
 
 }
 

@@ -50,12 +50,15 @@ public:
 
 private:
 
-    float ds=20;
+    float ds_dis=40;
+    float ds_itr=40;
+
+    float ds=40;
 
     float offset_x=0;
     float offset_y=0;
 
-    float desireOri = 360;
+    float desireOri = 0;
 
     float t=0;
     float dt=0;

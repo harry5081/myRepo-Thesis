@@ -21,6 +21,9 @@ void plotTheta();
 
 int wSize = 20;
 
+std::vector<float> obs_posx_temp;
+std::vector<float> obs_posy_temp;
+
 std::vector<float> predictHorz_posx_temp;
 std::vector<float> predictHorz_posy_temp;
 
@@ -340,6 +343,7 @@ void plotX(){
     plt::figure(3);
     // plt::plot(PosY_cor,PosX_cor,{{"label", "f(x)"}});
     // sleep(5);
+    plt::Plot plot_map_obs("Global Map",obs_posy_temp,obs_posx_temp,"C5."); 
     plt::Plot plot_map("Global Map",canReadData_PosY_temp,canReadData_PosX_temp,"y--"); 
     plt::Plot plot_map_cor("Global Map",PosY_cor, PosX_cor,"k"); 
     plt::Plot plot_map_leader("Leader",leader_posy_temp,leader_posx_temp,"xm"); 
@@ -347,6 +351,10 @@ void plotX(){
     plt::Plot plot_map_predictHorz("PredictHorz",predictHorz_posy_temp,predictHorz_posx_temp,"b.");
     plt::title("Global Map");
     plt::grid();
+
+    
+
+
 
 
     ///////////////////////////     forward speed     ///////////////////////////
@@ -369,6 +377,19 @@ void plotX(){
     plt::grid();
     plt::legend();
     
+
+
+    /////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////     One Time Plot     //////////////////////////
+    //////////////////////////////////////////////////////////////////////////// 
+
+    // readFileToVector("../build/plot/o_1_obstacle_posx", obs_posx_temp);
+    // readFileToVector("../build/plot/o_1_obstacle_posy", obs_posy_temp);
+
+    // if(obs_posx_temp.size()== obs_posy_temp.size()){
+    //     plt::figure(3);
+    //     plot_map_obs.update(obs_posx_temp,obs_posy_temp);
+    // }
     
     
   
@@ -423,7 +444,7 @@ void plotX(){
             plt::figure(5);
             plt::subplot(2,1,1);
             plt::xlim(0, wSize);
-            plt::ylim(-200, 200);
+            plt::ylim(-50, 400);
             
             plot20_0.update(velRef_Time_temp,fspeedRef_temp);
 
@@ -575,6 +596,11 @@ void plotX(){
         ///////////////////////////     position part     ///////////////////////////
         /////////////////////////////////////////////////////////////////////////////
 
+        readFileToVector("../build/plot/o_1_obstacle_posx", obs_posx_temp);
+        readFileToVector("../build/plot/o_1_obstacle_posy", obs_posy_temp);
+
+        
+
         readFileToVector("../build/plot/0_Leader_posx", leader_posx_temp);
         readFileToVector("../build/plot/0_Leader_posy", leader_posy_temp);
 
@@ -652,7 +678,8 @@ void plotX(){
             plt::subplot(3,1,2);
             plt::xlim(0, wSize);
 
-             plt::ylim(-300, 300);
+             //plt::ylim(-300, 300);
+             plt::ylim(-50, 750);
             //plt::ylim(-2300, 2200);
             // plt::ylim(-100, 200);
             //plt::ylim(-100, 900);
@@ -711,17 +738,26 @@ void plotX(){
 
             // plt::xlim(-100, 900);
             // plt::ylim(-500, 500);
-            //plt::xlim(-100, 4000);
-            //plt::ylim(-4000, 100);
+            // plt::xlim(-100, 4000);
+            // plt::ylim(-4000, 100);
 
-            plt::xlim(-100, 500);
-            plt::ylim(-500, 100);
+            plt::xlim(-100, 1900);
+            plt::ylim(-1000, 1000);
+
+            // plt::xlim(-100, 500);
+            // plt::ylim(-500, 100);
 
             //plt::xlim(-300, 300);
             //plt::ylim(-300, 300);
             
 
             plot_map.update(canReadData_PosY_temp,canReadData_PosX_temp);
+
+                
+            if(obs_posx_temp.size()== obs_posy_temp.size()){
+                plot_map_obs.update(obs_posy_temp,obs_posx_temp);
+            }
+
 
             if(leader_posx_temp.size()== leader_posy_temp.size()){
 
@@ -748,6 +784,9 @@ void plotX(){
         }
 
         //plt::pause(0.05);
+
+        obs_posx_temp.clear();
+        obs_posy_temp.clear();
 
 
         leader_posx_temp.clear();

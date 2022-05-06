@@ -123,6 +123,7 @@ kimko: controlPlant/libplant.a
 kimko: mpc/libmpc.a
 kimko: leader/libleader.a
 kimko: traj_plan/libtraj_plan.a
+kimko: obs/libobs.a
 kimko: /usr/lib/libpcanbasic.so
 kimko: /lib/x86_64-linux-gnu/libpthread.so.0
 kimko: /usr/lib/x86_64-linux-gnu/libpython3.6m.so

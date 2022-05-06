@@ -69,6 +69,7 @@ CMakeFiles/kimko.dir/all: controlPlant/CMakeFiles/plant.dir/all
 CMakeFiles/kimko.dir/all: mpc/CMakeFiles/mpc.dir/all
 CMakeFiles/kimko.dir/all: leader/CMakeFiles/leader.dir/all
 CMakeFiles/kimko.dir/all: traj_plan/CMakeFiles/traj_plan.dir/all
+CMakeFiles/kimko.dir/all: obs/CMakeFiles/obs.dir/all
 	$(MAKE) -f CMakeFiles/kimko.dir/build.make CMakeFiles/kimko.dir/depend
 	$(MAKE) -f CMakeFiles/kimko.dir/build.make CMakeFiles/kimko.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/kimko/myRepo-Thesis/KIMKO/build/CMakeFiles --progress-num=1,2,3 "Built target kimko"
@@ -81,7 +82,7 @@ all: CMakeFiles/kimko.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/kimko.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/kimko/myRepo-Thesis/KIMKO/build/CMakeFiles 15
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/kimko/myRepo-Thesis/KIMKO/build/CMakeFiles 17
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/kimko.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/kimko/myRepo-Thesis/KIMKO/build/CMakeFiles 0
 .PHONY : CMakeFiles/kimko.dir/rule
@@ -126,7 +127,7 @@ plot/preinstall:
 plot/CMakeFiles/plot.dir/all:
 	$(MAKE) -f plot/CMakeFiles/plot.dir/build.make plot/CMakeFiles/plot.dir/depend
 	$(MAKE) -f plot/CMakeFiles/plot.dir/build.make plot/CMakeFiles/plot.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/kimko/myRepo-Thesis/KIMKO/build/CMakeFiles --progress-num=12,13 "Built target plot"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/kimko/myRepo-Thesis/KIMKO/build/CMakeFiles --progress-num=14,15 "Built target plot"
 .PHONY : plot/CMakeFiles/plot.dir/all
 
 # Include target in all.
@@ -181,7 +182,7 @@ pid/preinstall:
 pid/CMakeFiles/pid.dir/all:
 	$(MAKE) -f pid/CMakeFiles/pid.dir/build.make pid/CMakeFiles/pid.dir/depend
 	$(MAKE) -f pid/CMakeFiles/pid.dir/build.make pid/CMakeFiles/pid.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/kimko/myRepo-Thesis/KIMKO/build/CMakeFiles --progress-num=8,9 "Built target pid"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/kimko/myRepo-Thesis/KIMKO/build/CMakeFiles --progress-num=10,11 "Built target pid"
 .PHONY : pid/CMakeFiles/pid.dir/all
 
 # Include target in all.
@@ -236,7 +237,7 @@ controlPlant/preinstall:
 controlPlant/CMakeFiles/plant.dir/all:
 	$(MAKE) -f controlPlant/CMakeFiles/plant.dir/build.make controlPlant/CMakeFiles/plant.dir/depend
 	$(MAKE) -f controlPlant/CMakeFiles/plant.dir/build.make controlPlant/CMakeFiles/plant.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/kimko/myRepo-Thesis/KIMKO/build/CMakeFiles --progress-num=10,11 "Built target plant"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/kimko/myRepo-Thesis/KIMKO/build/CMakeFiles --progress-num=12,13 "Built target plant"
 .PHONY : controlPlant/CMakeFiles/plant.dir/all
 
 # Include target in all.
@@ -401,7 +402,7 @@ traj_plan/preinstall:
 traj_plan/CMakeFiles/traj_plan.dir/all:
 	$(MAKE) -f traj_plan/CMakeFiles/traj_plan.dir/build.make traj_plan/CMakeFiles/traj_plan.dir/depend
 	$(MAKE) -f traj_plan/CMakeFiles/traj_plan.dir/build.make traj_plan/CMakeFiles/traj_plan.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/kimko/myRepo-Thesis/KIMKO/build/CMakeFiles --progress-num=14,15 "Built target traj_plan"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/kimko/myRepo-Thesis/KIMKO/build/CMakeFiles --progress-num=16,17 "Built target traj_plan"
 .PHONY : traj_plan/CMakeFiles/traj_plan.dir/all
 
 # Include target in all.
@@ -428,6 +429,61 @@ traj_plan/CMakeFiles/traj_plan.dir/clean:
 
 # clean rule for target.
 clean: traj_plan/CMakeFiles/traj_plan.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Directory level rules for directory obs
+
+# Convenience name for "all" pass in the directory.
+obs/all: obs/CMakeFiles/obs.dir/all
+
+.PHONY : obs/all
+
+# Convenience name for "clean" pass in the directory.
+obs/clean: obs/CMakeFiles/obs.dir/clean
+
+.PHONY : obs/clean
+
+# Convenience name for "preinstall" pass in the directory.
+obs/preinstall:
+
+.PHONY : obs/preinstall
+
+#=============================================================================
+# Target rules for target obs/CMakeFiles/obs.dir
+
+# All Build rule for target.
+obs/CMakeFiles/obs.dir/all:
+	$(MAKE) -f obs/CMakeFiles/obs.dir/build.make obs/CMakeFiles/obs.dir/depend
+	$(MAKE) -f obs/CMakeFiles/obs.dir/build.make obs/CMakeFiles/obs.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/kimko/myRepo-Thesis/KIMKO/build/CMakeFiles --progress-num=8,9 "Built target obs"
+.PHONY : obs/CMakeFiles/obs.dir/all
+
+# Include target in all.
+all: obs/CMakeFiles/obs.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+obs/CMakeFiles/obs.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/kimko/myRepo-Thesis/KIMKO/build/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 obs/CMakeFiles/obs.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/kimko/myRepo-Thesis/KIMKO/build/CMakeFiles 0
+.PHONY : obs/CMakeFiles/obs.dir/rule
+
+# Convenience name for target.
+obs: obs/CMakeFiles/obs.dir/rule
+
+.PHONY : obs
+
+# clean rule for target.
+obs/CMakeFiles/obs.dir/clean:
+	$(MAKE) -f obs/CMakeFiles/obs.dir/build.make obs/CMakeFiles/obs.dir/clean
+.PHONY : obs/CMakeFiles/obs.dir/clean
+
+# clean rule for target.
+clean: obs/CMakeFiles/obs.dir/clean
 
 .PHONY : clean
 

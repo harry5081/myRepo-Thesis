@@ -61,6 +61,7 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("/home/kimko/myRepo-Thesis/KIMKO/build/mpc/cmake_install.cmake")
   include("/home/kimko/myRepo-Thesis/KIMKO/build/leader/cmake_install.cmake")
   include("/home/kimko/myRepo-Thesis/KIMKO/build/traj_plan/cmake_install.cmake")
+  include("/home/kimko/myRepo-Thesis/KIMKO/build/obs/cmake_install.cmake")
 
 endif()
 

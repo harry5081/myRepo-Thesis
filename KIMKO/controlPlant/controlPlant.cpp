@@ -44,6 +44,22 @@ void PLANT::calFspeed(){
     
     fsAngle_rad = fsAngle* PI/180.0;
     // //fsAngle = angleConv(fsAngle);
+
+
+    //correct to fsAngle with respect to reference
+    if(fsAngle_360 - fsAngle_fromRef_360>=360){
+        fsAngle_360 = fsAngle_360-360;
+
+        fsAngle_pre = fsAngle_360;
+        fsAngle_rad = fsAngle* PI/180.0;
+    }
+
+    else if(fsAngle_360 - fsAngle_fromRef_360<=-360){
+        fsAngle_360 = fsAngle_360+360;
+        
+        fsAngle_pre = fsAngle_360;
+        fsAngle_rad = fsAngle* PI/180.0;
+    }
    
 
     

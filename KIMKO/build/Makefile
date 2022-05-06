@@ -247,6 +247,19 @@ traj_plan/fast:
 	$(MAKE) -f traj_plan/CMakeFiles/traj_plan.dir/build.make traj_plan/CMakeFiles/traj_plan.dir/build
 .PHONY : traj_plan/fast
 
+#=============================================================================
+# Target rules for targets named obs
+
+# Build rule for target.
+obs: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 obs
+.PHONY : obs
+
+# fast build rule for target.
+obs/fast:
+	$(MAKE) -f obs/CMakeFiles/obs.dir/build.make obs/CMakeFiles/obs.dir/build
+.PHONY : obs/fast
+
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -320,6 +333,7 @@ help:
 	@echo "... mpc"
 	@echo "... leader"
 	@echo "... traj_plan"
+	@echo "... obs"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

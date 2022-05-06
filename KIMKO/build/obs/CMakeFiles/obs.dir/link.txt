@@ -1,0 +1,2 @@
+/usr/bin/ar qc libobs.a  CMakeFiles/obs.dir/obs.cpp.o
+/usr/bin/ranlib libobs.a

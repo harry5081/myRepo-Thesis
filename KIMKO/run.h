@@ -15,6 +15,7 @@
 #include "controlPlant.h"
 
 #include "unwrap.h"
+#include "obs.h"
 
 enum DOF {X_DIRECTION=0, Y_DIRECTION, Z_DIRECTION, ALL_DIRECTION};
 enum DRAW {NO_PLOT=0, PLOT};
@@ -40,6 +41,7 @@ public:
     PLANT mRobot;
     MPC mpc;
     PLANNER planner;
+    OBS obs_run_A;
     
    
 
