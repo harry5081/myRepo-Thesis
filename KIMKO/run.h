@@ -39,8 +39,9 @@ public:
     void getPositionValue();
 
     PLANT mRobot;
-    MPC mpc;
+    
     PLANNER planner;
+    MPC mpc;
     OBS obs_run_A;
     
    

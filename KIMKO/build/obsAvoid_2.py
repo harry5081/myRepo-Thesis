@@ -11,17 +11,20 @@ def errDynFunction(obs, p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
     obs_y=obs[0][1]#900#800
     obs_r=obs[0][2]#200#100#100
     
-    eps=50
+    eps=0
     robot_r=0
 
     dis_robot_obs = obs_r+robot_r+eps
+
+    obs_init=np.array([obs[0][0],obs[0][1],0])
+    obs_init_world = obs_init-p_ref[0] # world coordinate
 
     #np.set_printoptions(precision=3,suppress=False)
     
     
     #ws = 1 # check ws direction and sign
     window =len(p_ref)-1
-    dt = 0.15
+    dt = 0.2
     #print(p_ref)
     #print(p_init)
     p_ref = np.array(p_ref)
@@ -81,6 +84,10 @@ def errDynFunction(obs, p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
 
     #############################################################################
     # System Define
+    obs_x_frenet = SX.sym('obs_x_frenet')
+    obs_y_frenet = SX.sym('obs_y_frenet')
+    blanck_obs = SX.sym('blanck_obs')
+    obs_state_frenet = vertcat(obs_x_frenet,obs_y_frenet, blanck_obs)
 
     ### Ref, known variables
     xs = SX.sym('xs')
@@ -190,8 +197,10 @@ def errDynFunction(obs, p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
 
 
     err_dyn = T @ e_state + (Rz @ demand_state[3:6]) - ref[3:6]
-    err_dyn_f = Function('err_dyn_f',[e_state, desire_e_phi, demand_state[3:6],ref[3:6]],[err_dyn])
+    err_dyn_f = Function('err_dyn_f',[e_state, desire_e_phi, demand_state[3:6], ref[3:6]],[err_dyn])
 
+    obs_dyn = T @ obs_state_frenet - ref[3:6]
+    obs_dyn_f = Function('obs_dyn_f',[obs_state_frenet,ref[3:6]],[obs_dyn])
 
     # Theta dyn
     ori_dyn = ori_demand_w # - ori_ref_w * vs
@@ -245,6 +254,7 @@ def errDynFunction(obs, p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
     # g2 = vertcat(g2,E[:,0]-err_init)
     #print(e_init_Frenet)
 
+    obs_init_Frenet = worldToFrenet_f(ref_init[2]) @ obs_init_world # Frenet coordinate
     
     
     # err_cur=err_init
@@ -272,11 +282,11 @@ def errDynFunction(obs, p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
     Q = np.zeros((3,3))
     Q[0,0]=5   # ex
     Q[1,1]=5    # ey
-    Q[2,2]=10#100000#100000#100000#35000   # e_phi
+    Q[2,2]=10000#100000#100000#100000#35000   # e_phi
 
     # err_init = err_init + dt * err_dyn_f(err_init,err_init[2],v_init,v_ref[0])
     g_e = vertcat(g_e,E[:,0][0:3]-e_init_Frenet[0:3])
-
+    obs_cur = obs_init_Frenet
     # obj = err_init.T @ Q @ err_init
 
     for i in range(window):
@@ -286,6 +296,9 @@ def errDynFunction(obs, p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
         ref_current = P[n_demand_state + (i+1)*n_ref : n_demand_state + (i+2)*n_ref]
         demand_cur = D[:,i]
         err_cur = E[:,i]
+
+        
+
         
         err_next =  err_cur + dt * err_dyn_f(err_cur,E[:,i+1][2],demand_cur[3:6],ref_pre[3:6])# get vp
         #err_next =  err_cur + dt * err_dyn_f(err_cur,demand_cur,ref_pre)
@@ -302,9 +315,31 @@ def errDynFunction(obs, p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
         acc = (D[3,i]-fspeed_temp)/dt
         ACC[:,i] = acc
         fspeed_temp = D[3,i]
+
+        # obs
+        # x=demand_cur[0]
+        # y=demand_cur[1]
+        # dis = (obs_x-x)**2+(obs_y-y)**2  #x**2 - 2*x*obs_x + obs_x**2 + y**2 - 2*y*obs_y + obs_y**2
+        # OBS[:,i] = dis
+
+        # x=err_cur[0]
+        # y=err_cur[1]
+        # dis = (obs_cur[0]-x)**2+(obs_cur[1]-y)**2
+        # OBS[:,i] = dis
+        # obs_next =  obs_cur + dt * obs_dyn_f(obs_cur, ref_current[3:6])# get vp
+        # obs_cur = obs_next
+
+        obs_next =  obs_cur + dt * obs_dyn_f(obs_cur, ref_pre[3:6])
+        x=err_next[0]
+        y=err_next[1]
+        dis = (obs_next[0]-x)**2+(obs_next[1]-y)**2
+        OBS[:,i] = dis
+        obs_cur = obs_next
         
         #obj=obj+(err_next.T @ Q @ err_next) + 8*demand_cur[3]**2 + 0.05*acc**2 + 0.1*(ori_err_next**2 + 3*ori_demand_cur[1]**2)# + 0.3*ACC[:,i]**2 + 0.1*(ori_err_next**2 + 5*ori_demand_cur[1]**2)
-        obj=obj+(err_next.T @ Q @ err_next) + 5*demand_cur[3]**2 + (ori_err_next**2 + 0.5*ori_demand_cur[1]**2)# + 0.3*ACC[:,i]**2 + 0.1*(ori_err_next**2 + 5*ori_demand_cur[1]**2)
+        #obj=obj+(err_next.T @ Q @ err_next) + 1*demand_cur[3]**2 + (ori_err_next**2 + 0.5*ori_demand_cur[1]**2)# + 0.3*ACC[:,i]**2 + 0.1*(ori_err_next**2 + 5*ori_demand_cur[1]**2)
+        obj=obj+30*(err_next.T @ Q @ err_next) + (window-i)**2*demand_cur[3]**2 + (ori_err_next**2 + 0.5*ori_demand_cur[1]**2)# + 0.3*ACC[:,i]**2 + 0.1*(ori_err_next**2 + 5*ori_demand_cur[1]**2)
+        
         #obj=obj+(err_next.T @ Q @ err_next)
         # + demand_cur[5]**2+ 0.05*(ori_err_next**2 + 20*ori_demand_cur[1]**2)
         #obj=obj+(err_next.T @ Q @ err_next) + 7*demand_cur[3]**2+ 0.1*(ori_err_next**2 + 5*ori_demand_cur[1]**2)
@@ -321,11 +356,6 @@ def errDynFunction(obs, p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
         g_ori_d = vertcat(g_ori_d,ori_demand_cur[0]-ori_ref_current[0]-ori_err_next)
         g_ori_e = vertcat(g_ori_e,T_E[:,i+1]-ori_err_next)
         
-        # obs
-        x=demand_cur[0]
-        y=demand_cur[1]
-        dis = (obs_x-x)**2+(obs_y-y)**2  #x**2 - 2*x*obs_x + obs_x**2 + y**2 - 2*y*obs_y + obs_y**2
-        OBS[:,i] = dis
         
         
         
@@ -375,11 +405,12 @@ def errDynFunction(obs, p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
     #temp_ubx1[1]=                       # demand_y
     #temp_ubx1[2]=math.pi                # demand_phi
     temp_ubx1[2]=2*math.pi              # demand_phi
-    temp_ubx1[3]=200                      # fspeed <150
+    temp_ubx1[3]=800                      # fspeed <150
     temp_ubx1[4]=0                      # blank
     temp_ubx1=repmat(temp_ubx1,window)
 
-    temp_ubx2=float('inf')*np.ones(3) # err state
+    temp_ubx2=float('inf')*np.ones(3) # frenet frame max    err state
+    #temp_ubx2[1]=0
     temp_ubx2[2]=1*math.pi
     temp_ubx2=repmat(temp_ubx2,window+1)
 
@@ -395,13 +426,14 @@ def errDynFunction(obs, p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
 
     temp_lbx1=-float('inf')*np.ones(6)   # demand min
     #temp_lbx1[0]= 0                      # demand_x          
-    temp_lbx1[1]= 0                      # demand_y
+    #temp_lbx1[1]= 0                      # demand_y
     temp_lbx1[2]=-2*math.pi                     # demand_phi
     temp_lbx1[3]=0                     # fspeed >0
     temp_lbx1[4]=0                      # blank
     temp_lbx1=repmat(temp_lbx1,window)
 
-    temp_lbx2=-float('inf')*np.ones(3)  # err state
+    temp_lbx2=-float('inf')*np.ones(3)  # frenet frame min   err state
+    temp_lbx2[1]=0
     temp_lbx2[2]=(-1)*math.pi
     temp_lbx2=repmat(temp_lbx2,window+1)
 
@@ -421,6 +453,8 @@ def errDynFunction(obs, p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
     #args["ubg"] = vertcat(np.zeros(g_e.shape[0]),repmat(acc_max,(window),1),np.zeros(g_ori_d.shape[0]),np.zeros(g_ori_e.shape[0]))
     
     args["lbg"] = vertcat(np.zeros(3*(window)+g_e.shape[0]),(-1)*repmat(acc_max,(window),1),np.zeros(g_ori_d.shape[0]),np.zeros(g_ori_e.shape[0]),repmat(dis_robot_obs**2,(window),1))
+    #args["lbg"] = vertcat(np.zeros(3*(window)+g_e.shape[0]),(-1)*repmat(acc_max,(window),1),np.zeros(g_ori_d.shape[0]),np.zeros(g_ori_e.shape[0]),repmat(-float('inf'),(window),1))
+    
     args["ubg"] = vertcat(np.zeros(3*(window)+g_e.shape[0]),repmat(acc_max,(window),1),np.zeros(g_ori_d.shape[0]),np.zeros(g_ori_e.shape[0]),repmat(float('inf'),(window),1))
 
     #args["lbg"] = vertcat(np.zeros(3*(window)+g_e.shape[0]),(-1)*repmat(acc_max,(window),1),np.zeros(g_ori_e.shape[0]))

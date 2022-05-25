@@ -343,7 +343,8 @@ void plotX(){
     plt::figure(3);
     // plt::plot(PosY_cor,PosX_cor,{{"label", "f(x)"}});
     // sleep(5);
-    plt::Plot plot_map_obs("Global Map",obs_posy_temp,obs_posx_temp,"C5."); 
+    //plt::Plot plot_map_obs("Global Map",obs_posy_temp,obs_posx_temp,"C5."); 
+    plt::Plot plot_map_obs("Global Map",obs_posy_temp,obs_posx_temp,"C5");
     plt::Plot plot_map("Global Map",canReadData_PosY_temp,canReadData_PosX_temp,"y--"); 
     plt::Plot plot_map_cor("Global Map",PosY_cor, PosX_cor,"k"); 
     plt::Plot plot_map_leader("Leader",leader_posy_temp,leader_posx_temp,"xm"); 
@@ -640,7 +641,7 @@ void plotX(){
             plt::figure(2);
             plt::subplot(3,1,1);
             plt::xlim(0, wSize);
-            plt::ylim(-450, 450);
+            plt::ylim(-350, 750);
             //plt::ylim(-4000, 1500);
             
             //plt::ylim(-100, 200);
@@ -648,9 +649,9 @@ void plotX(){
 
             plot5.update(posDemand_Time_temp,posDemand_X_temp);
 
-            if(canReadTime_Pos_temp.size()==canReadData_PosX_temp.size()){
-                plot6.update(canReadTime_Pos_temp,canReadData_PosX_temp);
-            }
+            //if(canReadTime_Pos_temp.size()==canReadData_PosX_temp.size()){
+            //    plot6.update(canReadTime_Pos_temp,canReadData_PosX_temp);
+            //}
             if(canReadTime_Pos_temp.size()==PosX_cor.size()){
                 plot6_1.update(canReadTime_Pos_temp,PosX_cor);
             }
@@ -679,16 +680,16 @@ void plotX(){
             plt::xlim(0, wSize);
 
              //plt::ylim(-300, 300);
-             plt::ylim(-50, 750);
+             plt::ylim(-50, 1100);
             //plt::ylim(-2300, 2200);
             // plt::ylim(-100, 200);
             //plt::ylim(-100, 900);
 
             plot7.update(posDemand_Time_temp,posDemand_Y_temp);
 
-            if(canReadTime_Pos_temp.size()==canReadData_PosY_temp.size()){
-                plot8.update(canReadTime_Pos_temp,canReadData_PosY_temp);
-            }
+            //if(canReadTime_Pos_temp.size()==canReadData_PosY_temp.size()){
+            //    plot8.update(canReadTime_Pos_temp,canReadData_PosY_temp);
+            //}
             if(canReadTime_Pos_temp.size()==PosY_cor.size()){
                 plot8_1.update(canReadTime_Pos_temp,PosY_cor);
             }
@@ -733,25 +734,35 @@ void plotX(){
         ///////////////////////////     Global Map    ///////////////////////////
         if(canReadData_PosY_temp.size()==canReadData_PosX_temp.size()){ 
             plt::figure(3);
-            // plt::xlim(-200, 1500);
-            // plt::ylim(-200, 1500);
+            // plt::xlim(-300, 1700);
+            // plt::ylim(-1000, 1000);
+
+            // plt::xlim(-1000, 1000);
+            // plt::ylim(-1700, 250);
 
             // plt::xlim(-100, 900);
             // plt::ylim(-500, 500);
-            // plt::xlim(-100, 4000);
-            // plt::ylim(-4000, 100);
+            plt::xlim(-100, 4000);
+            plt::ylim(-4000, 100);
 
-            plt::xlim(-100, 1900);
-            plt::ylim(-1000, 1000);
+            //plt::xlim(-1000, 1000);
+            //plt::ylim(-2000, 100);
+
+            //plt::xlim(-100, 1100);
+            //plt::ylim(-400, 800);
+
+            // plt::xlim(-50, 200);
+            // plt::ylim(-10, 600);
+            
 
             // plt::xlim(-100, 500);
             // plt::ylim(-500, 100);
 
-            //plt::xlim(-300, 300);
-            //plt::ylim(-300, 300);
+            // plt::xlim(-300, 300);
+            // plt::ylim(-300, 300);
             
 
-            plot_map.update(canReadData_PosY_temp,canReadData_PosX_temp);
+            //plot_map.update(canReadData_PosY_temp,canReadData_PosX_temp);
 
                 
             if(obs_posx_temp.size()== obs_posy_temp.size()){

@@ -150,8 +150,8 @@ int main(int argc, char **argv) {
     
     
 
-    leader.cir_traject_init();
-    //leader.file_traject_init();
+    //leader.cir_traject_init();
+    leader.file_traject_init();
     plotLeaderTraject();
     
     

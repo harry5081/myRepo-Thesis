@@ -50,10 +50,10 @@ public:
 
 private:
 
-    float ds_dis=40;
-    float ds_itr=40;
+    float ds_dis=10;
+    float ds_itr=10;
 
-    float ds=40;
+    float ds=30;
 
     float offset_x=0;
     float offset_y=0;

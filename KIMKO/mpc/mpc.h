@@ -38,10 +38,11 @@ private:
     std::vector<float> pre_sol ={0,0,0,0,0,0};
     std::vector<float> pre_sol_ori ={0,0,0,0,0,0,0,0};
     
-    
+    std::vector<float> pre_x_sol;
 
 public:
 
+    int window_planner;
     float mpcExTime;
 
     float fspeedVel_ref=0;
@@ -82,6 +83,8 @@ public:
     
     void mpcObsAvoid(std::vector<std::vector<float>> p_ref, std::vector<std::vector<float>> v_ref, std::vector<float> p_init, std::vector<float> v_init, std::vector<std::vector<float>> Ori_ref, std::vector<float> Ori_init, std::vector<std::vector<float>> guess);
     void mpcObsAvoid_obsData(std::vector<std::vector<int>> obs,std::vector<std::vector<float>> p_ref, std::vector<std::vector<float>> v_ref, std::vector<float> p_init, std::vector<float> v_init, std::vector<std::vector<float>> Ori_ref, std::vector<float> Ori_init, std::vector<std::vector<float>> guess);
+    void mpcAvoid_obsData_presol(std::vector<std::vector<int>> obs,std::vector<std::vector<float>> p_ref, std::vector<std::vector<float>> v_ref, std::vector<float> p_init, std::vector<float> v_init, std::vector<std::vector<float>> Ori_ref, std::vector<float> Ori_init, std::vector<std::vector<float>> guess);
+
  
     
 
@@ -97,7 +100,7 @@ public:
     float powThreePosDemand(float time);
     float powTwoVelDemand(float time);
 
-    MPC();
+    MPC(int window);
 
     std::vector<std::vector<float>> predictHorz; // for ploting out the window
 

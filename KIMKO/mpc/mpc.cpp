@@ -1,7 +1,8 @@
 #include "mpc.h"
 
-MPC::MPC(){
-
+MPC::MPC(int window){
+window_planner = window;
+pre_x_sol.resize(window_planner*3 + (window_planner-1)*6 + 2*(window_planner-1) + 1*window_planner,0);
 initDemand();
 
 }
@@ -65,7 +66,7 @@ void MPC::mpcErrDyn_xy_plotPredicHorz(std::vector<std::vector<float>> p_ref, std
     std::vector<std::vector<float>> result_value = result.cast<std::vector<std::vector<float>>>();
 
     float time2 = (float)clock()/CLOCKS_PER_SEC;
-    std::cout << " MPC_DYN_errorDynOri9_2 operation time: "<< time2-time1 << std::endl;
+    //std::cout << " MPC_DYN_errorDynOri9_2 operation time: "<< time2-time1 << std::endl;
 
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> float_ms = end - start;
@@ -153,12 +154,12 @@ void MPC::mpcObsAvoid_obsData(std::vector<std::vector<int>> obs,std::vector<std:
     float time1 = (float)clock()/CLOCKS_PER_SEC;
     auto start = std::chrono::high_resolution_clock::now();
     
-    pybind11::module_ mpc = pybind11::module_::import("obsAvoid_2");
+    pybind11::module_ mpc = pybind11::module_::import("obsAvoid_3");
     pybind11::object result = mpc.attr("errDynFunction")(obs, p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess);
     std::vector<std::vector<float>> result_value = result.cast<std::vector<std::vector<float>>>();
 
     float time2 = (float)clock()/CLOCKS_PER_SEC;
-    std::cout << "MPC ObsAvoid obsData time: "<< time2-time1 << std::endl;
+    // std::cout << "MPC ObsAvoid obsData time: "<< time2-time1 << std::endl;
 
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> float_ms = end - start;
@@ -191,6 +192,138 @@ void MPC::mpcObsAvoid_obsData(std::vector<std::vector<int>> obs,std::vector<std:
         pre_sol[i] = result_value[0][i];
     }
     
+
+}
+
+void MPC::mpcAvoid_obsData_presol(std::vector<std::vector<int>> obs,std::vector<std::vector<float>> p_ref, std::vector<std::vector<float>> v_ref, std::vector<float> p_init, std::vector<float> v_init, std::vector<std::vector<float>> Ori_ref, std::vector<float> Ori_init, std::vector<std::vector<float>> guess){
+    
+    float time1 = (float)clock()/CLOCKS_PER_SEC;
+    auto start = std::chrono::high_resolution_clock::now();
+    
+    pybind11::module_ mpc = pybind11::module_::import("obsAvoid_4_presol");
+    pybind11::object result = mpc.attr("errDynFunction")(obs, p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess, pre_x_sol);
+    //std::vector<std::vector<float>> result_value = result.cast<std::vector<std::vector<float>>>();
+    std::vector<float> result_value = result.cast<std::vector<float>>();
+    pre_x_sol=result_value;
+    float time2 = (float)clock()/CLOCKS_PER_SEC;
+    // std::cout << "MPC ObsAvoid obsData time: "<< time2-time1 << std::endl;
+
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> float_ms = end - start;
+    std::cout << "MPC ObsAvoid obsData time: " << float_ms.count() << " ms " << std::endl;
+    mpcExTime = float_ms.count();
+
+    //x_pos_demand = result_value[0];
+    // y_pos_demand = result_value[0][1];
+    
+    // float fsAngle_temp = result_value[0][2];
+    // fspeedVel_demand = result_value[0][3];
+
+    // //x_vel_demand=fspeedVel_demand*cos(fsAngle_temp);
+    // //y_vel_demand=fspeedVel_demand*sin(fsAngle_temp);
+
+    // fsAngle_demand_rad = fsAngle_temp;
+    // fsAngle_demand = fsAngle_temp*180/PI;
+    // //std::cout << fsAngle_demand_rad << std::endl;
+
+
+    // float blank = result_value[0][4];
+    // float w_demand = result_value[0][5];
+
+    // z_pos_demand = result_value[0][6];
+    // z_vel_demand = result_value[0][7];
+
+    // predictHorz = result_value;
+    
+    // for(int i=0;i<6;i++){
+    //     pre_sol[i] = result_value[0][i];
+    // }
+
+    int window = window_planner;
+    //std::cout << window << "\n";
+
+    std::vector<float> pos_desired_temp;
+    std::vector<float> ori_desired_temp;
+    std::vector<std::vector<float>> predictHorz_temp;
+
+
+    pos_desired_temp.resize(6*(window-1));
+    ori_desired_temp.resize(2*(window-1));
+
+    predictHorz_temp.resize(window-1);
+    for (int i = 0; i < window-1; ++i){
+        predictHorz_temp[i].resize(8);
+    }
+    
+    
+    int k=0;
+    
+
+    for(int i = 3*window; i < 3*window+6*(window-1); i++) {
+    //std::cout << result_value[i] << "\n";
+    pos_desired_temp[k] = result_value[i];
+    k++;
+    }
+
+    k=0;
+    for(int i = 3*window+6*(window-1); i < 3*window+6*(window-1)+2*(window-1); i++) {
+    //std::cout << *it << "\n";
+    ori_desired_temp[k] = result_value[i];
+    k++;
+    }
+
+    int it_pos=0;
+    int it_ori=0;
+    for(int w=0;w<(window-1);w++){
+        std::vector<float> sub_pos = {pos_desired_temp.begin()+it_pos, pos_desired_temp.end()+it_pos+6};
+        std::vector<float> sub_ori = {pos_desired_temp.begin()+it_ori, pos_desired_temp.end()+it_ori+2};
+                
+        predictHorz_temp[w].insert(predictHorz_temp[w].begin(), sub_pos.begin(), sub_pos.end());
+        predictHorz_temp[w].insert(predictHorz_temp[w].end(), sub_ori.begin(), sub_ori.end());
+
+        it_pos=it_pos+6;
+        it_ori=it_ori+2;
+
+    }
+
+    predictHorz = predictHorz_temp;
+
+    // for(auto it = std::begin(result_value)+3*10; it != std::begin(result_value)+3*10+6*9; ++it) {
+    // //std::cout << *it << "\n";
+    // pos_desired_temp[i] = *it;
+    // i++;
+    // }
+
+    // for(auto it = std::begin(result_value)+3*10+6*9; it != std::begin(result_value)+3*10+6*9+2*9; ++it) {
+    // //std::cout << *it << "\n";
+    // ori_desired_temp[j] = *it;
+    // j++;
+    // }
+
+    // for(int it){
+
+
+    // }
+
+    x_pos_demand = pos_desired_temp[0];
+    y_pos_demand = pos_desired_temp[1];
+    
+    float fsAngle_temp = pos_desired_temp[2];
+    fspeedVel_demand = pos_desired_temp[3];
+
+    //x_vel_demand=fspeedVel_demand*cos(fsAngle_temp);
+    //y_vel_demand=fspeedVel_demand*sin(fsAngle_temp);
+
+    fsAngle_demand_rad = fsAngle_temp;
+    fsAngle_demand = fsAngle_temp*180/PI;
+    //std::cout << fsAngle_demand_rad << std::endl;
+
+
+    float blank = pos_desired_temp[4];
+    float w_demand = pos_desired_temp[5];
+
+    z_pos_demand = ori_desired_temp[0];
+    z_vel_demand = ori_desired_temp[1];
 
 }
 

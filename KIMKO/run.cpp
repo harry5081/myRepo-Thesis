@@ -75,7 +75,10 @@ m_int16_operatingmode(0),
 m_int16_velocity_level0(0),
 m_int16_velocity_level1(0),
 m_int16_velocity_level2(0),
-obs_run_A(850,800,900)
+//obs_run_A(-750,-300,500)
+obs_run_A(-1500,-50,500),
+mpc(planner.window)
+//obs_run_A(700,300,500)
 {
     
     while(CAN_Initialize(m_Channel, m_Btr0Btr1) != PCAN_ERROR_OK)
@@ -121,12 +124,12 @@ void run::start()
     
     timeDiff=time-timeTemp;
     //time_ms = time - time_ms;
-    std::cout << "!!!!!!!!!!!!!!!!!!!  TimeTest  !!!!!!!!!!!!!!!!!!!!!    "<< timeDiff <<std::endl;
+    //std::cout << "!!!!!!!!!!!!!!!!!!!  TimeTest  !!!!!!!!!!!!!!!!!!!!!    "<< timeDiff <<std::endl;
     timeTemp=time;
 
     auto chronoTime = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> chronoDiff_ms = chronoTime - pre_chrono_time;
-    std::cout << "!!!!!!!!!!!!!!!!!!!  ChronoTime  !!!!!!!!!!!!!!!!!!!!!  "<< chronoDiff_ms.count() << " ms " <<std::endl;
+    std::cout << "!!!!!!!!!!!!!!!!!!!  ChronoTime  !!!!!!!!!!!!!!!!  Sampling:  "<< chronoDiff_ms.count() << " ms " <<std::endl;
     pre_chrono_time=chronoTime;
 
     
@@ -137,9 +140,9 @@ void run::start()
     //planner.linear_traject_2();
     //planner.cir_traject_2();
     
-    planner.cir_traject_TNB();
+    //planner.cir_traject_TNB();
     //planner.cir_traject_TNB_preAngle();
-    //planner.traject_from_file();
+    planner.traject_from_file();
     
     // std::vector<std::vector<float>> v_ref_dyn = planner.vel_ref;
     // std::vector<std::vector<float>> p_ref_dyn = planner.pos_ref;
@@ -270,12 +273,14 @@ void run::start()
     mpc.z_pos_ref = planner.ori_ref[0][0]; //plot ref green
     mpc.z_vel_ref = planner.ori_ref[0][1]; //plot ref green
 
+    mpc.window_planner=planner.window;
 
     //mpc.mpcErrDyn_xy(p_ref_dyn, v_ref_dyn, p_init, v_init);
     //mpc.mpcErrDyn_xy_ori(p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
     //mpc.mpcErrDyn_xy_plotPredicHorz(p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
     //mpc.mpcObsAvoid(p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
-    mpc.mpcObsAvoid_obsData(obs_data, p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
+    //mpc.mpcObsAvoid_obsData(obs_data, p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
+    mpc.mpcAvoid_obsData_presol(obs_data, p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
 
     //mpc.x_vel_ref = mpc.fspeedVel_demand*cos(mpc.fsAngle_demand_rad); //plot ref green
     //mpc.y_vel_ref = mpc.fspeedVel_demand*sin(mpc.fsAngle_demand_rad); //plot ref green
