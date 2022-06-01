@@ -22,7 +22,10 @@
 
  float timeDiff;
  float timeTemp;
- 
+
+ enum BEHAVIOR {TRACK=0, AVOID};
+ BEHAVIOR behavior=TRACK;
+ float epsilon = 200;
 
  auto pre_chrono_time = std::chrono::high_resolution_clock::now();
 
@@ -76,7 +79,8 @@ m_int16_velocity_level0(0),
 m_int16_velocity_level1(0),
 m_int16_velocity_level2(0),
 //obs_run_A(-750,-300,500)
-obs_run_A(-1500,-50,500),
+//obs_run_A(-1500,3000,10), // no obs
+obs_run_A(-1500,0,700),
 mpc(planner.window)
 //obs_run_A(700,300,500)
 {
@@ -280,7 +284,26 @@ void run::start()
     //mpc.mpcErrDyn_xy_plotPredicHorz(p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
     //mpc.mpcObsAvoid(p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
     //mpc.mpcObsAvoid_obsData(obs_data, p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
-    mpc.mpcAvoid_obsData_presol(obs_data, p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
+    //mpc.mpcAvoid_obsData_presol(obs_data, p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
+
+
+    float distance = sqrt(pow((mRobot.pos_x_correct-obs_run_A.obs_x),2)+pow((mRobot.pos_y_correct-obs_run_A.obs_y),2));
+    if(distance<=700+epsilon){
+        behavior=AVOID;
+    }
+    else if(distance>700+2*epsilon){
+        behavior=TRACK;
+    }
+
+    if(behavior == AVOID){
+         mpc.mpcAvoid_obsData_presol(obs_data, p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
+    }
+   
+    else{
+        mpc.mpcErrDyn_xy_plotPredicHorz_presol(p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
+    }
+    
+
 
     //mpc.x_vel_ref = mpc.fspeedVel_demand*cos(mpc.fsAngle_demand_rad); //plot ref green
     //mpc.y_vel_ref = mpc.fspeedVel_demand*sin(mpc.fsAngle_demand_rad); //plot ref green

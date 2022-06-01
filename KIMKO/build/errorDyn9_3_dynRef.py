@@ -3,7 +3,7 @@ import numpy as np
 import math
 
 
-def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
+def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess, pre_x_sol):
     #np.set_printoptions(precision=3,suppress=False)
     
     
@@ -478,9 +478,13 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
     
     guess_temp=np.reshape(guess,(-1,1))
     guess_temp = guess_temp[0:6*(window)]
-                                                               
+    
+    # reference as guess                                                       
     args["x0"] = vertcat(repmat(np.zeros(3),(window+1),1),guess_temp,reshape(theta0,2*(window),1),repmat(np.zeros(1),(window+1),1)) 
     
+    # previous solution as guess 
+    #args["x0"] = pre_x_sol
+
     sol = solver(lbx=args["lbx"], ubx=args["ubx"], lbg=args["lbg"], ubg=args["ubg"],\
                 p=args["p"], x0=args["x0"])
 
@@ -571,5 +575,5 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess):
     out_temp = np.zeros((1,8,window))
     out_temp[0,:,:] = vertcat(demand_predichorz_update[0,:,:], demand_ori_predichorz_update[0,:,:])
     
-    return list(out_temp[0,:,:].T)
+    return np.array(x_sol)
     

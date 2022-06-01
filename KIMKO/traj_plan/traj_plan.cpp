@@ -391,8 +391,14 @@ void PLANNER::cir_traject_TNB(){
 
         ws =k*s_dot;
         /////////////////////////////////////  pos  ////////////////////////////////////////
-        float xt = r*sin(t/r)+offset_x;
+        float xt = r*sin(t/r)+offset_x;     //clockwise
         float yt = r*-cos(t/r)+r+offset_y;
+
+        //float xt = r*sin(t/r)+offset_x;       //counter clockwise
+        //float yt = r*cos(t/r)-r+offset_y;
+        
+        
+        
         float zt =0;
 
 
@@ -401,8 +407,11 @@ void PLANNER::cir_traject_TNB(){
         // }
 
         /////////////////////////////////////  vel  ////////////////////////////////////////
-        float vt_x = cos(t/r);
+        float vt_x = cos(t/r);          //clockwise
         float vt_y = sin(t/r);
+
+        //float vt_x = cos(t/r);        //counter clockwise
+        //float vt_y = -sin(t/r);
         //float vt = sqrt(pow(vt_x,2)+pow(vt_y,2));
 
         float vn_x = -(1/r)*sin(t/r);
@@ -469,7 +478,7 @@ void PLANNER::cir_traject_TNB(){
         //std::vector<float> pos = {0,300,0};
         //std::vector<float> pos = {-300,300,3*PI/4};
         std::vector<float> pos = {xt,yt,fsAngle_2PI};
-        //std::vector<float> pos = {200,0,PI/2};
+        //std::vector<float> pos = {200,0,0};
         pos_ref[i] = pos;
 
         std::vector<float> vel = {fspeed,0,ws};

@@ -742,8 +742,12 @@ void plotX(){
 
             // plt::xlim(-100, 900);
             // plt::ylim(-500, 500);
-            plt::xlim(-100, 4000);
-            plt::ylim(-4000, 100);
+
+            // plt::xlim(-100, 4000);
+            // plt::ylim(-4000, 100);
+
+            plt::xlim(-100, 6000);  // whole lab
+            plt::ylim(-5000, 1000);
 
             //plt::xlim(-1000, 1000);
             //plt::ylim(-2000, 100);
@@ -758,8 +762,8 @@ void plotX(){
             // plt::xlim(-100, 500);
             // plt::ylim(-500, 100);
 
-            // plt::xlim(-300, 300);
-            // plt::ylim(-300, 300);
+            // plt::xlim(-500, 500);
+            // plt::ylim(-500, 500);
             
 
             //plot_map.update(canReadData_PosY_temp,canReadData_PosX_temp);
