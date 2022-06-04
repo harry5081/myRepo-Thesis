@@ -25,7 +25,7 @@
 
  enum BEHAVIOR {TRACK=0, AVOID};
  BEHAVIOR behavior=TRACK;
- float epsilon = 200;
+ float epsilon = 500;
 
  auto pre_chrono_time = std::chrono::high_resolution_clock::now();
 
@@ -90,12 +90,6 @@ mpc(planner.window)
         sleep(1);
         printf("pcan init fails.. \n");
         
-        
-        
-        
-        //mpc.mpcOperation(0,100,0,0,0);
-        
-    
     }
 
     
@@ -291,7 +285,7 @@ void run::start()
     if(distance<=700+epsilon){
         behavior=AVOID;
     }
-    else if(distance>700+2*epsilon){
+    else if(distance>700+1.5*epsilon){
         behavior=TRACK;
     }
 

@@ -277,7 +277,7 @@ def errDynFunction(obs, p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess, 
     #     horzcat(0, 0, 0)
     # )
     Q = np.zeros((3,3))
-    Q[0,0]=8   # ex
+    Q[0,0]=8#8   # ex
     Q[1,1]=1#1    # ey
     Q[2,2]=10000#100#100000#100000#100000#35000   # e_phi
 
@@ -401,7 +401,7 @@ def errDynFunction(obs, p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess, 
     #temp_ubx1[1]=                       # demand_y
     #temp_ubx1[2]=math.pi                # demand_phi
     #temp_ubx1[2]=2*math.pi              # demand_phi
-    temp_ubx1[3]=200                      # fspeed <150
+    temp_ubx1[3]=250                      # fspeed <150
     temp_ubx1[4]=0                      # blank
     temp_ubx1=repmat(temp_ubx1,window)
 
@@ -595,6 +595,6 @@ def errDynFunction(obs, p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess, 
     out_temp[0,:,:] = vertcat(demand_predichorz_update[0,:,:], demand_ori_predichorz_update[0,:,:])
     
     #return list(out_temp[0,:,:].T)
-    print(np.array(x_sol).shape)
+    print("AVOID!!")
     return np.array(x_sol)
     

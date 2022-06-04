@@ -377,7 +377,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess, pre_x
     temp_ubx1=float('inf')*np.ones(6)
     #temp_ubx1[2]=math.pi                # demand_phi
     temp_ubx1[2]=2*math.pi              # demand_phi
-    temp_ubx1[3]=200                      # fspeed <150
+    temp_ubx1[3]=250                      # fspeed <150
     temp_ubx1[4]=0                      # blank
     temp_ubx1=repmat(temp_ubx1,window)
 
