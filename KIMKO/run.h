@@ -43,15 +43,12 @@ public:
     PLANNER planner;
     MPC mpc;
     OBS obs_run_A;
-    
-   
+        
 
     bool velButton;
     bool posButton;
 
-    bool runPlotButton = false;
-
-    
+    // bool runPlotButton = false;
 
 private:
         

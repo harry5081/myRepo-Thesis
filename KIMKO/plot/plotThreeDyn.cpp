@@ -6,99 +6,16 @@
 #include <math.h>
 #include <cmath>
 #include "../matplotlib-cpp-master/matplotlibcpp.h"
+#include "plotThreeDyn.h"
 
 //g++ -o plot.out plotThreeDyn.cpp -I/usr/include/python2.7 /lib/x86_64-linux-gnu/libpthread.so.0 -lpython2.7
 
 
 #define PI 3.14159265
 
-template<class T> void readFileToVector(std::string fileName, std::vector<T> &data);
-void windowSizeControl();
+
 void plotX();
-void plot(std::string CAN_Write_Time, std::string CAN_Write_Data, std::string CAN_Read_Time, std::string CAN_Read_Data);
-void intp();
 void plotTheta();
-
-int wSize = 20;
-
-std::vector<float> obs_posx_temp;
-std::vector<float> obs_posy_temp;
-
-std::vector<float> predictHorz_posx_temp;
-std::vector<float> predictHorz_posy_temp;
-
-std::vector<float> leader_posx_temp;
-std::vector<float> leader_posy_temp;
-
-std::vector<float> planner_posx_temp;
-std::vector<float> planner_posy_temp;
-
-std::vector<float> posRef_Time_temp;
-std::vector<float> posRef_X_temp;
-std::vector<float> posRef_Y_temp;
-std::vector<float> posRef_Z_temp;
-
-std::vector<float> velRef_Time_temp;
-std::vector<float> velRef_X_temp;
-std::vector<float> velRef_Y_temp;
-std::vector<float> velRef_Z_temp;
-
-std::vector<float> fspeedRef_temp;
-std::vector<float> fsAngleRef_temp;
-
-
-std::vector<float> posDemand_Time_temp;
-std::vector<float> posDemand_X_temp;
-std::vector<float> posDemand_Y_temp;
-std::vector<float> posDemand_Z_temp;
-
-std::vector<float> velDemand_Time_temp;
-std::vector<float> velDemand_X_temp;
-std::vector<float> velDemand_Y_temp;
-std::vector<float> velDemand_Z_temp;
-
-std::vector<float> fspeedDemand_temp;
-std::vector<float> fsAngleDemand_temp;
-
-std::vector<float> canWriteTime_temp;
-std::vector<float> canReadTime_temp;
-
-
-std::vector<float> canWriteData_temp;
-std::vector<float> canReadData_temp;
-
-std::vector<float> canWriteData_Y_temp;
-std::vector<float> canReadData_Y_temp;
-
-std::vector<float> canWriteData_Z_temp;
-std::vector<float> canReadData_Z_temp;
-
-
-
-std::vector<float> canReadTime_Pos_temp;
-std::vector<float> canReadTime_PosZ_temp;
-
-std::vector<float> canReadData_PosZ_temp;
-
-std::vector<float> canReadData_PosX_temp;
-std::vector<float> canReadData_PosY_temp;
-
-std::vector<float> PosX_cor;
-std::vector<float> PosY_cor;
-
-std::vector<float> fspeedRobot_temp;
-std::vector<float> fsAngleRobot_temp;
-
-
-
-
-bool intp_button = false;
-bool show_angle_button = false;
-
-
-
-//std::shared_ptr<std::thread> plotX_thread;
-namespace plt = matplotlibcpp;
 
 int main() {
     std::cout<<" Start Read File and Plot"<<std::endl;
@@ -106,9 +23,7 @@ int main() {
     
     std::thread plot_thread(&plotX);
     std::thread intp_thread(&intp);
- 
-    
- 
+
     plot_thread.join();
     intp_thread.join();
 
@@ -117,167 +32,10 @@ int main() {
     return 0;
 }
 
-template<class T>
-void readFileToVector(std::string fileName, std::vector<T> &dataVec){
 
-    std::ifstream fileRead(fileName); 
-    if(!fileRead.is_open()){
-        std::cout << "Failed to open " << fileName << " for Read!\n";
-        return;
-    }
-
-    T data;
-    while (fileRead >> data){
-        dataVec.push_back(data);
-    }
- 
-    fileRead.close();
-
-
-}
-
-void windowSizeControl(){
-       
-    
-       
-        if(*(canWriteTime_temp.end()-1)>=10 && *(canWriteTime_temp.end()-1) >= wSize -10 ){
-            wSize = int(*(canWriteTime_temp.end()-1)*2);
-        }
-
-        else if( *(canWriteTime_temp.end()-1)<10){
-
-            wSize=20;
-        }
-
-        
-    
- 
-}
-
-void intp(){
-    while(true){
-        
-        char temp;
-    
-        std::cout<<"Press 's' to stop updating the plot"<<std::endl;
-        std::cout<<"Press 'c' to continue updating the plot"<<std::endl;
-
-        std::cin >> temp;
-
-        if(temp == 's'){
-            intp_button = true;
-            show_angle_button = false;
-        }
-
-        else if(temp == 'c'){
-            intp_button = false;
-            show_angle_button = false;
-        }
-        else if(temp == 'a'){
-            show_angle_button = true;
-            return;
-        }
-        
-        
-
-        sleep(1);
-    }
-
-    
-
-}
-    
-
-void plotTheta(){
-    
-    readFileToVector("../build/plot/CAN_Read_Data_PosX", canReadData_PosX_temp);
-    readFileToVector("../build/plot/CAN_Read_Data_PosY", canReadData_PosX_temp);
-
-    readFileToVector("../build/plot/CAN_Read_Data_PosX_Correct", PosX_cor);
-    readFileToVector("../build/plot/CAN_Read_Data_PosY_Correct", PosY_cor);
-
-    readFileToVector("../build/plot/CAN_Read_Data_PosZ", canReadData_PosZ_temp);
-    
-    
-    std::vector<float> xPoint;
-    std::vector<float> yPoint;
-    std::vector<float> xDir;
-    std::vector<float> yDir;
-
-    float posX_cur, posY_cur, posZ_cur;
-    float posX_pre, posY_pre, posZ_pre;
-    float disDiff;
-    float angDiff;
-    
-    for(int i=0; i<canReadData_PosZ_temp.size(); i++){
-        
-        posX_cur = PosX_cor[i];
-        posY_cur = PosY_cor[i];
-        posZ_cur = canReadData_PosZ_temp[i];
-
-        disDiff = sqrt(pow(posX_cur-posX_pre,2) + pow(posY_cur-posY_pre,2));
-        angDiff = abs(posZ_cur-posZ_pre);
-
-        if(i==0){
-            xDir.push_back(1*cos(canReadData_PosZ_temp[i]* PI / 180.0));
-            yDir.push_back(1*sin(canReadData_PosZ_temp[i]* PI / 180.0));
-        
-            xPoint.push_back(PosX_cor[i]);
-            yPoint.push_back(PosY_cor[i]);
-
-            posX_pre = posX_cur;
-            posY_pre = posY_cur;
-            posZ_pre = posZ_cur;
-
-        }
-
-        else if(angDiff>=3 || disDiff>50){
-            xDir.push_back(1*cos(canReadData_PosZ_temp[i]* PI / 180.0));
-            yDir.push_back(1*sin(canReadData_PosZ_temp[i]* PI / 180.0));
-        
-            xPoint.push_back(PosX_cor[i]);
-            yPoint.push_back(PosY_cor[i]);
-
-            posX_pre = posX_cur;
-            posY_pre = posY_cur;
-            posZ_pre = posZ_cur;
-
-        }
-
-        else if( i==canReadData_PosZ_temp.size()-1)
-        {
-            xDir.push_back(1*cos(canReadData_PosZ_temp[i]* PI / 180.0));
-            yDir.push_back(1*sin(canReadData_PosZ_temp[i]* PI / 180.0));
-        
-            xPoint.push_back(PosX_cor[i]);
-            yPoint.push_back(PosY_cor[i]);
-
-        }
-
-        
-
-        
-        
-        
-        
-
-    }
-    
-    plt::figure(4);
-    plt::grid();
-    plt::xlim(-100, 900);
-    plt::ylim(-500, 500);
-    
-    plt::plot(PosY_cor, PosX_cor);
-    plt::quiver(yPoint, xPoint, yDir, xDir);
-    plt::show();
-
-}
 void plotX(){
     
-    ///////////////////////////     velocity part     ///////////////////////////
-    //plt::figure_size(1200, 780);
-    
+    ///////////////////////////  Figure1   velcity part     ///////////////////////////
     plt::figure(1);
     
     plt::subplot(3,1,1);
@@ -299,7 +57,6 @@ void plotX(){
    
     plt::grid();
 
-
     plt::subplot(3,1,3);
     plt::Plot plot4_4("v_ref_z",velRef_Time_temp,velRef_Z_temp,"g");
     plt::Plot plot4_5("VelDemandZ",velDemand_Time_temp,velDemand_Z_temp,"b");
@@ -309,9 +66,7 @@ void plotX(){
     plt::grid();
     
 
-
-
-    ///////////////////////////     position part     ///////////////////////////
+    ///////////////////////////  Figure2   position part     ///////////////////////////
     plt::figure(2);
     
     plt::subplot(3,1,1);
@@ -338,8 +93,7 @@ void plotX(){
     plt::grid();
 
 
-
-    ///////////////////////////     global map     ///////////////////////////
+    ///////////////////////////  Figure3   global map     ///////////////////////////
     plt::figure(3);
     // plt::plot(PosY_cor,PosX_cor,{{"label", "f(x)"}});
     // sleep(5);
@@ -353,12 +107,7 @@ void plotX(){
     plt::title("Global Map");
     plt::grid();
 
-    
-
-
-
-
-    ///////////////////////////     forward speed     ///////////////////////////
+    ///////////////////////////   Figure5  forward speed     ///////////////////////////
     
     plt::figure(5);
     
@@ -377,23 +126,7 @@ void plotX(){
     plt::Plot plot21_2("angle_sensor",canReadTime_temp,fsAngleRobot_temp,"r"); 
     plt::grid();
     plt::legend();
-    
 
-
-    /////////////////////////////////////////////////////////////////////////////
-    ///////////////////////////     One Time Plot     //////////////////////////
-    //////////////////////////////////////////////////////////////////////////// 
-
-    // readFileToVector("../build/plot/o_1_obstacle_posx", obs_posx_temp);
-    // readFileToVector("../build/plot/o_1_obstacle_posy", obs_posy_temp);
-
-    // if(obs_posx_temp.size()== obs_posy_temp.size()){
-    //     plt::figure(3);
-    //     plot_map_obs.update(obs_posx_temp,obs_posy_temp);
-    // }
-    
-    
-  
 
     while(true){
         
@@ -402,46 +135,45 @@ void plotX(){
         /////////////////////////////////////////////////////////////////////////////
         ///////////////////////////     velocity part     //////////////////////////
         ///////////////////////////////////////////////////////////////////////////// 
-        readFileToVector("../build/plot/CAN_Write_Time", canWriteTime_temp);
-        readFileToVector("../build/plot/CAN_Write_Data_X", canWriteData_temp);
-        readFileToVector("../build/plot/CAN_Write_Data_Y", canWriteData_Y_temp);
-        readFileToVector("../build/plot/CAN_Write_Data_Z", canWriteData_Z_temp);
-
-        readFileToVector("../build/plot/9_Fspeed_robot", fspeedRobot_temp);
-        readFileToVector("../build/plot/9_FsAngle_robot", fsAngleRobot_temp);
-        
-
-        readFileToVector("../build/plot/CAN_Read_Time", canReadTime_temp);
-        readFileToVector("../build/plot/CAN_Read_Data_X", canReadData_temp);
-        readFileToVector("../build/plot/CAN_Read_Data_Y", canReadData_Y_temp);
-        readFileToVector("../build/plot/CAN_Read_Data_Z", canReadData_Z_temp);
-        
-
-
-        readFileToVector("../build/plot/VelDemand_Time", velDemand_Time_temp);
-        readFileToVector("../build/plot/VelDemand_Data_X", velDemand_X_temp);
-        readFileToVector("../build/plot/VelDemand_Data_Y", velDemand_Y_temp);
-        readFileToVector("../build/plot/VelDemand_Data_Z", velDemand_Z_temp);
-
-        readFileToVector("../build/plot/3_Fspeed_demand", fspeedDemand_temp);
-        readFileToVector("../build/plot/3_FsAngle_demand", fsAngleDemand_temp);
-
-
-        readFileToVector("../build/plot/VelRef_Time", velRef_Time_temp);
-        readFileToVector("../build/plot/VelRef_Data_X", velRef_X_temp);
-        readFileToVector("../build/plot/VelRef_Data_Y", velRef_Y_temp);
-        readFileToVector("../build/plot/VelRef_Data_Z", velRef_Z_temp);
+  
+        readFileToVector("../build/plot/2_VelRef_Time", velRef_Time_temp);
+        readFileToVector("../build/plot/2_VelRef_Data_X", velRef_X_temp);
+        readFileToVector("../build/plot/2_VelRef_Data_Y", velRef_Y_temp);
+        readFileToVector("../build/plot/2_VelRef_Data_Z", velRef_Z_temp);
 
         readFileToVector("../build/plot/2_Fspeed_ref", fspeedRef_temp);
         readFileToVector("../build/plot/2_FsAngle_ref", fsAngleRef_temp);
 
 
+        readFileToVector("../build/plot/3_VelDemand_Time", velDemand_Time_temp);
+        readFileToVector("../build/plot/3_VelDemand_Data_X", velDemand_X_temp);
+        readFileToVector("../build/plot/3_VelDemand_Data_Y", velDemand_Y_temp);
+        readFileToVector("../build/plot/3_VelDemand_Data_Z", velDemand_Z_temp);
+
+        readFileToVector("../build/plot/3_Fspeed_demand", fspeedDemand_temp);
+        readFileToVector("../build/plot/3_FsAngle_demand", fsAngleDemand_temp);
+
+
+        readFileToVector("../build/plot/4_CAN_Write_Time", canWriteTime_temp);
+        readFileToVector("../build/plot/4_CAN_Write_Data_X", canWriteData_temp);
+        readFileToVector("../build/plot/4_CAN_Write_Data_Y", canWriteData_Y_temp);
+        readFileToVector("../build/plot/4_CAN_Write_Data_Z", canWriteData_Z_temp);
+
+
+        readFileToVector("../build/plot/5_CAN_Read_Time", canReadTime_temp);
+        readFileToVector("../build/plot/5_CAN_Read_Data_X", canReadData_temp);
+        readFileToVector("../build/plot/5_CAN_Read_Data_Y", canReadData_Y_temp);
+        readFileToVector("../build/plot/5_CAN_Read_Data_Z", canReadData_Z_temp);
+
+        readFileToVector("../build/plot/5_Fspeed_robot", fspeedRobot_temp);
+        readFileToVector("../build/plot/5_FsAngle_robot", fsAngleRobot_temp);
+
+        
         windowSizeControl();
 
         ///////////////////////////     forward speed  vel   //////////////////////////
      
         if(fspeedRef_temp.size()==velRef_Time_temp.size()){      
-            
             plt::figure(5);
             plt::subplot(2,1,1);
             plt::xlim(0, wSize);
@@ -450,18 +182,12 @@ void plotX(){
             plot20_0.update(velRef_Time_temp,fspeedRef_temp);
 
             if(velDemand_Time_temp.size()==fspeedDemand_temp.size()){
-               
                 plot20_1.update(velDemand_Time_temp,fspeedDemand_temp);
-                
             }
 
             if(canReadTime_temp.size()==fspeedRobot_temp.size()){
-               
-                plot20_2.update(canReadTime_temp,fspeedRobot_temp);
-                
+               plot20_2.update(canReadTime_temp,fspeedRobot_temp);
             }
-
-            
         }
         plt::pause(0.05);
          
@@ -469,7 +195,6 @@ void plotX(){
         ///////////////////////////     forward speed  angle   //////////////////////////
 
         if(fsAngleRef_temp.size()==velRef_Time_temp.size()){      
-          
           plt::figure(5);
           plt::subplot(2,1,2);
           plt::xlim(0, wSize);
@@ -478,26 +203,18 @@ void plotX(){
           plot21_0.update(velRef_Time_temp,fsAngleRef_temp);
           
           if(velDemand_Time_temp.size()==fsAngleDemand_temp.size()){
-               
-                plot21_1.update(velDemand_Time_temp,fsAngleDemand_temp);
-                
-            }
+               plot21_1.update(velDemand_Time_temp,fsAngleDemand_temp);
+          }
         
           if(canReadTime_temp.size()==fsAngleRobot_temp.size()){
                 plot21_2.update(canReadTime_temp,fsAngleRobot_temp);
-            }
-
-          
-          
+          }
         }
         plt::pause(0.05);
-        
-           
         
         ///////////////////////////     velocity part  X   //////////////////////////
      
         if(canWriteTime_temp.size()==canWriteData_temp.size()){      
-            
             plt::figure(1);
             plt::subplot(3,1,1);
             plt::xlim(0, wSize);
@@ -506,29 +223,22 @@ void plotX(){
             plot1.update(canWriteTime_temp,canWriteData_temp);
 
             if(canReadTime_temp.size()==canReadData_temp.size()){
-               
-                plot2.update(canReadTime_temp,canReadData_temp);
-                
+               plot2.update(canReadTime_temp,canReadData_temp);
             }
 
             if(velDemand_Time_temp.size()==velDemand_X_temp.size()){
-                
                 plot0.update(velDemand_Time_temp,velDemand_X_temp);
-                
             }
 
             if(velRef_Time_temp.size()==velRef_X_temp.size()){
-                
                 plot0_1.update(velRef_Time_temp,velRef_X_temp);
-                
             }
         }
          plt::pause(0.05);
 
         ///////////////////////////     velocity part  Y   //////////////////////////
 
-        if(canWriteTime_temp.size()==canWriteData_Y_temp.size()){      
-          
+        if(canWriteTime_temp.size()==canWriteData_Y_temp.size()){    
           plt::figure(1);
           plt::subplot(3,1,2);
           plt::xlim(0, wSize);
@@ -541,28 +251,20 @@ void plotX(){
             }
 
           if(velDemand_Time_temp.size()==velDemand_Y_temp.size()){
-                
-                plot2_9.update(velDemand_Time_temp,velDemand_Y_temp);
+            plot2_9.update(velDemand_Time_temp,velDemand_Y_temp);
           }
 
           if(velRef_Time_temp.size()==velRef_Y_temp.size()){
-                
-                plot2_8.update(velRef_Time_temp,velRef_Y_temp);
-                
-            }
-
-           else{
-                std::cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<std::endl;
-           }     
-          
+            plot2_8.update(velRef_Time_temp,velRef_Y_temp);
+          }
+          else{
+            std::cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<std::endl;
+          }     
         }
         plt::pause(0.05);
 
-
         ///////////////////////////     velocity part  Z   //////////////////////////
-
-        if(canWriteTime_temp.size()==canWriteData_Z_temp.size()){      
-            
+        if(canWriteTime_temp.size()==canWriteData_Z_temp.size()){          
             plt::figure(1);
             plt::subplot(3,1,3);
             plt::xlim(0, wSize);
@@ -599,39 +301,44 @@ void plotX(){
 
         readFileToVector("../build/plot/o_1_obstacle_posx", obs_posx_temp);
         readFileToVector("../build/plot/o_1_obstacle_posy", obs_posy_temp);
-
-        
+  
 
         readFileToVector("../build/plot/0_Leader_posx", leader_posx_temp);
         readFileToVector("../build/plot/0_Leader_posy", leader_posy_temp);
 
+
         readFileToVector("../build/plot/1_Planner_posx", planner_posx_temp);
         readFileToVector("../build/plot/1_Planner_posy", planner_posy_temp);
 
-        readFileToVector("../build/plot/5_predicHorz_posx", predictHorz_posx_temp);
-        readFileToVector("../build/plot/5_predicHorz_posy", predictHorz_posy_temp);
+        readFileToVector("../build/plot/1_predicHorz_posx", predictHorz_posx_temp);
+        readFileToVector("../build/plot/1_predicHorz_posy", predictHorz_posy_temp);
+
+
+        readFileToVector("../build/plot/2_PosRef_Time", posRef_Time_temp);
+        readFileToVector("../build/plot/2_PosRef_Data_X", posRef_X_temp);
+        readFileToVector("../build/plot/2_PosRef_Data_Y", posRef_Y_temp);
+        readFileToVector("../build/plot/2_PosRef_Data_Z", posRef_Z_temp);
         
 
 
-        readFileToVector("../build/plot/PosDemand_Time", posDemand_Time_temp);
-        readFileToVector("../build/plot/PosDemand_Data_X", posDemand_X_temp);
-        readFileToVector("../build/plot/PosDemand_Data_Y", posDemand_Y_temp);
-        readFileToVector("../build/plot/PosDemand_Data_Z", posDemand_Z_temp);
+        readFileToVector("../build/plot/3_PosDemand_Time", posDemand_Time_temp);
+        readFileToVector("../build/plot/3_PosDemand_Data_X", posDemand_X_temp);
+        readFileToVector("../build/plot/3_PosDemand_Data_Y", posDemand_Y_temp);
+        readFileToVector("../build/plot/3_PosDemand_Data_Z", posDemand_Z_temp);
+
+
         
-        readFileToVector("../build/plot/CAN_Read_Time_Pos", canReadTime_Pos_temp);
-        readFileToVector("../build/plot/CAN_Read_Data_PosX", canReadData_PosX_temp);
-        readFileToVector("../build/plot/CAN_Read_Data_PosY", canReadData_PosY_temp);
+        readFileToVector("../build/plot/5_CAN_Read_Time_Pos", canReadTime_Pos_temp);
+        readFileToVector("../build/plot/5_CAN_Read_Data_PosX", canReadData_PosX_temp);
+        readFileToVector("../build/plot/5_CAN_Read_Data_PosY", canReadData_PosY_temp);
 
-        readFileToVector("../build/plot/CAN_Read_Data_PosX_Correct", PosX_cor);
-        readFileToVector("../build/plot/CAN_Read_Data_PosY_Correct", PosY_cor);
+        readFileToVector("../build/plot/5_CAN_Read_Data_PosX_Correct", PosX_cor);
+        readFileToVector("../build/plot/5_CAN_Read_Data_PosY_Correct", PosY_cor);
 
-        readFileToVector("../build/plot/CAN_Read_Time_PosZ", canReadTime_PosZ_temp);
-        readFileToVector("../build/plot/CAN_Read_Data_PosZ", canReadData_PosZ_temp);
+        readFileToVector("../build/plot/5_CAN_Read_Time_PosZ", canReadTime_PosZ_temp);
+        readFileToVector("../build/plot/5_CAN_Read_Data_PosZ", canReadData_PosZ_temp);
 
-        readFileToVector("../build/plot/PosRef_Time", posRef_Time_temp);
-        readFileToVector("../build/plot/PosRef_Data_X", posRef_X_temp);
-        readFileToVector("../build/plot/PosRef_Data_Y", posRef_Y_temp);
-        readFileToVector("../build/plot/PosRef_Data_Z", posRef_Z_temp);
+       
 
 
 
@@ -798,84 +505,7 @@ void plotX(){
 
         }
 
-        //plt::pause(0.05);
-
-        obs_posx_temp.clear();
-        obs_posy_temp.clear();
-
-
-        leader_posx_temp.clear();
-        leader_posy_temp.clear();
-
-        planner_posx_temp.clear();
-        planner_posy_temp.clear();
-
-        predictHorz_posx_temp.clear();
-        predictHorz_posy_temp.clear();
-
-
-
-        //ref_vel
-        velRef_Time_temp.clear();
-        velRef_X_temp.clear();
-        velRef_Y_temp.clear();
-        velRef_Z_temp.clear();
-
-        fspeedRef_temp.clear();
-        fsAngleRef_temp.clear();
-
-        posRef_Time_temp.clear();
-        posRef_X_temp.clear();
-        posRef_Y_temp.clear();
-        posRef_Z_temp.clear();
-
-        
-        
-
-        //demand_vel
-        velDemand_Time_temp.clear();
-        velDemand_X_temp.clear();
-        velDemand_Y_temp.clear();
-        velDemand_Z_temp.clear();
-
-        fspeedDemand_temp.clear();
-        fsAngleDemand_temp.clear();
-
-        //demand_pos
-        posDemand_Time_temp.clear();
-        posDemand_X_temp.clear();
-        posDemand_Y_temp.clear();
-        posDemand_Z_temp.clear();
-
-
-
-        canWriteTime_temp.clear();
-        canReadTime_temp.clear();
-
-        canWriteData_temp.clear();
-        canReadData_temp.clear();
-        
-        canWriteData_Y_temp.clear();
-        canReadData_Y_temp.clear();
-
-        canWriteData_Z_temp.clear();
-        canReadData_Z_temp.clear();
-
-
-        canReadTime_Pos_temp.clear();
-        canReadTime_PosZ_temp.clear();
-        canReadData_PosX_temp.clear();
-        canReadData_PosY_temp.clear();
-        canReadData_PosZ_temp.clear();
-
-        PosX_cor.clear();
-        PosY_cor.clear();
-
-        fspeedRobot_temp.clear();
-        fsAngleRobot_temp.clear();
-
-        
-        
+        cleanVector();
 
         }//if(intp_button==false)
 
@@ -891,45 +521,90 @@ void plotX(){
 }
 
 
-void plot(std::string CAN_Write_Time, std::string CAN_Write_Data, std::string CAN_Read_Time, std::string CAN_Read_Data){
+
+void plotTheta(){
     
-   plt::Plot plot3("Writecan",canWriteTime_temp,canWriteData_temp,"k--");
-    //plt::figure_size(1200, 780);
-    //plt::grid();
-    //plt::figure(2);
-//plt::Plot plot;
-    // plt::Plot plot1("Writecan",canWriteTime_Y_temp,canWriteData_temp,"k--");
-    // plt::Plot plot2("Writeread",canReadTime_Y_temp,canReadData_temp,"r");
+    readFileToVector("../build/plot/CAN_Read_Data_PosX", canReadData_PosX_temp);
+    readFileToVector("../build/plot/CAN_Read_Data_PosY", canReadData_PosX_temp);
 
-    // while(true){
+    readFileToVector("../build/plot/CAN_Read_Data_PosX_Correct", PosX_cor);
+    readFileToVector("../build/plot/CAN_Read_Data_PosY_Correct", PosY_cor);
 
-    //     readFileToVector(CAN_Write_Time, canWriteTime_Y_temp);
-    //     readFileToVector(CAN_Write_Data, canWriteData_Y_temp);
+    readFileToVector("../build/plot/CAN_Read_Data_PosZ", canReadData_PosZ_temp);
+    
+    
+    std::vector<float> xPoint;
+    std::vector<float> yPoint;
+    std::vector<float> xDir;
+    std::vector<float> yDir;
 
-    //     readFileToVector(CAN_Read_Time, canReadTime_Y_temp);
-    //     readFileToVector(CAN_Read_Data, canReadData_Y_temp);
-
-    //     if(canWriteTime_Y_temp.size()==canWriteData_Y_temp.size()){
-           
-    //     //   plt::xlim(0, wSize);
-    //     //   plt::ylim(-300, 300);
-
-    //       plot.update(canWriteTime_Y_temp,canWriteData_Y_temp);
-
-    //     //   if(canReadTime_Y_temp.size()==canReadData_Y_temp.size()){
-
-    //     //         plot2.update(canReadTime_Y_temp,canReadData_Y_temp);
+    float posX_cur, posY_cur, posZ_cur;
+    float posX_pre, posY_pre, posZ_pre;
+    float disDiff;
+    float angDiff;
+    
+    for(int i=0; i<canReadData_PosZ_temp.size(); i++){
         
-    //     //     }
-    //     }
-    
-    //     plt::pause(0.05);
-    //     canWriteTime_Y_temp.clear();
-    //     canWriteData_Y_temp.clear();
+        posX_cur = PosX_cor[i];
+        posY_cur = PosY_cor[i];
+        posZ_cur = canReadData_PosZ_temp[i];
 
-    //     canReadData_Y_temp.clear();
-    //     canReadTime_Y_temp.clear();
-    //}
+        disDiff = sqrt(pow(posX_cur-posX_pre,2) + pow(posY_cur-posY_pre,2));
+        angDiff = abs(posZ_cur-posZ_pre);
+
+        if(i==0){
+            xDir.push_back(1*cos(canReadData_PosZ_temp[i]* PI / 180.0));
+            yDir.push_back(1*sin(canReadData_PosZ_temp[i]* PI / 180.0));
+        
+            xPoint.push_back(PosX_cor[i]);
+            yPoint.push_back(PosY_cor[i]);
+
+            posX_pre = posX_cur;
+            posY_pre = posY_cur;
+            posZ_pre = posZ_cur;
+
+        }
+
+        else if(angDiff>=3 || disDiff>50){
+            xDir.push_back(1*cos(canReadData_PosZ_temp[i]* PI / 180.0));
+            yDir.push_back(1*sin(canReadData_PosZ_temp[i]* PI / 180.0));
+        
+            xPoint.push_back(PosX_cor[i]);
+            yPoint.push_back(PosY_cor[i]);
+
+            posX_pre = posX_cur;
+            posY_pre = posY_cur;
+            posZ_pre = posZ_cur;
+
+        }
+
+        else if( i==canReadData_PosZ_temp.size()-1)
+        {
+            xDir.push_back(1*cos(canReadData_PosZ_temp[i]* PI / 180.0));
+            yDir.push_back(1*sin(canReadData_PosZ_temp[i]* PI / 180.0));
+        
+            xPoint.push_back(PosX_cor[i]);
+            yPoint.push_back(PosY_cor[i]);
+
+        }
+
+        
+
+        
+        
+        
+        
+
+    }
+    
+    plt::figure(4);
+    plt::grid();
+    plt::xlim(-100, 900);
+    plt::ylim(-500, 500);
+    
+    plt::plot(PosY_cor, PosX_cor);
+    plt::quiver(yPoint, xPoint, yDir, xDir);
+    plt::show();
 
 }
 

@@ -3,8 +3,6 @@
 #include <iostream>
 #include <bitset>
 
-
-
 #include <fstream>
 #include <vector>
 #include "matplotlib-cpp-master/matplotlibcpp.h"
@@ -13,42 +11,31 @@
 #include <time.h>
 #include "readWritePlot.h"
 
- #include <pybind11/pybind11.h>
- #include <pybind11/embed.h>
- #include <pybind11/stl.h>
-//#include <pybind11/numpy.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/embed.h>
+#include <pybind11/stl.h>
 
 #define PI 3.14159265
 
+// timer
  float timeDiff;
  float timeTemp;
+ auto pre_chrono_time = std::chrono::high_resolution_clock::now();
 
+// tracking and obs avoidance
  enum BEHAVIOR {TRACK=0, AVOID};
  BEHAVIOR behavior=TRACK;
  float epsilon = 500;
 
- auto pre_chrono_time = std::chrono::high_resolution_clock::now();
 
-
-DOF dof =ALL_DIRECTION;
-DRAW draw = PLOT;
-
+// pid
 PID pid_x(3,0,1,0.3);
 PID pid_y(3,0,1,0.3);
+PID pid_z(2,0,1,0.1);
 
 // PID pid_x(0,0,1,0);
 // PID pid_y(0,0,1,0);
-
-//PID pid_z(3,0.01,1,1);
-//PID pid_z(3,0,1,1);
-//PID pid_z(2,0,1,0.1);
-PID pid_z(2,0,1,0.1);
-
-
-
-
-// bool velButton;
-// bool posButton;
+// PID pid_z(0,0,1,0);
 
 
 
@@ -82,7 +69,6 @@ m_int16_velocity_level2(0),
 //obs_run_A(-1500,3000,10), // no obs
 obs_run_A(-1500,0,700),
 mpc(planner.window)
-//obs_run_A(700,300,500)
 {
     
     while(CAN_Initialize(m_Channel, m_Btr0Btr1) != PCAN_ERROR_OK)
@@ -91,196 +77,71 @@ mpc(planner.window)
         printf("pcan init fails.. \n");
         
     }
-
-    
-    
+  
     printf("pcan init success.. \n");
     
     init();
-    initOriginPos();
+    initOriginPos(); // try to reset the register in robot, so dont have to switch it off every time
+                     // now this function is not working due to correction of sensor position
 
 
 
 }
 void run::start()
 {
-   //mRobot.pos_correct_to_world();
-   //mRobot.pos_sensor_correct();   // put in run start
-   mRobot.calFspeed();
-   //mRobot.pos_correct_to_world();
-    
-
-    //CAN_READ to get the initial state
-   
-    //printf("enter the operating mode");
-    //scanf("%hd", &m_int16_operatingmode);
-
-    m_int16_operatingmode = 2;
-
-    
-    float time = (float)clock()/CLOCKS_PER_SEC;
-    
-    timeDiff=time-timeTemp;
-    //time_ms = time - time_ms;
-    //std::cout << "!!!!!!!!!!!!!!!!!!!  TimeTest  !!!!!!!!!!!!!!!!!!!!!    "<< timeDiff <<std::endl;
-    timeTemp=time;
-
+    ////////////////////////////////   timer to print out sampling time   ////////////////////////////////////////////////////////
     auto chronoTime = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> chronoDiff_ms = chronoTime - pre_chrono_time;
     std::cout << "!!!!!!!!!!!!!!!!!!!  ChronoTime  !!!!!!!!!!!!!!!!  Sampling:  "<< chronoDiff_ms.count() << " ms " <<std::endl;
     pre_chrono_time=chronoTime;
 
-    
-    //usleep(200000);
-    //usleep(100000);
-    //std::this_thread::sleep_for(std::chrono::milliseconds (100));
     std::this_thread::sleep_for(std::chrono::milliseconds (200-int(mpc.mpcExTime)));
-    //planner.linear_traject_2();
-    //planner.cir_traject_2();
-    
-    //planner.cir_traject_TNB();
-    //planner.cir_traject_TNB_preAngle();
-    planner.traject_from_file();
-    
-    // std::vector<std::vector<float>> v_ref_dyn = planner.vel_ref;
-    // std::vector<std::vector<float>> p_ref_dyn = planner.pos_ref;
-    // std::vector<std::vector<float>> fspeed_ref = planner.fspeed_ref;
-
-    // mpc.x_vel_ref = planner.vel_ref[0][0]; //plot
-    // mpc.y_vel_ref = planner.vel_ref[0][1]; //plot
-
-    // mpc.x_pos_ref = planner.pos_ref[0][0]; //plot
-    // mpc.y_pos_ref = planner.pos_ref[0][1]; //plot
-
-    // mpc.z_pos_ref = planner.pos_ref[0][2]; //plot
-
-    // mpc.fspeedVel_ref = planner.fspeed_ref[0][0]; //plot
-    // mpc.fsAngle_ref = planner.fspeed_ref[0][1]; //plot
-
-
-    
-    // std::vector<float> v_ref = {mpc.x_vel_ref, mpc.y_vel_ref, mpc.z_vel_ref};
-    // std::vector<float> p_ref = {mpc.x_pos_ref, mpc.y_pos_ref, mpc.z_pos_ref};
-    
-    
-    // std::vector<float> v_init = {mRobot.vel_x, mRobot.vel_y, mRobot.vel_z};
-    // std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, mRobot.pos_z};
-    // std::vector<float> v_input = {mRobot.controlInput_x_vel, mRobot.controlInput_y_vel, mRobot.controlInput_z_vel};
-    // std::vector<float> fspeed_init = {mRobot.fspeedVel, mRobot.fsAngle};
-    
-
-    float time1 = (float)clock()/CLOCKS_PER_SEC;
-    //mpc vd pd from python
-    
-    //std::cout<<std::endl;
-    //std::cout << "Robot Frame Value"<<std::endl;
-    //std::cout <<  "vel_x: " << mRobot.vel_x <<  "     pos_x: " << mRobot.pos_x <<std::endl<<std::endl;   
-    
-    //mpc.mpcOperation(mpc.x_vel_ref, mpc.x_pos_ref, mRobot.vel_x, mRobot.pos_x_correct, mRobot.controlInput_x_vel);  // one direction
-    //mpc.mpcOperation(v_ref, p_ref, v_init, p_init, v_input); // three dimention with fix ref
-    //mpc.mpcOperation(v_ref_dyn, p_ref_dyn, v_init, p_init, v_input); // dyn ref
-    //mpc.mpcOperation(v_ref_dyn, p_ref_dyn, v_init, p_init, v_input, fspeed_ref, fspeed_init); // dyn ref fspeed
-
-
-
-
-
-    ///////////////////////////////////  Error Dynamic  ///////////////////////////////////
-    //fix Ref for x
-
-    // std::vector<float> p_ref = {mpc.x_pos_ref, mpc.y_pos_ref, 0};
-    // std::vector<float> v_ref = {mpc.x_vel_ref,0 , 0};
-    
-    // std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, 0};
-    // std::vector<float> v_init = {mRobot.vel_x, 0, 0};
-    
-    // mpc.mpcErrDyn(p_ref, v_ref, p_init, v_init);
-
-    //fix Ref for y
-    // std::vector<float> p_ref = {mpc.x_pos_ref, mpc.y_pos_ref, mpc.fsAngle_ref*float(PI/180)};
-    // std::vector<float> v_ref = {mpc.fspeedVel_ref, 0, 0};
-    
-    // std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, mRobot.fsAngle*float(PI/180)};
-    // std::vector<float> v_init = {mRobot.vel_y, 0, 0};
-    
-    // mpc.mpcErrDyn(p_ref, v_ref, p_init, v_init);
-
-
-    //dyn Ref
-    // for x
-    // std::vector<std::vector<float>> v_ref_dyn = planner.vel_ref;
-    // std::vector<std::vector<float>> p_ref_dyn = planner.pos_ref;
-    // //std::vector<std::vector<float>> fspeed_ref = planner.fspeed_ref;
-
-    // std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, 0};
-    // std::vector<float> v_init = {mRobot.vel_x, 0, 0};
-
-    // mpc.x_vel_ref = planner.vel_ref[0][0]; //plot
-    // mpc.y_vel_ref = planner.vel_ref[0][1]; //plot
-
-    // mpc.x_pos_ref = planner.pos_ref[0][0]; //plot
-    // mpc.y_pos_ref = planner.pos_ref[0][1]; //plot
-
-    // mpc.z_pos_ref = planner.pos_ref[0][2]; //plot
-
-    // mpc.mpcErrDyn(p_ref_dyn, v_ref_dyn, p_init, v_init);
-
-    //dyn Ref
-    // for xy
-
-    std::vector<std::vector<float>> v_ref_dyn = planner.vel_ref;
-    std::vector<std::vector<float>> p_ref_dyn = planner.pos_ref;
-    //std::vector<std::vector<float>> fspeed_ref = planner.fspeed_ref;
-
-    
-
-    std::vector<std::vector<float>> ori_ref_dyn = planner.ori_ref;
-    std::vector<std::vector<float>> guess = planner.guess;
    
    
-    float fspeed_temp = sqrt(pow(mRobot.vel_x,2) + pow(mRobot.vel_y,2));
-    mRobot.fsAngle_fromRef_360 = planner.pos_ref[0][2]*180.0/PI; //correct robot fsAngle with respect to reference
-    
-    //std::vector<float> p_init = {mRobot.pos_x, mRobot.pos_y, mRobot.fsAngle*float(PI/180)};
-    //std::vector<float> p_init = {mRobot.pos_x, mRobot.pos_y, planner.fsAngle};
-    
-    //std::vector<float> v_init = {fspeed_temp, 0, 0};
-    //std::vector<float> v_init = {mRobot.fspeedVel, 0, 0};
-    //std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, mRobot.fsAngle*float(PI/180)};
-    
-    // 
-    //std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, mRobot.fsAngle_rad};
-    std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, float(mRobot.fsAngle_360*PI/180.0)};
-    std::vector<float> v_init = {fspeed_temp, 0, 0};
-    //std::vector<float> ori_init = {0, 0};
-    std::vector<float> ori_init = {mRobot.pos_z, mRobot.vel_z}; 
+    ////////////////////////////////////////////   Manual or Automatic   ////////////////////////////////////////////////////////
+    m_int16_operatingmode = 2;          // automatic mode
+
+    // m_int16_operatingmode = 1;       // manual mode
+    //printf("enter the operating mode");
+    //scanf("%hd", &m_int16_operatingmode);
 
 
+    ////////////////////////////////////////////   Obstacle Avoidance      ////////////////////////////////////////////////////////
     std::vector<std::vector<int>> obs_data;
     obs_data.push_back(obs_run_A.data);
 
-
-    //mpc.x_vel_ref = planner.vel_ref[0][0]; //plot
-    //mpc.y_vel_ref = planner.vel_ref[0][1]; //plot
-
-    mpc.x_pos_ref = planner.pos_ref[0][0]; //plot ref green
-    mpc.y_pos_ref = planner.pos_ref[0][1]; //plot ref green
-    mpc.fsAngle_ref = planner.pos_ref[0][2]*180.0/PI; //plot ref green
-    mpc.fspeedVel_ref = planner.vel_ref[0][0]; //plot ref green
     
-    mpc.z_pos_ref = planner.ori_ref[0][0]; //plot ref green
-    mpc.z_vel_ref = planner.ori_ref[0][1]; //plot ref green
+    ////////////////////////////////////////////   Local Planner (Green Reference)   ////////////////////////////////////////////////////////
+    
+    //planner.cir_traject_TNB();        //  circular path
+    planner.traject_from_file();        //  long path throughout the lab
+
+    mRobot.fsAngle_fromRef_360 = planner.pos_ref[0][2]*180.0/PI; //correct robot fsAngle with respect to reference
+    mRobot.calFspeed(); // calculate forward speed and angle of forward speed
+
+    
+    /////////////////////////////      Data from Planner module to MPC module       ////////////////////////////////////
+    std::vector<std::vector<float>> p_ref_dyn = planner.pos_ref; // [x1, y1, psi_1, x2, y2, psi_2, ...]
+    std::vector<std::vector<float>> v_ref_dyn = planner.vel_ref; // [s_dot1, 0, ws_1, s_dot2, 0, ws_2, ...]
+        
+    std::vector<std::vector<float>> ori_ref_dyn = planner.ori_ref;
+    std::vector<std::vector<float>> guess = planner.guess;      // inital guess for MPC in CasADi
+   
+    std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, mRobot.fsAngle_rad};
+    //std::vector<float> p_init = {mRobot.pos_x_correct, mRobot.pos_y_correct, float(mRobot.fsAngle_360*PI/180.0)};
+    std::vector<float> v_init = {mRobot.fspeedVel, 0, 0};
+   
+    std::vector<float> ori_init = {mRobot.pos_z, mRobot.vel_z}; 
 
     mpc.window_planner=planner.window;
 
-    //mpc.mpcErrDyn_xy(p_ref_dyn, v_ref_dyn, p_init, v_init);
-    //mpc.mpcErrDyn_xy_ori(p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
-    //mpc.mpcErrDyn_xy_plotPredicHorz(p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
-    //mpc.mpcObsAvoid(p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
-    //mpc.mpcObsAvoid_obsData(obs_data, p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
+
+    ///////////////////////////////////////      MPC Execution       ///////////////////////////////////////////
+    
     //mpc.mpcAvoid_obsData_presol(obs_data, p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
+    //mpc.mpcErrDyn_xy_plotPredicHorz_presol(p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
 
-
+    //////////////////////////////////  MPC Execution  + Obstacle Avoidance  ///////////////////////////////////////
     float distance = sqrt(pow((mRobot.pos_x_correct-obs_run_A.obs_x),2)+pow((mRobot.pos_y_correct-obs_run_A.obs_y),2));
     if(distance<=700+epsilon){
         behavior=AVOID;
@@ -296,38 +157,46 @@ void run::start()
     else{
         mpc.mpcErrDyn_xy_plotPredicHorz_presol(p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
     }
+
+
+    mpc.x_vel_demand=mpc.fspeedVel_demand*cos(mpc.fsAngle_demand_rad-mRobot.pos_z_rad);
+    mpc.y_vel_demand=mpc.fspeedVel_demand*sin(mpc.fsAngle_demand_rad-mRobot.pos_z_rad);
+
+   /////////////////////////////////////////////  Plot Green Reference  ///////////////////////////////////////////////
+
+    mpc.x_pos_ref = planner.pos_ref[0][0]; //plot ref green
+    mpc.y_pos_ref = planner.pos_ref[0][1]; //plot ref green
+
+    mpc.fsAngle_ref = planner.pos_ref[0][2]*180.0/PI; //plot ref green
+    mpc.fspeedVel_ref = planner.vel_ref[0][0]; //plot ref green
     
+    mpc.z_pos_ref = planner.ori_ref[0][0]; //plot ref green
+    mpc.z_vel_ref = planner.ori_ref[0][1]; //plot ref green    
 
-
-    //mpc.x_vel_ref = mpc.fspeedVel_demand*cos(mpc.fsAngle_demand_rad); //plot ref green
-    //mpc.y_vel_ref = mpc.fspeedVel_demand*sin(mpc.fsAngle_demand_rad); //plot ref green
+   
 
     mpc.x_vel_ref = mpc.fspeedVel_ref*cos(planner.pos_ref[0][2]-planner.ori_ref[0][0]*PI/180.0); //plot ref green
     mpc.y_vel_ref = mpc.fspeedVel_ref*sin(planner.pos_ref[0][2]-planner.ori_ref[0][0]*PI/180.0); //plot ref green
 
-    // mpc.x_vel_demand=mpc.fspeedVel_demand*cos((mpc.fsAngle_demand)*PI/180);
-    // mpc.y_vel_demand=mpc.fspeedVel_demand*sin((mpc.fsAngle_demand)*PI/180);
 
-    mpc.x_vel_demand=mpc.fspeedVel_demand*cos(mpc.fsAngle_demand_rad-mRobot.pos_z_rad);
-    mpc.y_vel_demand=mpc.fspeedVel_demand*sin(mpc.fsAngle_demand_rad-mRobot.pos_z_rad);
-    
-    
-    
-
-    float time2 = (float)clock()/CLOCKS_PER_SEC;
-    //std::cout << " MPC_XYZ operation time: "<< time2-time1 << std::endl;
-
-
-    /////////////////////////////////////////////     X      /////////////////////////////////////
+    /////////////////////////////      Data from MPC module to PID module       ////////////////////////////////////
+    //  X
     mRobot.vd_x = mpc.x_vel_demand;
     mRobot.pd_x = mpc.x_pos_demand;
     
-    
+    // Y 
+    mRobot.vd_y = mpc.y_vel_demand;
+    mRobot.pd_y = mpc.y_pos_demand;
+
+    // Z
+    mRobot.vd_z = mpc.z_vel_demand;
+    mRobot.pd_z = mpc.z_pos_demand;
+
+
+    /////////////////////////////      PID Tuning       ////////////////////////////////////
+    //  X
     // mRobot.pd_x = mpc.sinePosDemand(time);
     // mRobot.vd_x = mpc.cosVelDemand(time);
-
-    
-
 
     //mRobot.pd_x = mpc.stepPosDemand(time);
     //mRobot.vd_x = mpc.stepVelDemand(time);
@@ -338,166 +207,70 @@ void run::start()
     // mRobot.pd_x = mpc.powThreePosDemand(time);
     // mRobot.vd_x = mpc.powTwoVelDemand(time);
 
-    /////////////////////////////////////////////     Y      /////////////////////////////////////
-    //std::cout<<std::endl;
-    //std::cout << "Robot Value"<<std::endl;
-    //std::cout <<  "vel_y: " << mRobot.vel_y <<  "     pos_y: " << mRobot.pos_y <<std::endl<<std::endl;   
+    // mRobot.pd_x = mpc.sineToTenPosDemand(time);
+    // mRobot.vd_x = mpc.cosToTenVelDemand(time);
+
+    //mRobot.pd_x = 0;
+    // mRobot.vd_x = 0;
     
-    mRobot.vd_y = mpc.y_vel_demand;
-    mRobot.pd_y = mpc.y_pos_demand;
-    
+
+    //  Y
     //mRobot.pd_y = mpc.sinePosDemand(time);
     //mRobot.vd_y = mpc.cosVelDemand(time);
 
     // mRobot.pd_y = mpc.powThreePosDemand(time);
     // mRobot.vd_y = mpc.powTwoVelDemand(time);
 
-    /////////////////////////////////////////////     Z      /////////////////////////////////////
-    //std::cout <<  "vel_z: " << mRobot.vel_z <<  "     pos_z: " << mRobot.pos_z <<std::endl<<std::endl;   
-    mRobot.vd_z = mpc.z_vel_demand;
-    mRobot.pd_z = mpc.z_pos_demand;
-    
-    //mRobot.pd_z = mpc.sinePosDemand(time)/10;
+    //mRobot.pd_y = mpc.sineToTenPosDemand(time);
+    //mRobot.vd_y = mpc.cosToTenVelDemand(time);
+
+    // mRobot.pd_y = 0;
+    // mRobot.vd_y = 0;
+
+
+    //  Z
+   //mRobot.pd_z = mpc.sinePosDemand(time)/10;
     //mRobot.vd_z = mpc.cosVelDemand(time)/10;
     
     //mRobot.pd_z = mpc.sineToTenPosDemand(time)/10;
     //mRobot.vd_z = mpc.cosToTenVelDemand(time)/10;
 
-    // mRobot.pd_x = 0;
-    // mRobot.vd_x = 0;
-
-    // mRobot.pd_x = mpc.sineToTenPosDemand(time);
-    // mRobot.vd_x = mpc.cosToTenVelDemand(time);
-
-    // mRobot.pd_y = 0;
-    // mRobot.vd_y = 0;
-
     // mRobot.vd_z =0;
     // mRobot.pd_z = 0;
 
-    //mRobot.pd_y = mpc.sineToTenPosDemand(time);
-    //mRobot.vd_y = mpc.cosToTenVelDemand(time);
 
-    //mRobot.pd_x = (1)*mpc.sineToTenPosDemand(time);
-    //mRobot.vd_x = (1)*mpc.cosToTenVelDemand(time);
+    ///////////////////////////////////////      PID Execution       ///////////////////////////////////////////
     
-    // mRobot.pd_z = 1*mpc.sineToTenPosDemand(time)/10;
-    // mRobot.vd_z = 1*mpc.cosToTenVelDemand(time)/10;
-
-    // mRobot.pd_z = (-1)*mpc.sineToTenPosDemand(time)/10;
-    // mRobot.vd_z = (-1)*mpc.cosToTenVelDemand(time)/10;
-    
-    // m_int16_desired_velocity_X = mpc.x_vel_demand;
-    // m_int16_desired_velocity_Y = mpc.y_vel_demand;
-    // m_f_desired_velocity_Z = mpc.z_vel_demand;
-
-    //int PID::pidExe(float posError, int velDemand, float velError)
     m_int16_desired_velocity_X = pid_x.pidExe(mRobot.pd_x-mRobot.pos_x_correct, mRobot.vd_x, mRobot.vd_x-mRobot.vel_x);
     m_int16_desired_velocity_Y = pid_y.pidExe(mRobot.pd_y-mRobot.pos_y_correct, mRobot.vd_y, mRobot.vd_y-mRobot.vel_y);
     m_f_desired_velocity_Z = pid_z.pidExeAngle(mRobot.pd_z-mRobot.pos_z,mRobot.vd_z,mRobot.vd_z-mRobot.vel_z);
-
-    // m_int16_desired_velocity_X = pid_x.pidExe(mRobot.pd_x-mRobot.pos_x, mRobot.vd_x, mRobot.vd_x-mRobot.vel_x);
-    // m_int16_desired_velocity_Y = pid_y.pidExe(mRobot.pd_y-mRobot.pos_y, mRobot.vd_y, mRobot.vd_y-mRobot.vel_y);
-    // m_f_desired_velocity_Z = pid_z.pidExeAngle(mRobot.pd_z-mRobot.pos_z,mRobot.vd_z,mRobot.vd_z-mRobot.vel_z);
-    
+  
     // open loop response
     // m_int16_desired_velocity_X = mpc.stepVelDemand(time);
     // m_int16_desired_velocity_Y = 0;
     // m_f_desired_velocity_Z = 0;
 
+    ///////////////////////////////////////      Manual Mode Input       ///////////////////////////////////////////
 
-    // switch(dof){
+     
+    // printf("enter the X velocity speed :");
+    // scanf("%hd", &m_int16_desired_velocity_X);
 
-    //     case X_DIRECTION:
-    //         printf("enter the X velocity speed :");
-    //         scanf("%hd", &m_int16_desired_velocity_X);
-    //         break;
+    // printf("enter the Y velocity speed :");
+    // scanf("%hd", &m_int16_desired_velocity_Y);
 
-    //     case Y_DIRECTION:
-    //         //printf("enter the Y velocity speed :");
-    //         //scanf("%hd", &m_int16_desired_velocity_Y);
-    //         break;
+    // printf("enter the Z velocity speed :");
+    // scanf("%f", &m_f_desired_velocity_Z);
 
-    //     case Z_DIRECTION:
-    //         printf("enter the Z velocity speed :");
-    //         scanf("%f", &m_f_desired_velocity_Z);
-            
-    //         break;
-
-    //     case ALL_DIRECTION:
-    //         printf("enter the X velocity speed :");
-    //         scanf("%hd", &m_int16_desired_velocity_X);
-
-    //         printf("enter the Y velocity speed :");
-    //         scanf("%hd", &m_int16_desired_velocity_Y);
- 
-    //         printf("enter the Z velocity speed :");
-    //         scanf("%f", &m_f_desired_velocity_Z);
-    
-    //         break;
-    // }
     
 
-    //ensure controller input security
-    // if(m_int16_desired_velocity_X > 320){
-    //     m_int16_desired_velocity_X=100;
-    //     std::cout <<  "X Direction Controller Input too Fast!!!" << std::endl;
-    // }
-    // else if (m_int16_desired_velocity_X < -320){
-    //     m_int16_desired_velocity_X=-100;
-    //     std::cout <<  "X Direction Controller Input too Fast!!!" << std::endl;
-    // }
-    
-    // if(m_int16_desired_velocity_Y > 500){
-    //     m_int16_desired_velocity_Y=100;
-    //     std::cout <<  "Y Direction Controller Input too Fast!!!" << std::endl;
-    // }
-    // else if (m_int16_desired_velocity_Y < -500){
-    //     m_int16_desired_velocity_Y=-100;
-    //     std::cout <<  "Y Direction Controller Input too Fast!!!" << std::endl;
-    // }
-    
-    // if(m_f_desired_velocity_Z >= 15){
-    //     m_f_desired_velocity_Z=5;
-    //     std::cout <<  "Z Direction Controller Input too Fast!!!" << std::endl;
-    // }
-    // else if (m_f_desired_velocity_Z <= -15){
-    //     m_f_desired_velocity_Z=-5;
-    //     std::cout <<  "Z Direction Controller Input too Fast!!!" << std::endl;
-    // }
-
-    //m_int16_desired_velocity_X = 10;
-    //m_int16_desired_velocity_Y = 0;
-    //m_f_desired_velocity_Z = 2;
+  ///////////////////////////////////////      Controller Input       ///////////////////////////////////////////
 
     mRobot.controlInput_x_vel = m_int16_desired_velocity_X;
     mRobot.controlInput_y_vel = m_int16_desired_velocity_Y;
     mRobot.controlInput_z_vel = m_f_desired_velocity_Z;
 
-    // std::cout <<  "V_input_x: " << m_int16_desired_velocity_X<< std::endl;
-    // std::cout <<  "V_input_y: " << m_int16_desired_velocity_Y<< std::endl;
-    // std::cout <<  "V_input_z: " << m_f_desired_velocity_Z<< std::endl;
-
-    
-
-    // wait till pos and vel both are read from CAN_READ 
-    // while(velButton ==false ||  posButton==false){
-   
-        
-    // }
-
-    // velButton =false;
-    // posButton =false;
-
-
-    //  while(velButton ==false ||  posButton==false){
-    //     canReadData();
-    // }
-
-    // velButton =false;
-    // posButton =false;
-    
-
+  
     
 }
 
@@ -512,7 +285,6 @@ void run::canOpen()  //CAN_Write()
     
     while(1)
     {
-        //std::cout << "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"<<std::endl;
         uint16_t uint16_data = 0;
         uint32_t uint32_data = 0;
         //PDO 0x201
@@ -625,8 +397,6 @@ void run::canOpen()  //CAN_Write()
         
         CAN_Write(m_Channel, &m_pcanMsg);
 
-   
-        
         usleep(20000);  //20 ms
 
         
@@ -644,33 +414,10 @@ void run::canReadData(){
         result = CAN_Read(m_Channel, &m_pcanMsg_listen, nullptr);
                 
         if(result != PCAN_ERROR_QRCVEMPTY){
-            //std::cout << "---------------------------------" << std::endl;
-            // data processing
-
+            
             getVelocityValue();
             getPositionValue();
-            
-            
-
-            // // data processing
-            // std::cout << "Robot Frame Value"<<std::endl;
-            // std::cout <<  "     pos_x: " << mRobot.pos_x <<std::endl<<std::endl;
-            // std::cout <<  "     pos_y: " << mRobot.pos_y <<std::endl<<std::endl;
-            // std::cout <<  "     pos_z: " << mRobot.pos_z <<std::endl<<std::endl;
-
-            // mRobot.deadReckon();
-            // std::cout << "Global Frame Value"<<std::endl;
-            // std::cout <<  "     World_x: " << mRobot.pos_x_global <<std::endl<<std::endl;
-            // std::cout <<  "     World_y: " << mRobot.pos_y_global <<std::endl<<std::endl;
-            // std::cout <<  "     World_theta: " << mRobot.theta_global <<std::endl<<std::endl;
-
-            
-            // std::cout << "Correct Position Value"<<std::endl;
-            // std::cout <<  "     Correct_x: " << mRobot.pos_x_correct <<std::endl<<std::endl;
-            // std::cout <<  "     Correct_y: " << mRobot.pos_y_correct <<std::endl<<std::endl;
-            // std::cout <<  "     Correct_theta: " << mRobot.pos_z_correct <<std::endl<<std::endl;
-            
-            //usleep(1000); //1 ms
+  
          }
 
         //usleep(20000);
@@ -736,18 +483,20 @@ void run::getPositionValue(){
         //    std::cout << "y_pos: ";
         //std::cout << "-----POS-----POS-----POS-----POS-----POS-----POS-----" << std::endl;   
         //std::cout << std::dec << y_pos << std::endl;
-
-        mRobot.pos_x = x_pos; //plot
-        mRobot.pos_y = y_pos;   
        
+       
+        // correct the wrong sensor value of position
         mRobot.pos_x_correct = mRobot.pos_x_correct_pre+(cos(2.0*mRobot.pos_z_rad)*(x_pos-mRobot.pos_x_raw_pre) + (-1.0)*sin(2.0*mRobot.pos_z_rad)*(y_pos-mRobot.pos_y_raw_pre));
         mRobot.pos_y_correct = mRobot.pos_y_correct_pre+(sin(2.0*mRobot.pos_z_rad)*(x_pos-mRobot.pos_x_raw_pre) + cos(2.0*mRobot.pos_z_rad)*(y_pos-mRobot.pos_y_raw_pre));
 
         mRobot.pos_x_raw_pre = x_pos;
         mRobot.pos_y_raw_pre = y_pos;
-
+        
         mRobot.pos_x_correct_pre=mRobot.pos_x_correct;
         mRobot.pos_y_correct_pre=mRobot.pos_y_correct;
+
+        mRobot.pos_x = x_pos; //plot raw wrong position data
+        mRobot.pos_y = y_pos;   
 
 
         // mRobot.pos_x = x_pos-mRobot.originPos_x;
@@ -764,30 +513,16 @@ void run::getPositionValue(){
 
     } //if(m_pcanMsg_listen.ID == 0x1A1)
 
-    // if(m_pcanMsg_listen.ID == 0x1A2){
-    //     std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl; 
-
-    // }
-
-
+    
     //Z Position
     else if(m_pcanMsg_listen.ID == 0x1C1){
-                
-        // std::cout << std::dec << static_cast<uint32_t>(m_pcanMsg_listen.DATA[0]) << std::endl;
-        // std::cout << std::dec << static_cast<uint32_t>(m_pcanMsg_listen.DATA[1]) << std::endl;
-        // std::cout << std::dec << static_cast<uint32_t>(m_pcanMsg_listen.DATA[2]) << std::endl;
-        // std::cout << std::dec << static_cast<uint32_t>(m_pcanMsg_listen.DATA[3]) << std::endl;
-        // std::cout << std::dec << static_cast<uint32_t>(m_pcanMsg_listen.DATA[4]) << std::endl;
-        // std::cout << std::dec << static_cast<uint32_t>(m_pcanMsg_listen.DATA[5]) << std::endl;
-        // std::cout << std::dec << static_cast<uint32_t>(m_pcanMsg_listen.DATA[6]) << std::endl;
-        // std::cout << std::dec << static_cast<uint32_t>(m_pcanMsg_listen.DATA[7]) << std::endl;
-        // std::cout << "---------------------------------------------------------" << std::endl;
-                
+                       
         uint32_t z_pos_temp=static_cast<uint32_t>(m_pcanMsg_listen.DATA[0])|static_cast<uint32_t>(m_pcanMsg_listen.DATA[1]<<8)\
                         |static_cast<uint32_t>(m_pcanMsg_listen.DATA[2]<<16)|static_cast<uint32_t>(m_pcanMsg_listen.DATA[3]<<24);
         float z_pos = *((float *) &z_pos_temp);
+        
         mRobot.pos_z_raw = z_pos;
-        z_pos = unwrap(mRobot.pos_z_pre_unwrap,z_pos);
+        z_pos = unwrap(mRobot.pos_z_pre_unwrap,z_pos); // make z pos continuous
                 
         mRobot.pos_z = z_pos-mRobot.originPos_z;
         mRobot.pos_z_pre_unwrap = mRobot.pos_z; // unwrap
@@ -810,8 +545,6 @@ void run::getPositionValue(){
         // }
         
     }// if(m_pcanMsg_listen.ID == 0x1C1)
-            
-
 
 
 }
@@ -837,10 +570,7 @@ void run::initOriginPos(){
                        |static_cast<uint32_t>(m_pcanMsg_listen.DATA[6])<<16 | static_cast<uint32_t>(m_pcanMsg_listen.DATA[7]<<24);
             mRobot.originPos_y = y_pos;
             
-            
             mRobot.initXYPosButton=true;
-
-            
 
        }
 
@@ -857,19 +587,16 @@ void run::initOriginPos(){
             mRobot.originPos_z = z_pos;
             mRobot.pos_z_pre_unwrap = mRobot.originPos_z;
             mRobot.initZPosButton=true;   
-
-            
-
-        if(mRobot.initXYPosButton==true && mRobot.initZPosButton==true){
-            mRobot.initPosButton =true;
-            std::cout <<  std::endl;
-            std::cout <<  std::endl;
-            std::cout <<  "initOrigin X Pos: " << mRobot.originPos_x <<std::endl;
-            std::cout <<  "initOrigin Y Pos: " << mRobot.originPos_y <<std::endl;
-            std::cout <<  "initOrigin Z Pos_unwrap: " << mRobot.originPos_z << std::endl;   
-            std::cout <<  std::endl;
-        }
-
+         
+            if(mRobot.initXYPosButton==true && mRobot.initZPosButton==true){
+                mRobot.initPosButton =true;
+                std::cout <<  std::endl;
+                std::cout <<  std::endl;
+                std::cout <<  "initOrigin X Pos: " << mRobot.originPos_x <<std::endl;
+                std::cout <<  "initOrigin Y Pos: " << mRobot.originPos_y <<std::endl;
+                std::cout <<  "initOrigin Z Pos_unwrap: " << mRobot.originPos_z << std::endl;   
+                std::cout <<  std::endl;
+            }
         }
 
     }         

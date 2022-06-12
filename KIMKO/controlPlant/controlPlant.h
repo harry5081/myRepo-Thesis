@@ -58,11 +58,6 @@ public:
     float fsAngle_fromRef_360=0;
 
 
-    // deadReckon
-    float pos_x_global=0;
-    float pos_y_global=0;
-    float theta_global=0;
-
 
     // position value correction
     float pos_x_correct_pre=0;
@@ -72,23 +67,12 @@ public:
     float pos_y_raw_pre=0;
     //float pos_z_pre;
 
-    float pos_x_cur;
-    float pos_y_cur;
-    float pos_z_cur;
-
-    float pos_x_diff;
-    float pos_y_diff;
-    float pos_z_diff;
-
     float pos_x_correct;
     float pos_y_correct;
     float pos_z_correct; 
 
 
-    void deadReckon();
-    void pos_sensor_correct();
-    //void pos_sensor_correct2();
-    void pos_correct_to_world();
+   
     
 
     
