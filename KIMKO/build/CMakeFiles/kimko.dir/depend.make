@@ -25,6 +25,7 @@ CMakeFiles/kimko.dir/main.cpp.o: /home/kimko/miniconda3/include/pybind11/pybind1
 CMakeFiles/kimko.dir/main.cpp.o: /home/kimko/miniconda3/include/pybind11/pytypes.h
 CMakeFiles/kimko.dir/main.cpp.o: /home/kimko/miniconda3/include/pybind11/stl.h
 CMakeFiles/kimko.dir/main.cpp.o: ../main.cpp
+CMakeFiles/kimko.dir/main.cpp.o: ../main.h
 CMakeFiles/kimko.dir/main.cpp.o: ../run.h
 CMakeFiles/kimko.dir/main.cpp.o: ../unwrap.h
 CMakeFiles/kimko.dir/main.cpp.o: /usr/include/python3.6m/Python.h
