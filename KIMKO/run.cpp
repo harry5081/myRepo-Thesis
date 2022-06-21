@@ -67,7 +67,8 @@ m_int16_velocity_level1(0),
 m_int16_velocity_level2(0),
 //obs_run_A(-750,-300,500)
 //obs_run_A(-1500,3000,10), // no obs
-obs_run_A(-1500,0,700),
+//obs_run_A(-1500,0,700),
+obs_run_A(-4000,0,300),
 mpc(planner.window)
 {
     

@@ -67,7 +67,6 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess, pre_x
     ori_ref = vertcat(ori_ref_theta, ori_ref_w)
     n_ori_ref = ori_ref.shape[0]
 
-    
     # Demand, theta, orientation, output of MPC
     ori_demand_theta = SX.sym('ori_demand_theta')
     ori_demand_w = SX.sym('ori_demand_w')
@@ -76,7 +75,6 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess, pre_x
 
     e_ori = ori_demand[0]-ori_ref[0]
     n_e_ori = e_ori.shape[0]
-
 
     ### Error dyn function
     T = SX.zeros(3,3)   # check ws direction and sign!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -123,7 +121,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess, pre_x
     T_E = SX.sym('T_E',n_e_ori,window+1)
 
     ACC= SX.sym('ACC',1,window)
-    ACC2= SX.sym('ACC2',1,window)
+    #ACC2= SX.sym('ACC2',1,window)
     E_Matrix= SX.sym('E_Matrix',3,window)
     REF_Matrix= SX.sym('REF_Matrix',6,window+1)
 
@@ -145,7 +143,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess, pre_x
     e_init_Frenet = worldToFrenet_f(ref_init[2]) @ e_init_world # Frenet coordinate
 
     fspeed_init = state_init[3]      # for acc constraint
-
+    fspeed_temp = fspeed_init
     # Orientation
     startOfOri = 6*(window+2)
     ori_init = P[startOfOri:startOfOri + n_ori_ref]
@@ -176,20 +174,17 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess, pre_x
         ori_err_cur = T_E[:,i]
         ori_err_next= ori_err_cur + dt * ori_dyn_f(ori_demand_cur[1])
 
-        #acc = (D[:,i][3]-fspeed_temp)/dt
-        #ACC[:,i] = acc
-        #fspeed_temp = D[:,i][3]
+        
+        acc = (D[3,i]-fspeed_temp)/dt
+        ACC[:,i] = acc
+        fspeed_temp = D[3,i]
 
-        #acc = (D[3,i]-fspeed_temp)/dt
-        #ACC[:,i] = acc
-        #fspeed_temp = D[3,i]
-
-        acc_x = (demand_cur[3]*cos(demand_cur[2])-vx)/dt
-        acc_y = (demand_cur[3]*sin(demand_cur[2])-vy)/dt
-        ACC[:,i] = acc_x
-        ACC2[:,i] = acc_y
-        vx = demand_cur[3]*cos(demand_cur[2])
-        vy = demand_cur[3]*sin(demand_cur[2])
+        # acc_x = (demand_cur[3]*cos(demand_cur[2])-vx)/dt
+        # acc_y = (demand_cur[3]*sin(demand_cur[2])-vy)/dt
+        # ACC[:,i] = acc_x
+        # ACC2[:,i] = acc_y
+        # vx = demand_cur[3]*cos(demand_cur[2])
+        # vy = demand_cur[3]*sin(demand_cur[2])
 
         #acc = (demand_cur[3]**2+fspeed_temp[1]**2-2*demand_cur[3]*fspeed_temp[1]*cos(demand_cur[2]-fspeed_temp[0]))
         #acc = ((vx- demand_cur[3]*cos(demand_cur[2]))**2+(vy- demand_cur[3]*sin(demand_cur[2]))**2)/dt
@@ -216,13 +211,10 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess, pre_x
     g = vertcat(g,g_d)
 
     g = vertcat(g,reshape(ACC,window,1))
-    g = vertcat(g,reshape(ACC2,window,1))
-
+    #g = vertcat(g,reshape(ACC2,window,1))
 
     g = vertcat(g,g_ori_d)
     g = vertcat(g,g_ori_e)
-
-
     ###############################################################################
     # Construct NLP solver
     D_STATE_variables = reshape(D,n_demand_state*window,1) #[x1, y1, psi1, v1, 0, w1, x2, y2, psi2, v2, 0, w2]
@@ -245,7 +237,6 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess, pre_x
     ipopt_options["acceptable_tol"] = 1e-8
     ipopt_options["acceptable_obj_change_tol"] = 1e-6
     opts["ipopt"]=ipopt_options
-
 
     args = {}
     #--------------------------------------------------
@@ -300,10 +291,10 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess, pre_x
     args["lbx"] = al
     args["ubx"] = au
     
-    #args["lbg"] = vertcat(np.zeros(3*(window)+g_e.shape[0]),repmat(-1*acc_max,(window),1),np.zeros(g_ori_d.shape[0]),np.zeros(g_ori_e.shape[0]))
-    #args["ubg"] = vertcat(np.zeros(3*(window)+g_e.shape[0]),repmat(acc_max,(window),1),np.zeros(g_ori_d.shape[0]),np.zeros(g_ori_e.shape[0]))
-    args["lbg"] = vertcat(np.zeros(3*(window)+g_e.shape[0]),repmat(-1*acc_max,(window),1),repmat(-1*acc_max,(window),1),np.zeros(g_ori_d.shape[0]),np.zeros(g_ori_e.shape[0]))
-    args["ubg"] = vertcat(np.zeros(3*(window)+g_e.shape[0]),repmat(acc_max,(window),1),repmat(acc_max,(window),1),np.zeros(g_ori_d.shape[0]),np.zeros(g_ori_e.shape[0]))
+    args["lbg"] = vertcat(np.zeros(3*(window)+g_e.shape[0]),repmat(-1*acc_max,(window),1),np.zeros(g_ori_d.shape[0]),np.zeros(g_ori_e.shape[0]))
+    args["ubg"] = vertcat(np.zeros(3*(window)+g_e.shape[0]),repmat(acc_max,(window),1),np.zeros(g_ori_d.shape[0]),np.zeros(g_ori_e.shape[0]))
+    #args["lbg"] = vertcat(np.zeros(3*(window)+g_e.shape[0]),repmat(-1*acc_max,(window),1),repmat(-1*acc_max,(window),1),np.zeros(g_ori_d.shape[0]),np.zeros(g_ori_e.shape[0]))
+    #args["ubg"] = vertcat(np.zeros(3*(window)+g_e.shape[0]),repmat(acc_max,(window),1),repmat(acc_max,(window),1),np.zeros(g_ori_d.shape[0]),np.zeros(g_ori_e.shape[0]))
    
     solver = nlpsol('solver', 'ipopt', nlp_prob, opts)
 
@@ -326,7 +317,6 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess, pre_x
     #args["x0"] = vertcat(reshape(d0,6*(window),1),repmat(np.zeros(3),(window+1),1),reshape(theta0,2*(window),1),repmat(np.zeros(1),(window+1),1)) 
                                                                                 #initial guess of demand state
                                                                                 # plus initial guess of error
-    
     guess_temp=np.reshape(guess,(-1,1))
     guess_temp = guess_temp[0:6*(window)]
     
