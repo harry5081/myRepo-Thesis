@@ -62,19 +62,14 @@ void LEADER::cir_traject_init(){
 
         }//if(time>=startTime)
 
-        
-        
     }//while(1){
-    
-
     
 }
 
 void LEADER::cir_traject(){
 
     //index = int((time-startTime)/period);
-    
-    
+        
     if(index<point_cnt){
         s_current = index*ds;
         xs =curve[index][0];
@@ -86,9 +81,6 @@ void LEADER::cir_traject(){
         
     }
 
-    
-    
-
 
 }
 
@@ -99,7 +91,7 @@ void LEADER::readTrajFile(){
 	std::string t, xPos, yPos, phi, sDot, blank, w; //variables from file are here
 	
 	//input filename
-	std::string file = "traj2.txt";
+	std::string file = "traj.txt";
 	std::string str;
 	//number of lines
 	int i = 0;
@@ -141,7 +133,7 @@ void LEADER::readTrajFile(){
 		{
             i++;
 			
-            getline(traj, garbage, '\t');
+            // getline(traj, garbage, '\t');
 		
 			getline(traj, xPos, '\t');
             xs_temp = stof(xPos);
@@ -175,64 +167,4 @@ void LEADER::readTrajFile(){
 	// std::cout << std::endl;
 
 }
-
-// void LEADER::linear_traject_init(){
-//     for(int i=0;i<point_cnt;i++){
-
-//         float xs_temp = s;
-//         float ys_temp = 0;
-
-//         std::vector<float> point = {xs_temp,ys_temp};
-//         s=s+ds;
-
-//         curve.push_back(point);
-        
-//     }
-
-//     float pre_time=0;
-
-//     while(1){
-//         usleep(100000);  
-//         float time = (float)clock()/CLOCKS_PER_SEC;
-        
-//         if(time>=startTime){
-
-//             if(time-pre_time>=period){
-            
-//                 linear_traject();
-//                 pre_time = time;
-
-//             }
-
-//         }//if(time>=startTime)
-
-        
-        
-//     }//while(1){
-    
-
-    
-// }
-
-// void LEADER::linear_traject(){
-
-//     //index = int((time-startTime)/period);
-    
-    
-//     if(index<point_cnt){
-//         s_current = index*ds;
-//         xs =curve[index][0];
-//         ys =curve[index][1];
-//         index++;
-//         std::cout << "Leader: "<< s_current <<std::endl;
-//         std::cout << "Leader: "<< xs<<  " "<<  ys<<std::endl;
-//         // std::cout << time <<std::endl;
-        
-//     }
-    
-
-
-// }
-
-
 

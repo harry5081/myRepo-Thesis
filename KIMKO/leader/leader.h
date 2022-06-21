@@ -16,10 +16,13 @@ public:
     LEADER();
 
     // user input
-    int point_cnt=26; //64;//32; // 26 for r=400
+    float r=400;//800;//400;//500000;//200; // data sent to planner module    
+    float offset_xs=-100;                      // data sent to planner module
+    float offset_ys=100;                      // data sent to planner module
 
+    int point_cnt=26; // end point of the cicle //64;//32; // 26 for r=400
+ 
     
-    float r=400;//800;//400;//500000;//200;
 
     float xs;
     float ys;
@@ -49,31 +52,18 @@ public:
 
 private:
 
-    float offset_xs=0;
-    float offset_ys=0;
-
-
     // user input
     float startTime = 0;
     float ds = 100;//50*1.414;//20;
 
-
     float s=0;
     int index =0;
 
-    
-    
     void cir_traject();
     //void linear_traject();
    
     
-    
-    
-
-
-    
     std::vector< std::vector<float>> vel_TN;
-
 
     
     // std::vector<int>index_f;
@@ -84,15 +74,6 @@ private:
     // std::vector<float>blank_ref_f;
 	// std::vector<float>w_ref_f;
     int lineCount=0;
-
-    
-
-
-
-    
-
-
-
 
 };
 

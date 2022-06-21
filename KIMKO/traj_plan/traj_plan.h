@@ -19,7 +19,6 @@ public:
     PLANNER();
 
     float s=0;
-    float s_pre_route=700;
     float pre_s=0; // counter
 
     LEADER leaderData;
@@ -35,23 +34,16 @@ public:
     std::vector<std::vector<float>> ori_ref;
     std::vector<std::vector<float>> guess;
 
-    void cir_traject();
-    void cir_traject_2();
-
+    void traject_from_file();
     void cir_traject_TNB();
-    void cir_traject_TNB_preAngle();
-
-    void linear_traject_2();
+    
     bool circleFinished = false;
 
-    void traject_from_file();
+    
 
 
 
 private:
-
-    float ds_dis=10;
-    float ds_itr=10;
 
     float ds=25;
 
@@ -66,8 +58,7 @@ private:
     float t_current;
 
     float r;
-    float w=0.8;//0.1;
-    float sampleTime=0.2;//0.2;//0.2  //0.4
+    float sampleTime=0.2;
 
     float fsAngle_pre =0;
     float fsAngle_pre_window =0;
