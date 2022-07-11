@@ -197,6 +197,7 @@ def errDynFunction(p_ref, v_ref, p_init, v_init, Ori_ref, Ori_init, guess, pre_x
 
         #obj=obj+10*(err_next.T @ Q @ err_next) + (window-i)**2*demand_cur[3]**2 + (ori_err_next**2 + 0.5*ori_demand_cur[1]**2)# + 0.3*ACC[:,i]**2 + 0.1*(ori_err_next**2 + 5*ori_demand_cur[1]**2)
         obj=obj+1*(err_next.T @ Q @ err_next) + 1*demand_cur[3]**2 + (ori_err_next**2 + 1.5*ori_demand_cur[1]**2)# + 0.3*ACC[:,i]**2 + 0.1*(ori_err_next**2 + 5*ori_demand_cur[1]**2)
+        #obj=obj+1*(err_next.T @ Q @ err_next) + 3*demand_cur[3]**2 + (ori_err_next**2 + 0.5*ori_demand_cur[1]**2)# + 0.3*ACC[:,i]**2 + 0.1*(ori_err_next**2 + 5*ori_demand_cur[1]**2)
         
         # pos vel
         g_e = vertcat(g_e,E[:,i+1][0:3]-err_next[0:3])

@@ -77,7 +77,7 @@ void MPC::mpcErrDyn_xy_plotPredicHorz_presol(std::vector<std::vector<float>> p_r
     auto end = std::chrono::high_resolution_clock::now();
 
     std::chrono::duration<double, std::milli> float_ms = end - start;
-    std::cout << "MPC_DYN_errorDynOri9_3 chrono time: " << float_ms.count() << " ms " << std::endl;
+    std::cout << "MPC Execution time: " << float_ms.count() << " ms " << std::endl;
     mpcExTime = float_ms.count();
 
     

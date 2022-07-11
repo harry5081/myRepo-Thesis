@@ -29,7 +29,7 @@
 
 
 // pid
-PID pid_x(3,0,1,0.3);
+PID pid_x(3,0,1,0.3); //(kp, ki, kf, kd)
 PID pid_y(3,0,1,0.3);
 PID pid_z(2,0,1,0.1);
 
@@ -66,9 +66,8 @@ m_int16_velocity_level0(0),
 m_int16_velocity_level1(0),
 m_int16_velocity_level2(0),
 //obs_run_A(-750,-300,500)
-//obs_run_A(-1500,3000,10), // no obs
-//obs_run_A(-1500,0,700),
-obs_run_A(-4000,0,300),
+//obs_run_A(1500,3000,10), // no obs
+obs_run_A(-1500,0,700), //(x,y,radius)
 mpc(planner.window)
 {
     
@@ -93,11 +92,9 @@ void run::start()
     ////////////////////////////////   timer to print out sampling time   ////////////////////////////////////////////////////////
     auto chronoTime = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double, std::milli> chronoDiff_ms = chronoTime - pre_chrono_time;
-    std::cout << "!!!!!!!!!!!!!!!!!!!  ChronoTime  !!!!!!!!!!!!!!!!  Sampling:  "<< chronoDiff_ms.count() << " ms " <<std::endl;
+    std::cout << "!!!!!!!!!! Sampling Time  !!!!!!!!!! :  "<< chronoDiff_ms.count() << " ms " <<std::endl;
     pre_chrono_time=chronoTime;
-
     std::this_thread::sleep_for(std::chrono::milliseconds (200-int(mpc.mpcExTime)));
-   
    
     ////////////////////////////////////////////   Manual or Automatic   ////////////////////////////////////////////////////////
     m_int16_operatingmode = 2;          // automatic mode
@@ -106,21 +103,17 @@ void run::start()
     //printf("enter the operating mode");
     //scanf("%hd", &m_int16_operatingmode);
 
-
     ////////////////////////////////////////////   Obstacle Avoidance      ////////////////////////////////////////////////////////
     std::vector<std::vector<int>> obs_data;
     obs_data.push_back(obs_run_A.data);
 
-    
     ////////////////////////////////////////////   Local Planner (Green Reference)   ////////////////////////////////////////////////////////
-    
     //planner.cir_traject_TNB();        //  circular path
     planner.traject_from_file();        //  long path throughout the lab
 
     mRobot.fsAngle_fromRef_360 = planner.pos_ref[0][2]*180.0/PI; //correct robot fsAngle with respect to reference
     mRobot.calFspeed(); // calculate forward speed and angle of forward speed
 
-    
     /////////////////////////////      Data from Planner module to MPC module       ////////////////////////////////////
     std::vector<std::vector<float>> p_ref_dyn = planner.pos_ref; // [x1, y1, psi_1, x2, y2, psi_2, ...]
     std::vector<std::vector<float>> v_ref_dyn = planner.vel_ref; // [s_dot1, 0, ws_1, s_dot2, 0, ws_2, ...]
@@ -136,9 +129,7 @@ void run::start()
 
     mpc.window_planner=planner.window;
 
-
     ///////////////////////////////////////      MPC Execution       ///////////////////////////////////////////
-    
     //mpc.mpcAvoid_obsData_presol(obs_data, p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
     //mpc.mpcErrDyn_xy_plotPredicHorz_presol(p_ref_dyn, v_ref_dyn, p_init, v_init, ori_ref_dyn, ori_init, guess);
 
@@ -476,6 +467,7 @@ void run::getPositionValue(){
 
         int32_t x_pos = static_cast<uint32_t>(m_pcanMsg_listen.DATA[0]) | static_cast<uint32_t>(m_pcanMsg_listen.DATA[1]<<8)\
                             |static_cast<uint32_t>(m_pcanMsg_listen.DATA[2])<<16 | static_cast<uint32_t>(m_pcanMsg_listen.DATA[3]<<24);
+        
         //std::cout << "x_pos: ";
         //std::cout << std::dec << x_pos << std::endl;
 

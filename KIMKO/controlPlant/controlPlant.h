@@ -68,7 +68,7 @@ public:
     //float pos_z_pre;
 
     float pos_x_correct;
-    float pos_y_correct;
+    float pos_y_correct=0;
     float pos_z_correct; 
 
 

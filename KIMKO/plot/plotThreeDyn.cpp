@@ -268,7 +268,7 @@ void plotX(){
             plt::figure(1);
             plt::subplot(3,1,3);
             plt::xlim(0, wSize);
-            plt::ylim(-20, 20);
+            plt::ylim(-50, 50);
             
             plot4_6.update(canWriteTime_temp,canWriteData_Z_temp);
 
@@ -348,7 +348,7 @@ void plotX(){
             plt::figure(2);
             plt::subplot(3,1,1);
             plt::xlim(0, wSize);
-            plt::ylim(-350, 750);
+            plt::ylim(-4000, 250);
             //plt::ylim(-4000, 1500);
             
             //plt::ylim(-100, 200);
@@ -387,7 +387,7 @@ void plotX(){
             plt::xlim(0, wSize);
 
              //plt::ylim(-300, 300);
-             plt::ylim(-50, 1100);
+             plt::ylim(-50, 6000);
             //plt::ylim(-2300, 2200);
             // plt::ylim(-100, 200);
             //plt::ylim(-100, 900);
@@ -420,7 +420,7 @@ void plotX(){
             plt::xlim(0, wSize);
             //plt::ylim(-150, 150);
             //plt::ylim(-60, 60);
-            plt::ylim(0, 370);
+            plt::ylim(-370, 370);
 
             plot9.update(posDemand_Time_temp,posDemand_Z_temp);
 
